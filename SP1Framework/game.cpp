@@ -15,7 +15,8 @@ bool    g_abKeyPressed[K_COUNT];
 SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
-std::string Map[125][50];
+std::string Map[125][50] = { {"0",},{"0",}};
+
 
 // Console object
 Console g_Console(125, 50, "Game");
@@ -36,8 +37,8 @@ void init( void )
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
-    g_sChar.m_cLocation.X = g_Console.getConsoleSize().X / 2;
-    g_sChar.m_cLocation.Y = g_Console.getConsoleSize().Y / 2;
+	g_sChar.m_cLocation.X = 3; //g_Console.getConsoleSize().X / 2;
+		g_sChar.m_cLocation.Y = 2; //g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
@@ -145,34 +146,48 @@ void gameplay()            // gameplay logic
 void moveCharacter()
 {
     bool bSomethingHappened = false;
+	bool bIsGrounded = false;
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "1")
+		bIsGrounded = true;
     if (g_dBounceTime > g_dElapsedTime)
         return;
 
     // Updating the location of the character based on the key press
     // providing a beep sound whenver we shift the character
-    if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0)
+    if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0&&bIsGrounded)
     {
         //Beep(1440, 30);
-		if(Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y--]!="1")
-        g_sChar.m_cLocation.Y--;
+		if(Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y-1]!="1")
+		{ 
+        g_sChar.m_cLocation.Y-=3;
+		}
         bSomethingHappened = true;
     }
     if (g_abKeyPressed[K_LEFT] && g_sChar.m_cLocation.X > 0)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.X--;
-        bSomethingHappened = true;
+		if (Map[g_sChar.m_cLocation.X-1][g_sChar.m_cLocation.Y] != "1")
+		{
+			g_sChar.m_cLocation.X--;
+		}
+			bSomethingHappened = true;
     }
     if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
     {
         //Beep(1440, 30);
-        g_sChar.m_cLocation.Y++;
-        bSomethingHappened = true;
+		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] != "1")
+		{
+			g_sChar.m_cLocation.Y++;
+		}
+			bSomethingHappened = true;
     }
     if (g_abKeyPressed[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
+		if (Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y] != "1")
+		{
         g_sChar.m_cLocation.X++;
+		}
         bSomethingHappened = true;
     }
     if (g_abKeyPressed[K_SPACE])
@@ -180,6 +195,11 @@ void moveCharacter()
         g_sChar.m_bActive = !g_sChar.m_bActive;
         bSomethingHappened = true;
     }
+
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "")//Gravity
+	{
+		g_sChar.m_cLocation.Y++;
+	}
 
     if (bSomethingHappened)
     {
@@ -222,32 +242,30 @@ void renderGame()
 
 void renderMap()
 {
-    // Set up sample colours, and output shadings
-    const WORD colors[] = {
-        0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-        0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
-    };
+	// Set up sample colours, and output shadings
+	const WORD colors[] = {
+		0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+		0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+	};
 
-    COORD c;
-    for (int i = 0; i < 12; ++i)
-    {
-		if (i < 6)
-		{
-        c.X =i;
-        c.Y = i;
-        colour(colors[i]);
-        g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
-		Map[c.X][c.Y] = "1";
-		}
-		else
-		{
-			c.X = i;
-			c.Y = 12 - i;
+	COORD c;
+	for (int i = 0; i < 50; ++i)
+	{
+		c.X = 2 * i;
+			c.Y=4;
 			colour(colors[i]);
-			g_Console.writeToBuffer(c, "Û", colors[1]);
+			g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
 			Map[c.X][c.Y] = "1";
-		}
-    }
+
+			c.X = i;
+			c.Y = 5;
+			colour(colors[i]);
+			g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
+			Map[c.X][c.Y] = "1";
+		
+		//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
+
+	}
 }
 
 void renderCharacter()
@@ -258,7 +276,7 @@ void renderCharacter()
     {
         charColor = 0x0A;
     }
-    g_Console.writeToBuffer(g_sChar.m_cLocation, (char)1, charColor);
+    g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
 }
 
 void renderFramerate()
