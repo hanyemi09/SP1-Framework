@@ -15,9 +15,10 @@ bool    g_abKeyPressed[K_COUNT];
 SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
+std::string Map[125][50];
 
 // Console object
-Console g_Console(200, 50, "SP1 Framework");
+Console g_Console(125, 50, "Game");
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -152,6 +153,7 @@ void moveCharacter()
     if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0)
     {
         //Beep(1440, 30);
+		if(Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y--]!="1")
         g_sChar.m_cLocation.Y--;
         bSomethingHappened = true;
     }
@@ -235,6 +237,7 @@ void renderMap()
         c.Y = i;
         colour(colors[i]);
         g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
+		Map[c.X][c.Y] = "1";
 		}
 		else
 		{
@@ -242,6 +245,7 @@ void renderMap()
 			c.Y = 12 - i;
 			colour(colors[i]);
 			g_Console.writeToBuffer(c, "Û", colors[1]);
+			Map[c.X][c.Y] = "1";
 		}
     }
 }
