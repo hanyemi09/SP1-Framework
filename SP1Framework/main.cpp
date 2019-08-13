@@ -11,9 +11,12 @@ const unsigned int gc_uFrameTime = 1000 / gc_ucFPS;    // time for each frame
 //main loop declaration
 void mainLoop( void );
 //xdkkldd//////
-////////////////////////////////////////////////////////////
 // TODO:
 // Bug in waitUntil. it waits for the time from getElapsedTime to waitUntil, but should be insignificant.
+<<<<<<< HEAD
+=======
+
+>>>>>>> f13817a9ea54377a75381d2a17ecf733a1682a27
 // main function - starting function
 // You should not be modifying this unless you know what you are doing
 int main( void )
