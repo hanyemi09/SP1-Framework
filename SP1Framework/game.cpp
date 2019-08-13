@@ -235,7 +235,6 @@ void renderMap()
         colour(colors[i]);
         g_Console.writeToBuffer(c, " °±²Û", colors[i]);
 		*/
-		std::ofstream map("map.txt");
     }
 }
 
