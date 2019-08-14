@@ -15,11 +15,11 @@ bool    g_abKeyPressed[K_COUNT];
 SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
-std::string Map[125][50] = { {"0",},{"0",}};
+std::string Map[100][45] = { {"0",},{"0",}};
 
 
 // Console object
-Console g_Console(125, 50, "Game");
+Console g_Console(100, 45, "Game");
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -267,22 +267,30 @@ void renderMap()
 	};
 
 	COORD c;
-	for (int i = 0; i < 50; ++i)
+	for (int j = 0; j < 5; j++)
 	{
-		c.X = 2 * i;
-			c.Y=4;
-			colour(colors[i]);
-			g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
-			Map[c.X][c.Y] = "1";
-
+		for (int i = 0; i < 45; ++i)
+		{
 			c.X = i;
-			c.Y = 5;
+			c.Y = 5 * j;
 			colour(colors[i]);
 			g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
 			Map[c.X][c.Y] = "1";
-		
-		//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
 
+			//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
+
+		}
+		for (int i = 0; i < 45; ++i)
+		{
+			c.X = i+45;
+			c.Y = 5 * j+3;
+			colour(colors[i]);
+			g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
+			Map[c.X][c.Y] = "1";
+
+			//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
+
+		}
 	}
 }
 
