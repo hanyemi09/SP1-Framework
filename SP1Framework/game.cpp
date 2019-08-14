@@ -13,6 +13,7 @@ bool    g_abKeyPressed[K_COUNT];
 
 // Game specific variables here
 SGameChar   g_sChar;
+SGameChar	g_sChar1;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 std::string Map[125][50] = { {"0",},{"0",}};
@@ -37,9 +38,17 @@ void init( void )
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
 
+<<<<<<< Updated upstream
 	g_sChar.m_cLocation.X = 3; //g_Console.getConsoleSize().X / 2;
 		g_sChar.m_cLocation.Y = 2; //g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
+=======
+		g_sChar.m_cLocation.X = 3; //g_Console.getConsoleSize().X / 2;
+		g_sChar.m_cLocation.Y = 4; //g_Console.getConsoleSize().Y / 2;
+		g_sChar1.m_cLocation.X = 6;
+		g_sChar1.m_cLocation.Y = 4;
+		g_sChar.m_bActive = true;
+>>>>>>> Stashed changes
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(0, 16, L"Consolas");
 }
@@ -78,6 +87,12 @@ void getInput( void )
     g_abKeyPressed[K_RIGHT]  = isKeyPressed(VK_RIGHT);
     g_abKeyPressed[K_SPACE]  = isKeyPressed(VK_SPACE);
     g_abKeyPressed[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
+	g_abKeyPressed[K_W] = isKeyPressed(VK_W);
+	g_abKeyPressed[K_S] = isKeyPressed(VK_S);
+	g_abKeyPressed[K_A] = isKeyPressed(VK_A);
+	g_abKeyPressed[K_D] = isKeyPressed(VK_D);
+
+
 }
 
 //--------------------------------------------------------------
@@ -140,6 +155,7 @@ void gameplay()            // gameplay logic
 {
     processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
     moveCharacter();    // moves the character, collision detection, physics, etc
+	moveCharacter1();
                         // sound can be played here too.
 }
 
@@ -207,6 +223,95 @@ void moveCharacter()
         g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
     }
 }
+
+void moveCharacter1()
+{
+	bool bSomethingHappened = false;
+	bool bIsGrounded = false;
+	if (Map[g_sChar1.m_cLocation.X][g_sChar1.m_cLocation.Y + 1] == "1")
+	{
+		bIsGrounded = true;
+		bCanJump = true;
+	}
+	if (g_dBounceTime > g_dElapsedTime)
+		return;
+
+	// Updating the location of the character based on the key press
+	// providing a beep sound whenver we shift the character
+	if (bIsGrounded)
+	{
+		sJump = 3;
+	}
+	if (g_abKeyPressed[K_W] && g_sChar1.m_cLocation.Y > 0 && bCanJump == true)
+	{
+		//Beep(1440, 30);
+		if (Map[g_sChar1.m_cLocation.X][g_sChar1.m_cLocation.Y - 1] != "1")
+		{
+			g_sChar1.m_cLocation.Y -= 2;
+			sJump--;
+		}
+		if (sJump <= 0)
+		{
+			bCanJump = false;
+		}
+		bSomethingHappened = true;
+	}
+	else
+	{
+		bCanJump = false;
+	}
+	if (g_abKeyPressed[K_A] && g_sChar1.m_cLocation.X > 0)
+	{
+		//Beep(1440, 30);
+		if (Map[g_sChar1.m_cLocation.X - 1][g_sChar1.m_cLocation.Y] != "1")
+		{
+			g_sChar1.m_cLocation.X--;
+		}
+		bSomethingHappened = true;
+	}
+	/*
+	if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+	{
+	//Beep(1440, 30);
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] != "1")
+	{
+	g_sChar.m_cLocation.Y++;
+	}
+	bSomethingHappened = true;
+	}
+	*/
+	if (g_abKeyPressed[K_D] && g_sChar1.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+	{
+		//Beep(1440, 30);
+		if (Map[g_sChar1.m_cLocation.X + 1][g_sChar1.m_cLocation.Y] != "1")
+		{
+			g_sChar1.m_cLocation.X++;
+		}
+		bSomethingHappened = true;
+	}
+	if (g_abKeyPressed[K_SPACE])
+	{
+		g_sChar1.m_bActive = !g_sChar1.m_bActive;
+		bSomethingHappened = true;
+	}
+
+	if (Map[g_sChar1.m_cLocation.X][g_sChar1.m_cLocation.Y + 1] != "1")//Gravity
+	{
+		g_sChar1.m_cLocation.Y++;
+		bSomethingHappened = true;
+	}
+	if (Map[g_sChar1.m_cLocation.X][g_sChar1.m_cLocation.Y] == "5")
+	{
+		Sleep(500);
+		playerRespawn();
+	}
+	if (bSomethingHappened)
+	{
+		// set the bounce time to some time in the future to prevent accidental triggers
+		g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
+	}
+}
+
 void processUserInput()
 {
     // quits the game if player hits the escape key
@@ -276,7 +381,31 @@ void renderCharacter()
     {
         charColor = 0x0A;
     }
+<<<<<<< Updated upstream
     g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
+=======
+    //g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
+	g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
+	for (int i = -1; i < 2; i++)
+	{
+		g_Console.writeToBuffer(g_sChar.m_cLocation.X + i, g_sChar.m_cLocation.Y - 2, (char)22, charColor);
+	}
+	g_Console.writeToBuffer(g_sChar.m_cLocation.X , g_sChar.m_cLocation.Y - 1, (char)0, charColor);
+	g_Console.writeToBuffer(g_sChar.m_cLocation.X-1, g_sChar.m_cLocation.Y,(char)0, charColor);
+	g_Console.writeToBuffer(g_sChar.m_cLocation.X + 1, g_sChar.m_cLocation.Y, (char)0, charColor);
+//player2
+	g_Console.writeToBuffer(g_sChar1.m_cLocation.X, g_sChar1.m_cLocation.Y - 3, (char)2, charColor);
+	for (int i = -1; i < 2; i++)
+	{
+		g_Console.writeToBuffer(g_sChar1.m_cLocation.X + i, g_sChar1.m_cLocation.Y - 2, (char)22, charColor);
+	}
+	g_Console.writeToBuffer(g_sChar1.m_cLocation.X, g_sChar1.m_cLocation.Y - 1, (char)0, charColor);
+	g_Console.writeToBuffer(g_sChar1.m_cLocation.X - 1, g_sChar1.m_cLocation.Y, (char)0, charColor);
+	g_Console.writeToBuffer(g_sChar1.m_cLocation.X + 1, g_sChar1.m_cLocation.Y, (char)0, charColor);
+
+
+
+>>>>>>> Stashed changes
 }
 
 void renderFramerate()
