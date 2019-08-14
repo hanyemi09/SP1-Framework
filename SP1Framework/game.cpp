@@ -38,10 +38,10 @@ void init( void )
     g_eGameState = S_SPLASHSCREEN;
 
 	g_sChar.m_cLocation.X = 3; //g_Console.getConsoleSize().X / 2;
-		g_sChar.m_cLocation.Y = 2; //g_Console.getConsoleSize().Y / 2;
+		g_sChar.m_cLocation.Y = 4; //g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
     // sets the width, height and the font name to use in the console
-    g_Console.setConsoleFont(0, 16, L"Consolas");
+    g_Console.setConsoleFont(8, 16, L"Consolas");
 }
 
 //--------------------------------------------------------------
@@ -142,6 +142,17 @@ void gameplay()            // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
 }
+COORD Respawn;
+void setRespawn()
+{
+	Respawn.X = g_sChar.m_cLocation.Y;
+	Respawn.Y= g_sChar.m_cLocation.X;
+}
+
+void playerRespawn()
+{
+	g_sChar.m_cLocation= Respawn;
+}
 bool bCanJump = true;
 short sJump = 3;
 void moveCharacter()
@@ -189,6 +200,7 @@ void moveCharacter()
 		}
 			bSomethingHappened = true;
     }
+	/*
     if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
     {
         //Beep(1440, 30);
@@ -198,6 +210,7 @@ void moveCharacter()
 		}
 			bSomethingHappened = true;
     }
+	*/
     if (g_abKeyPressed[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
@@ -213,12 +226,16 @@ void moveCharacter()
         bSomethingHappened = true;
     }
 
-	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "")//Gravity
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] != "1")//Gravity
 	{
 		g_sChar.m_cLocation.Y++;
 		bSomethingHappened = true;
 	}
-
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y] == "5")
+	{
+		Sleep(500);
+		playerRespawn();
+	}
     if (bSomethingHappened)
     {
         // set the bounce time to some time in the future to prevent accidental triggers
@@ -291,6 +308,15 @@ void renderMap()
 			//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
 
 		}
+		
+		for (int i = 10; i < 50; i++)
+		{
+			c.X = i;
+			c.Y = 2;
+			colour(colors[i]);
+			g_Console.writeToBuffer(c, "Û", colors[3]);// °±²Û
+			Map[c.X][c.Y] = "5";
+		}
 	}
 }
 
@@ -302,7 +328,15 @@ void renderCharacter()
     {
         charColor = 0x0A;
     }
-    g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
+    //g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
+	g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
+	for (int i = -1; i < 2; i++)
+	{
+		g_Console.writeToBuffer(g_sChar.m_cLocation.X + i, g_sChar.m_cLocation.Y - 2, (char)22, charColor);
+	}
+	g_Console.writeToBuffer(g_sChar.m_cLocation.X , g_sChar.m_cLocation.Y - 1, (char)0, charColor);
+	g_Console.writeToBuffer(g_sChar.m_cLocation.X-1, g_sChar.m_cLocation.Y,(char)0, charColor);
+	g_Console.writeToBuffer(g_sChar.m_cLocation.X + 1, g_sChar.m_cLocation.Y, (char)0, charColor);
 }
 
 void renderFramerate()
