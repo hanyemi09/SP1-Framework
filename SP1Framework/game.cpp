@@ -15,15 +15,11 @@ bool    g_abKeyPressed[K_COUNT];
 SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
-<<<<<<< Updated upstream
-std::string Map[125][50] = { {"0",},{"0",}};
-=======
 _Object Map[100][45] = {};
->>>>>>> Stashed changes
 
 
 // Console object
-Console g_Console(125, 50, "Game");
+Console g_Console(100, 45, "Game");
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -42,10 +38,10 @@ void init( void )
     g_eGameState = S_SPLASHSCREEN;
 
 	g_sChar.m_cLocation.X = 3; //g_Console.getConsoleSize().X / 2;
-		g_sChar.m_cLocation.Y = 2; //g_Console.getConsoleSize().Y / 2;
+		g_sChar.m_cLocation.Y = 4; //g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
     // sets the width, height and the font name to use in the console
-    g_Console.setConsoleFont(0, 16, L"Consolas");
+    g_Console.setConsoleFont(8, 16, L"Consolas");
 }
 
 //--------------------------------------------------------------
@@ -146,32 +142,55 @@ void gameplay()            // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
 }
+COORD Respawn;
+void setRespawn()
+{
+	Respawn.X = g_sChar.m_cLocation.Y;
+	Respawn.Y= g_sChar.m_cLocation.X;
+}
 
+void playerRespawn()
+{
+	g_sChar.m_cLocation= Respawn;
+}
+bool bCanJump = true;
+short sJump = 3;
 void moveCharacter()
 {
     bool bSomethingHappened = false;
 	bool bIsGrounded = false;
-<<<<<<< Updated upstream
-	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "1")
-=======
 	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code == 1)
 	{
->>>>>>> Stashed changes
 		bIsGrounded = true;
+		bCanJump=true;
+	}
     if (g_dBounceTime > g_dElapsedTime)
         return;
 
     // Updating the location of the character based on the key press
     // providing a beep sound whenver we shift the character
-    if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0&&bIsGrounded)
+	if (bIsGrounded)
+	{
+		sJump = 3;
+	}
+    if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0&& bCanJump == true)
     {
         //Beep(1440, 30);
 		if(Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y-1].Code!=1)
 		{ 
-        g_sChar.m_cLocation.Y-=3;
+        g_sChar.m_cLocation.Y-=2;
+		sJump--;
+		}	
+		if (sJump <= 0)
+		{
+			bCanJump = false;
 		}
         bSomethingHappened = true;
     }
+	else
+	{
+		bCanJump = false;
+	}
     if (g_abKeyPressed[K_LEFT] && g_sChar.m_cLocation.X > 0)
     {
         //Beep(1440, 30);
@@ -181,6 +200,7 @@ void moveCharacter()
 		}
 			bSomethingHappened = true;
     }
+	/*
     if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
     {
         //Beep(1440, 30);
@@ -190,6 +210,7 @@ void moveCharacter()
 		}
 			bSomethingHappened = true;
     }
+	*/
     if (g_abKeyPressed[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
     {
         //Beep(1440, 30);
@@ -205,11 +226,6 @@ void moveCharacter()
         bSomethingHappened = true;
     }
 
-<<<<<<< Updated upstream
-	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "")//Gravity
-	{
-		g_sChar.m_cLocation.Y++;
-=======
 	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code != 1)//Gravity
 	{
 		g_sChar.m_cLocation.Y++;
@@ -219,9 +235,7 @@ void moveCharacter()
 	{
 		Sleep(500);
 		playerRespawn();
->>>>>>> Stashed changes
 	}
-
     if (bSomethingHappened)
     {
         // set the bounce time to some time in the future to prevent accidental triggers
@@ -270,24 +284,25 @@ void renderMap()
 	};
 
 	COORD c;
-	for (int i = 0; i < 50; ++i)
+	for (int j = 0; j < 5; j++)
 	{
-		c.X = 2 * i;
-			c.Y=4;
+		for (int i = 0; i < 45; ++i)
+		{
+			c.X = i;
+			c.Y = 5 * j;
 			colour(colors[i]);
 			g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
 			Map[c.X][c.Y].Code = 1;
 
-			c.X = i;
-			c.Y = 5;
+			//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
+
+		}
+		for (int i = 0; i < 45; ++i)
+		{
+			c.X = i+45;
+			c.Y = 5 * j+3;
 			colour(colors[i]);
 			g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
-<<<<<<< Updated upstream
-			Map[c.X][c.Y] = "1";
-		
-		//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
-
-=======
 			Map[c.X][c.Y].Code = 1;
 
 			//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
@@ -302,7 +317,6 @@ void renderMap()
 			g_Console.writeToBuffer(c, "Û", colors[3]);// °±²Û
 			Map[c.X][c.Y].Code = 5;
 		}
->>>>>>> Stashed changes
 	}
 }
 
@@ -310,14 +324,10 @@ void renderCharacter()
 {
     // Draw the location of the character
     WORD charColor = 0x0C;
-    /*if (g_sChar.m_bActive)
+    if (g_sChar.m_bActive)
     {
         charColor = 0x0A;
-<<<<<<< Updated upstream
     }
-    g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
-=======
-    }*/
     g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
 	/*g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
 	for (int i = -1; i < 2; i++)
@@ -327,7 +337,6 @@ void renderCharacter()
 	g_Console.writeToBuffer(g_sChar.m_cLocation.X , g_sChar.m_cLocation.Y - 1, (char)0, charColor);
 	g_Console.writeToBuffer(g_sChar.m_cLocation.X-1, g_sChar.m_cLocation.Y,(char)0, charColor);
 	g_Console.writeToBuffer(g_sChar.m_cLocation.X + 1, g_sChar.m_cLocation.Y, (char)0, charColor);*/
->>>>>>> Stashed changes
 }
 
 void renderFramerate()
