@@ -142,27 +142,44 @@ void gameplay()            // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
 }
-
+bool bCanJump = true;
+short sJump = 3;
 void moveCharacter()
 {
     bool bSomethingHappened = false;
 	bool bIsGrounded = false;
 	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "1")
+	{
 		bIsGrounded = true;
+		bCanJump=true;
+	}
     if (g_dBounceTime > g_dElapsedTime)
         return;
 
     // Updating the location of the character based on the key press
     // providing a beep sound whenver we shift the character
-    if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0&&bIsGrounded)
+	if (bIsGrounded)
+	{
+		sJump = 3;
+	}
+    if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0&& bCanJump == true)
     {
         //Beep(1440, 30);
 		if(Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y-1]!="1")
 		{ 
-        g_sChar.m_cLocation.Y-=3;
+        g_sChar.m_cLocation.Y-=2;
+		sJump--;
+		}	
+		if (sJump <= 0)
+		{
+			bCanJump = false;
 		}
         bSomethingHappened = true;
     }
+	else
+	{
+		bCanJump = false;
+	}
     if (g_abKeyPressed[K_LEFT] && g_sChar.m_cLocation.X > 0)
     {
         //Beep(1440, 30);
@@ -199,6 +216,7 @@ void moveCharacter()
 	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "")//Gravity
 	{
 		g_sChar.m_cLocation.Y++;
+		bSomethingHappened = true;
 	}
 
     if (bSomethingHappened)
