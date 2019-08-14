@@ -16,10 +16,18 @@ enum EKEYS
     K_ESCAPE,
     K_SPACE,
     K_COUNT,
+<<<<<<< Updated upstream
+=======
+	K_ENTER,
+>>>>>>> Stashed changes
 	K_W,
 	K_A,
 	K_S,
 	K_D
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 };
 
 // Enumeration for the different screen states
@@ -49,6 +57,7 @@ void gameplay();            // gameplay logic
 void setRespawn();
 void playerRespawn();
 void moveCharacter();       // moves the character, collision detection, physics, etc
+void moveCharacter1();
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderSplashScreen();  // renders the splash screen
