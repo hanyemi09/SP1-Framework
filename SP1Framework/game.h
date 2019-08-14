@@ -15,7 +15,11 @@ enum EKEYS
     K_RIGHT,
     K_ESCAPE,
     K_SPACE,
-    K_COUNT
+    K_COUNT,
+	K_W,
+	K_A,
+	K_S,
+	K_D
 };
 
 // Enumeration for the different screen states
@@ -41,6 +45,8 @@ void shutdown    ( void );      // do clean up, free memory
 
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
+void setRespawn();
+void playerRespawn();
 void moveCharacter();       // moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void clearScreen();         // clears the current screen and draw from scratch 
