@@ -15,8 +15,14 @@ bool    g_abKeyPressed[K_COUNT];
 SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
+<<<<<<< Updated upstream
 std::string Map[125][50] = { {"0",},{"0",}};
 
+=======
+std::string Map[100][45] = { {"0",},{"0",}};
+int respawnPointY = 3;
+int respawnPointX = 2;
+>>>>>>> Stashed changes
 
 // Console object
 Console g_Console(125, 50, "Game");
@@ -143,6 +149,26 @@ void gameplay()            // gameplay logic
                         // sound can be played here too.
 }
 
+<<<<<<< Updated upstream
+=======
+void setRespawn() 
+{
+
+	respawnPointY = g_sChar.m_cLocation.Y;
+	respawnPointX = g_sChar.m_cLocation.X;
+
+}
+
+void playerRespawn() 
+{
+
+	g_sChar.m_cLocation.Y = respawnPointY;
+	g_sChar.m_cLocation.X = respawnPointX;
+
+}
+bool bCanJump = true;
+short sJump = 3;
+>>>>>>> Stashed changes
 void moveCharacter()
 {
     bool bSomethingHappened = false;
@@ -206,6 +232,15 @@ void moveCharacter()
         // set the bounce time to some time in the future to prevent accidental triggers
         g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
     }
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y] == "4") {
+
+		setRespawn();
+	}
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "5" || Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1] == "5" || Map[g_sChar.m_cLocation.X - 1][g_sChar.m_cLocation.Y] == "5" || Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y] == "5") 
+	{
+		Sleep(500);
+		playerRespawn();
+	}
 }
 void processUserInput()
 {
@@ -265,6 +300,14 @@ void renderMap()
 		
 		//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
 
+	}
+	for (int i = 10; i < 50; i++)
+	{
+		c.X = i;
+		c.Y = 2;
+		colour(colors[i]);
+		g_Console.writeToBuffer(c, "Û", colors[3]);// °±²Û
+		Map[c.X][c.Y] = "5";
 	}
 }
 
