@@ -38,7 +38,7 @@ void init( void )
     g_eGameState = S_SPLASHSCREEN;
 
 	g_sChar.m_cLocation.X = 3; //g_Console.getConsoleSize().X / 2;
-		g_sChar.m_cLocation.Y = 4; //g_Console.getConsoleSize().Y / 2;
+	g_sChar.m_cLocation.Y = 4; //g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(8, 16, L"Consolas");
@@ -78,6 +78,8 @@ void getInput( void )
     g_abKeyPressed[K_RIGHT]  = isKeyPressed(VK_RIGHT);
     g_abKeyPressed[K_SPACE]  = isKeyPressed(VK_SPACE);
     g_abKeyPressed[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
+	g_abKeyPressed[K_ENTER] = isKeyPressed(0x0D);
+
 }
 
 //--------------------------------------------------------------
@@ -132,8 +134,15 @@ void render()
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
-    if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to game mode, else do nothing
-        g_eGameState = S_GAME;
+	if (g_abKeyPressed[K_ENTER] == true) // Press ENTER to start
+	{
+		g_eGameState = S_GAME;
+	}
+
+	if (g_abKeyPressed[K_ESCAPE] == true) // Press ENTER to start
+	{
+		g_bQuitGame = true;
+	}
 }
 
 void gameplay()            // gameplay logic
@@ -265,11 +274,14 @@ void renderSplashScreen()  // renders the splash screen
     COORD c = g_Console.getConsoleSize();
     c.Y /= 3;
     c.X = c.X / 2 - 9;
-    g_Console.writeToBuffer(c, "A game in 3 seconds", 0x03);
+    g_Console.writeToBuffer(c, "Press <ENTER> to start", 0x03);
     c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 20;
     g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
-    c.Y += 1;
+	c.Y += 1;
+	c.X = g_Console.getConsoleSize().X / 2 - 12;
+	g_Console.writeToBuffer(c, "Use the Arrow Keys to move", 0x09);
+	c.Y += 1;
     c.X = g_Console.getConsoleSize().X / 2 - 9;
     g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
 }
