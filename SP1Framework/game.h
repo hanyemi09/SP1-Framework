@@ -16,18 +16,12 @@ enum EKEYS
     K_ESCAPE,
     K_SPACE,
     K_COUNT,
-<<<<<<< Updated upstream
-=======
 	K_ENTER,
->>>>>>> Stashed changes
 	K_W,
 	K_A,
 	K_S,
 	K_D
-<<<<<<< Updated upstream
-=======
 
->>>>>>> Stashed changes
 };
 
 // Enumeration for the different screen states
@@ -44,18 +38,22 @@ struct SGameChar
     COORD m_cLocation;
     bool  m_bActive;
 };
-
+struct _Object
+{
+	short Code;
+	short Ascii;
+	bool Active;
+	bool Solid;
+	short Link;
+};
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
 
-void moveCharacter1();
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
-void setRespawn();
-void playerRespawn();
 void moveCharacter();       // moves the character, collision detection, physics, etc
 void moveCharacter1();
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
