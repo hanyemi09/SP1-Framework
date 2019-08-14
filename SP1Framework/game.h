@@ -32,7 +32,14 @@ struct SGameChar
     COORD m_cLocation;
     bool  m_bActive;
 };
-
+struct _Object
+{
+	short Code;
+	short Ascii;
+	bool Active;
+	bool Solid;
+	short Link;
+};
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
