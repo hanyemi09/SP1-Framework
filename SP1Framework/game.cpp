@@ -273,13 +273,23 @@ void moveCharacter()
 	{
 		playerRespawn();
 	}
-
-
+if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Code == 2) {
+		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Active == false&&g_abKeyPressed[K_DOWN]) {
+			bSomethingHappened = true;
+			Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Active = true;
+		}
+		else if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Active == true && g_abKeyPressed[K_DOWN]) {
+			bSomethingHappened = true;
+			Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Active = false;
+		}
+	}
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
 		g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
 	}
+
+	
 }
 void processUserInput()
 {
@@ -337,7 +347,7 @@ void MapPrinting(std::string output, int x) {
 	case '2':
 		*ipColor = 1;
 		*ipTileCode = 2;
-		*cpTileChar = '2';
+		*cpTileChar = 0x25C9;
 		break;
 	case '3':
 		*ipColor = 0;
@@ -385,7 +395,6 @@ void renderMap()
 	c.Y = 2;
 	std::string output;
 	// °±²Û
-
 	std::ifstream map("map.txt");
 	if (map.is_open()) {
 		int y = 1;
@@ -400,17 +409,17 @@ void renderMap()
 			++y;
 		}
 	}
-	if (Map[4][16].Active == true) {
+	if (Map[43][7].Active == true) {
 		Map[47][8].Code = 0;
 		c.X = 47;
 		c.Y = 8;
-		g_Console.writeToBuffer(c, 'Û', colors[1]);
+		g_Console.writeToBuffer(c, ' ', colors[12]);
 		Map[48][8].Code = 0;
 		c.X = 48;
 		c.Y = 8;
-		g_Console.writeToBuffer(c, 'Û', colors[1]);
+		g_Console.writeToBuffer(c, ' ', colors[12]);
 	}
-	else if (Map[4][16].Active == false) {
+	else if (Map[43][7].Active == false) {
 		Map[47][8].Code = 1;
 		c.X = 47;
 		c.Y = 8;
