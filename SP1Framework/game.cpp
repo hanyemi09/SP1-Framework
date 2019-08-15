@@ -28,19 +28,19 @@ Console g_Console(100, 50, "Game");
 // Input    : void
 // Output   : void
 //--------------------------------------------------------------
-void init( void )
+void init(void)
 {
-    // Set precision for floating point output
-    g_dElapsedTime = 0.0;
-    g_dBounceTime = 0.0;
+	// Set precision for floating point output
+	g_dElapsedTime = 0.0;
+	g_dBounceTime = 0.0;
 
-    // sets the initial state for the game
-    g_eGameState = S_SPLASHSCREEN;
+	// sets the initial state for the game
+	g_eGameState = S_SPLASHSCREEN;
 	g_sChar.m_cLocation.X = 2; //g_Console.getConsoleSize().X / 2;
 	g_sChar.m_cLocation.Y = 5; //g_Console.getConsoleSize().Y / 2;
-    g_sChar.m_bActive = true;
-    // sets the width, height and the font name to use in the console
-    g_Console.setConsoleFont(8, 16, L"Consolas");
+	g_sChar.m_bActive = true;
+	// sets the width, height and the font name to use in the console
+	g_Console.setConsoleFont(8, 16, L"Consolas");
 	//Sets initial spawnpoint
 	setRespawn();
 }
@@ -52,12 +52,12 @@ void init( void )
 // Input    : Void
 // Output   : void
 //--------------------------------------------------------------
-void shutdown( void )
+void shutdown(void)
 {
-    // Reset to white text on black background
-    colour(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
+	// Reset to white text on black background
+	colour(FOREGROUND_BLUE | FOREGROUND_GREEN | FOREGROUND_RED);
 
-    g_Console.clearBuffer();
+	g_Console.clearBuffer();
 }
 
 //--------------------------------------------------------------
@@ -71,14 +71,14 @@ void shutdown( void )
 // Input    : Void
 // Output   : void
 //--------------------------------------------------------------
-void getInput( void )
-{    
-    g_abKeyPressed[K_UP]     = isKeyPressed(VK_UP);
-    g_abKeyPressed[K_DOWN]   = isKeyPressed(VK_DOWN);
-    g_abKeyPressed[K_LEFT]   = isKeyPressed(VK_LEFT);
-    g_abKeyPressed[K_RIGHT]  = isKeyPressed(VK_RIGHT);
-    g_abKeyPressed[K_SPACE]  = isKeyPressed(VK_SPACE);
-    g_abKeyPressed[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
+void getInput(void)
+{
+	g_abKeyPressed[K_UP] = isKeyPressed(VK_UP);
+	g_abKeyPressed[K_DOWN] = isKeyPressed(VK_DOWN);
+	g_abKeyPressed[K_LEFT] = isKeyPressed(VK_LEFT);
+	g_abKeyPressed[K_RIGHT] = isKeyPressed(VK_RIGHT);
+	g_abKeyPressed[K_SPACE] = isKeyPressed(VK_SPACE);
+	g_abKeyPressed[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
 	g_abKeyPressed[K_ENTER] = isKeyPressed(0x0D);
 
 }
@@ -99,17 +99,17 @@ void getInput( void )
 //--------------------------------------------------------------
 void update(double dt)
 {
-    // get the delta time
-    g_dElapsedTime += dt;
-    g_dDeltaTime = dt;
+	// get the delta time
+	g_dElapsedTime += dt;
+	g_dDeltaTime = dt;
 
-    switch (g_eGameState)
-    {
-        case S_SPLASHSCREEN : splashScreenWait(); // game logic for the splash screen
-            break;
-        case S_GAME: gameplay(); // gameplay logic when we are in the game
-            break;
-    }
+	switch (g_eGameState)
+	{
+	case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
+		break;
+	case S_GAME: gameplay(); // gameplay logic when we are in the game
+		break;
+	}
 }
 //--------------------------------------------------------------
 // Purpose  : Render function is to update the console screen
@@ -121,16 +121,16 @@ void update(double dt)
 //--------------------------------------------------------------
 void render()
 {
-    clearScreen();      // clears the current screen and draw from scratch 
-    switch (g_eGameState)
-    {
-        case S_SPLASHSCREEN: renderSplashScreen();
-            break;
-        case S_GAME: renderGame();
-            break;
-    }
-    renderFramerate();  // renders debug information, frame rate, elapsed time, etc
-    renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
+	clearScreen();      // clears the current screen and draw from scratch 
+	switch (g_eGameState)
+	{
+	case S_SPLASHSCREEN: renderSplashScreen();
+		break;
+	case S_GAME: renderGame();
+		break;
+	}
+	renderFramerate();  // renders debug information, frame rate, elapsed time, etc
+	renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
 }
 
 void splashScreenWait()    // waits for time to pass in splash screen
@@ -148,20 +148,20 @@ void splashScreenWait()    // waits for time to pass in splash screen
 
 void gameplay()            // gameplay logic
 {
-    processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
-    moveCharacter();    // moves the character, collision detection, physics, etc
-                        // sound can be played here too.
+	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
+	moveCharacter();    // moves the character, collision detection, physics, etc
+						// sound can be played here too.
 }
 COORD Respawn;
 void setRespawn()
 {
 	Respawn.X = 2;
-	Respawn.Y= 4;
+	Respawn.Y = 4;
 }
 
 void playerRespawn()
 {
-	g_sChar.m_cLocation.X= Respawn.X;
+	g_sChar.m_cLocation.X = Respawn.X;
 	g_sChar.m_cLocation.Y = Respawn.Y;
 }
 bool bCanJump = true;
@@ -169,9 +169,9 @@ bool bWasGrounded = false;
 short sJump = 2;
 void moveCharacter()
 {
-    if (g_dBounceTime > g_dElapsedTime)
-        return;
-    bool bSomethingHappened = false;
+	if (g_dBounceTime > g_dElapsedTime)
+		return;
+	bool bSomethingHappened = false;
 	bool bIsGrounded = false;
 	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code == 1)
 	{
@@ -181,37 +181,37 @@ void moveCharacter()
 		bWasGrounded = false;
 	}
 	else
-		if(bWasGrounded)
+		if (bWasGrounded)
 		{
 			bWasGrounded = false;
 		}
-		else if(!bIsGrounded&&!bCanJump)
+		else if (!bIsGrounded && !bCanJump)
 		{
 			bWasGrounded = true;
 		}
 
-    // Updating the location of the character based on the key press
-    // providing a beep sound whenver we shift the character
+	// Updating the location of the character based on the key press
+	// providing a beep sound whenver we shift the character
 	//Jumping
-	if (g_abKeyPressed[K_UP]&&g_sChar.m_cLocation.Y > 0)
+	if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0)
 	{
-			
-			if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code == 1 || sJump <= 0)
-			{
-				bCanJump = false;
-				sJump = 0;
-			}
-			else if (bWasGrounded)
-			{
-				bCanJump = true;
-			}
-			//Beep(1440, 30);
-			if (bCanJump)
-			{
-				g_sChar.m_cLocation.Y -= 1;
-				sJump--;
-			}
-			bSomethingHappened = true;
+
+		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code == 1 || sJump <= 0)
+		{
+			bCanJump = false;
+			sJump = 0;
+		}
+		else if (bWasGrounded)
+		{
+			bCanJump = true;
+		}
+		//Beep(1440, 30);
+		if (bCanJump)
+		{
+			g_sChar.m_cLocation.Y -= 1;
+			sJump--;
+		}
+		bSomethingHappened = true;
 	}
 	else
 	{
@@ -224,7 +224,7 @@ void moveCharacter()
 		{
 			g_sChar.m_cLocation.X--;
 		}
-		else if (Map[g_sChar.m_cLocation.X - 1][g_sChar.m_cLocation.Y].Code == 1 && Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code != 1 && Map[g_sChar.m_cLocation.X-1][g_sChar.m_cLocation.Y - 1].Code != 1)
+		else if (Map[g_sChar.m_cLocation.X - 1][g_sChar.m_cLocation.Y].Code == 1 && Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code != 1 && Map[g_sChar.m_cLocation.X - 1][g_sChar.m_cLocation.Y - 1].Code != 1)
 		{
 			g_sChar.m_cLocation.X--;
 			g_sChar.m_cLocation.Y--;
@@ -249,7 +249,7 @@ void moveCharacter()
 		{
 			g_sChar.m_cLocation.X++;
 		}
-		else if (Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y].Code == 1 && Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code != 1 && Map[g_sChar.m_cLocation.X+1][g_sChar.m_cLocation.Y - 1].Code != 1)
+		else if (Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y].Code == 1 && Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code != 1 && Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y - 1].Code != 1)
 		{
 			g_sChar.m_cLocation.X++;
 			g_sChar.m_cLocation.Y--;
@@ -283,44 +283,44 @@ void moveCharacter()
 }
 void processUserInput()
 {
-    // quits the game if player hits the escape key
-    if (g_abKeyPressed[K_ESCAPE])
-        g_bQuitGame = true;    
+	// quits the game if player hits the escape key
+	if (g_abKeyPressed[K_ESCAPE])
+		g_bQuitGame = true;
 }
 
 void clearScreen()
 {
-    // Clears the buffer with this colour attribute
-    g_Console.clearBuffer(0x1F);
+	// Clears the buffer with this colour attribute
+	g_Console.clearBuffer(0x1F);
 }
 
 void renderSplashScreen()  // renders the splash screen
 {
-    COORD c = g_Console.getConsoleSize();
-    c.Y /= 3;
-    c.X = c.X / 2 - 9;
-    g_Console.writeToBuffer(c, "Press <ENTER> to start", 0x03);
-    c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 20;
-    g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
+	COORD c = g_Console.getConsoleSize();
+	c.Y /= 3;
+	c.X = c.X / 2 - 9;
+	g_Console.writeToBuffer(c, "Press <ENTER> to start", 0x03);
+	c.Y += 1;
+	c.X = g_Console.getConsoleSize().X / 2 - 20;
+	g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
 	c.Y += 1;
 	c.X = g_Console.getConsoleSize().X / 2 - 12;
 	g_Console.writeToBuffer(c, "Use the Arrow Keys to move", 0x09);
 	c.Y += 1;
-    c.X = g_Console.getConsoleSize().X / 2 - 9;
-    g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
+	c.X = g_Console.getConsoleSize().X / 2 - 9;
+	g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
 }
 
 void renderGame()
 {
-    renderMap();        // renders the map to the buffer first
-    renderCharacter();  // renders the character into the buffer
+	renderMap();        // renders the map to the buffer first
+	renderCharacter();  // renders the character into the buffer
 }
 int Color, iTileCode;
 char cTileChar;
 int* ipColor = &Color;
 int* ipTileCode = &iTileCode;
-char* cpTileChar= &cTileChar;
+char* cpTileChar = &cTileChar;
 
 void MapPrinting(std::string output, int x) {
 	switch (output[x]) {
@@ -384,82 +384,9 @@ void renderMap()
 	c.X = 0;
 	c.Y = 2;
 	std::string output;
+	// °±²Û
 
-	
-	 // °±²Û
-	/*
-		std::ifstream map("map.txt");
-		if (map.is_open()) {
-			int y = 1;
-			while (getline(map, output)) {
-
-				for (int x = 0; x < output.size(); ++x) {
-
-					switch (output[x]) {
-					case ' ':
-						c.X = x;
-						c.Y = y;
-						Map[c.X][c.Y].Code = 0;
-						g_Console.writeToBuffer(c, " ", 0x1f);
-						break;
-					case '1':
-						c.X = x;
-						c.Y = y;
-						Map[c.X][c.Y].Code = 1;
-						g_Console.writeToBuffer(c, "Û", 0x1A);
-						break;
-					case '2':
-						c.X = x;
-						c.Y = y;
-						Map[c.X][c.Y].Code = 2;
-						g_Console.writeToBuffer(c, "2", 0x1A);
-						break;
-					case '3':
-						c.X = x;
-						c.Y = y;
-						Map[c.X][c.Y].Code = 3;
-						g_Console.writeToBuffer(c, "3", 0x1A);
-						break;
-					case '4':
-						c.X = x;
-						c.Y = y;
-						Map[c.X][c.Y].Code = 4;
-						g_Console.writeToBuffer(c, "4", 0x1A);
-						break;
-					case '5':
-						c.X = x;
-						c.Y = y;
-						Map[c.X][c.Y].Code = 5;
-						g_Console.writeToBuffer(c, "Û", 0x3C);
-						break;
-					case '6':
-						c.X = x;
-						c.Y = y;
-						Map[c.X][c.Y].Code = 6;
-						g_Console.writeToBuffer(c, "6", 0x1A);
-						break;
-					case '7':
-						c.X = x;
-						c.Y = y;
-						Map[c.X][c.Y].Code = 7;
-						g_Console.writeToBuffer(c, "7", 0x1A);
-						break;
-					case '8':
-						c.X = x;
-						c.Y = y;
-						Map[c.X][c.Y].Code = 8;
-						g_Console.writeToBuffer(c, "8", 0x1A);
-						break;
-
-					}
-
-				}
-				y++;
-
-			}
-		}*/
-
-std::ifstream map("map.txt");
+	std::ifstream map("map.txt");
 	if (map.is_open()) {
 		int y = 1;
 		while (getline(map, output)) {
@@ -473,38 +400,37 @@ std::ifstream map("map.txt");
 			++y;
 		}
 	}
-		if (Map[4][16].Active==true) {
-			Map[47][8].Code = 0;
-			c.X = 47;
-			c.Y = 8;
-			g_Console.writeToBuffer(c, 'Û', colors[1]);
-			Map[48][8].Code = 0;
-			c.X = 48;
-			c.Y = 8;
-			g_Console.writeToBuffer(c, 'Û', colors[1]);
-		}
-		else if (Map[4][16].Active == false) {
-			Map[47][8].Code = 1;
-			c.X = 47;
-			c.Y = 8;
-			g_Console.writeToBuffer(c, 'Û', colors[12]);
-			Map[48][8].Code = 1;
-			c.X = 48;
-			c.Y = 8;
-			g_Console.writeToBuffer(c, 'Û', colors[12]);
-		}
-	
+	if (Map[4][16].Active == true) {
+		Map[47][8].Code = 0;
+		c.X = 47;
+		c.Y = 8;
+		g_Console.writeToBuffer(c, 'Û', colors[1]);
+		Map[48][8].Code = 0;
+		c.X = 48;
+		c.Y = 8;
+		g_Console.writeToBuffer(c, 'Û', colors[1]);
+	}
+	else if (Map[4][16].Active == false) {
+		Map[47][8].Code = 1;
+		c.X = 47;
+		c.Y = 8;
+		g_Console.writeToBuffer(c, 'Û', colors[12]);
+		Map[48][8].Code = 1;
+		c.X = 48;
+		c.Y = 8;
+		g_Console.writeToBuffer(c, 'Û', colors[12]);
+	}
 }
 
 void renderCharacter()
 {
-    // Draw the location of the character
-    WORD charColor = 0x0C;
-    if (g_sChar.m_bActive)
-    {
-        charColor = 0x0A;
-    }
-    g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
+	// Draw the location of the character
+	WORD charColor = 0x0C;
+	if (g_sChar.m_bActive)
+	{
+		charColor = 0x0A;
+	}
+	g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
 	/*g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
 	for (int i = -1; i < 2; i++)
 	{
@@ -517,24 +443,24 @@ void renderCharacter()
 
 void renderFramerate()
 {
-    COORD c;
-    // displays the framerate
-    std::ostringstream ss;
-    ss << std::fixed << std::setprecision(3);
-    ss << 1.0 / g_dDeltaTime << "fps";
-    c.X = g_Console.getConsoleSize().X - 9;
-    c.Y = 0;
-    g_Console.writeToBuffer(c, ss.str());
+	COORD c;
+	// displays the framerate
+	std::ostringstream ss;
+	ss << std::fixed << std::setprecision(3);
+	ss << 1.0 / g_dDeltaTime << "fps";
+	c.X = g_Console.getConsoleSize().X - 9;
+	c.Y = 0;
+	g_Console.writeToBuffer(c, ss.str());
 
-    // displays the elapsed time
-    ss.str("");
-    ss << g_dElapsedTime << "secs";
-    c.X = 0;
-    c.Y = 0;
-    g_Console.writeToBuffer(c, ss.str(), 0x59);
+	// displays the elapsed time
+	ss.str("");
+	ss << g_dElapsedTime << "secs";
+	c.X = 0;
+	c.Y = 0;
+	g_Console.writeToBuffer(c, ss.str(), 0x59);
 }
 void renderToScreen()
 {
-    // Writes the buffer to the console, hence you will see what you have written
-    g_Console.flushBufferToConsole();
+	// Writes the buffer to the console, hence you will see what you have written
+	g_Console.flushBufferToConsole();
 }
