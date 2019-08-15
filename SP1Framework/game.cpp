@@ -325,12 +325,12 @@ char* cpTileChar = &cTileChar;
 void MapPrinting(std::string output, int x) {
 	switch (output[x]) {
 	case ' ':
-		*ipColor = 1;//color picker
+		*ipColor = 12;//color picker
 		*ipTileCode = 0;//object map.code
 		*cpTileChar = ' ';//visual in console
 		break;
 	case '1':
-		*ipColor = 0;
+		*ipColor = 12;
 		*ipTileCode = 1;
 		*cpTileChar = 'Û';
 		break;
@@ -377,7 +377,7 @@ void renderMap()
 	// Set up sample colours, and output shadings
 	const WORD colors[] = {
 		0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-		0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6
+		0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6,0x808080
 	};
 
 	COORD c;
