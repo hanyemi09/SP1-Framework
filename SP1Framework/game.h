@@ -41,7 +41,7 @@ struct SGameChar
 struct _Object
 {
 	short Code;
-	bool Active;
+	bool Active=false;
 };
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player

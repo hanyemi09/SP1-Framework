@@ -224,6 +224,11 @@ void moveCharacter()
 		{
 			g_sChar.m_cLocation.X--;
 		}
+		else if (Map[g_sChar.m_cLocation.X - 1][g_sChar.m_cLocation.Y].Code == 1 && Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code != 1 && Map[g_sChar.m_cLocation.X-1][g_sChar.m_cLocation.Y - 1].Code != 1)
+		{
+			g_sChar.m_cLocation.X--;
+			g_sChar.m_cLocation.Y--;
+		}
 		bSomethingHappened = true;
 	}
 	/*
@@ -243,6 +248,11 @@ void moveCharacter()
 		if (Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y].Code != 1)
 		{
 			g_sChar.m_cLocation.X++;
+		}
+		else if (Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y].Code == 1 && Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code != 1 && Map[g_sChar.m_cLocation.X+1][g_sChar.m_cLocation.Y - 1].Code != 1)
+		{
+			g_sChar.m_cLocation.X++;
+			g_sChar.m_cLocation.Y--;
 		}
 		bSomethingHappened = true;
 	}
@@ -306,7 +316,62 @@ void renderGame()
     renderMap();        // renders the map to the buffer first
     renderCharacter();  // renders the character into the buffer
 }
+int Color, iTileCode;
+char cTileChar;
+int* ipColor = &Color;
+int* ipTileCode = &iTileCode;
+char* cpTileChar= &cTileChar;
 
+void MapPrinting(std::string output, int x) {
+	switch (output[x]) {
+	case ' ':
+		*ipColor = 1;//color picker
+		*ipTileCode = 0;//object map.code
+		*cpTileChar = ' ';//visual in console
+		break;
+	case '1':
+		*ipColor = 0;
+		*ipTileCode = 1;
+		*cpTileChar = 'Û';
+		break;
+	case '2':
+		*ipColor = 1;
+		*ipTileCode = 2;
+		*cpTileChar = '2';
+		break;
+	case '3':
+		*ipColor = 0;
+		*ipTileCode = 3;
+		*cpTileChar = '3';
+		break;
+	case '4':
+		*ipColor = 0;
+		*ipTileCode = 4;
+		*cpTileChar = '4';
+		break;
+	case '5':
+		*ipColor = 2;
+		*ipTileCode = 5;
+		*cpTileChar = 'Û';
+		break;
+	case '6':
+		*ipColor = 0;
+		*ipTileCode = 6;
+		*cpTileChar = '6';
+		break;
+	case '7':
+		*ipColor = 0;
+		*ipTileCode = 7;
+		*cpTileChar = '7';
+		break;
+	case '8':
+		*ipColor = 0;
+		*ipTileCode = 8;
+		*cpTileChar = 'Û';
+		break;
+
+	}
+}
 void renderMap()
 {
 	// Set up sample colours, and output shadings
@@ -322,6 +387,7 @@ void renderMap()
 
 	
 	 // °±²Û
+	/*
 		std::ifstream map("map.txt");
 		if (map.is_open()) {
 			int y = 1;
@@ -391,7 +457,43 @@ void renderMap()
 				y++;
 
 			}
+		}*/
+
+std::ifstream map("map.txt");
+	if (map.is_open()) {
+		int y = 1;
+		while (getline(map, output)) {
+			for (int x = 0; x < output.size(); ++x) {
+				c.X = x;
+				c.Y = y;
+				MapPrinting(output, x);
+				Map[c.X][c.Y].Code = *ipTileCode;
+				g_Console.writeToBuffer(c, *cpTileChar, colors[*ipColor]);
+			}
+			++y;
 		}
+	}
+		if (Map[4][16].Active==true) {
+			Map[47][8].Code = 0;
+			c.X = 47;
+			c.Y = 8;
+			g_Console.writeToBuffer(c, 'Û', colors[1]);
+			Map[48][8].Code = 0;
+			c.X = 48;
+			c.Y = 8;
+			g_Console.writeToBuffer(c, 'Û', colors[1]);
+		}
+		else if (Map[4][16].Active == false) {
+			Map[47][8].Code = 1;
+			c.X = 47;
+			c.Y = 8;
+			g_Console.writeToBuffer(c, 'Û', colors[12]);
+			Map[48][8].Code = 1;
+			c.X = 48;
+			c.Y = 8;
+			g_Console.writeToBuffer(c, 'Û', colors[12]);
+		}
+	
 }
 
 void renderCharacter()
