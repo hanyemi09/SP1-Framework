@@ -15,19 +15,11 @@ bool    g_abKeyPressed[K_COUNT];
 SGameChar   g_sChar;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
-<<<<<<< Updated upstream
-std::string Map[125][50] = { {"0",},{"0",}};
-
-
-// Console object
-Console g_Console(125, 50, "Game");
-=======
+//Map objects
 _Object Map[100][50] = {};
-
 
 // Console object
 Console g_Console(100, 50, "Game");
->>>>>>> Stashed changes
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -44,22 +36,13 @@ void init( void )
 
     // sets the initial state for the game
     g_eGameState = S_SPLASHSCREEN;
-
-<<<<<<< Updated upstream
-	g_sChar.m_cLocation.X = 3; //g_Console.getConsoleSize().X / 2;
-		g_sChar.m_cLocation.Y = 2; //g_Console.getConsoleSize().Y / 2;
-    g_sChar.m_bActive = true;
-    // sets the width, height and the font name to use in the console
-    g_Console.setConsoleFont(0, 16, L"Consolas");
-=======
 	g_sChar.m_cLocation.X = 2; //g_Console.getConsoleSize().X / 2;
-	g_sChar.m_cLocation.Y = 4; //g_Console.getConsoleSize().Y / 2;
+	g_sChar.m_cLocation.Y = 5; //g_Console.getConsoleSize().Y / 2;
     g_sChar.m_bActive = true;
     // sets the width, height and the font name to use in the console
     g_Console.setConsoleFont(8, 16, L"Consolas");
 	//Sets initial spawnpoint
 	setRespawn();
->>>>>>> Stashed changes
 }
 
 //--------------------------------------------------------------
@@ -160,9 +143,7 @@ void gameplay()            // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
 }
-<<<<<<< Updated upstream
 
-=======
 COORD Respawn;
 void setRespawn()
 {
@@ -173,87 +154,89 @@ void setRespawn()
 void playerRespawn()
 {
 	g_sChar.m_cLocation.X= Respawn.X;
-	g_sChar.m_cLocation.Y = 4;
+	g_sChar.m_cLocation.Y = Respawn.Y;
 }
 bool bCanJump = true;
-short sJump = 3;
->>>>>>> Stashed changes
+short sJump = 2;
 void moveCharacter()
 {
     bool bSomethingHappened = false;
 	bool bIsGrounded = false;
-	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "1")
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code == 1)
+	{
 		bIsGrounded = true;
+		bCanJump = true;;
+		sJump = 3;
+	}
     if (g_dBounceTime > g_dElapsedTime)
         return;
 
     // Updating the location of the character based on the key press
     // providing a beep sound whenver we shift the character
-    if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0&&bIsGrounded)
-    {
-        //Beep(1440, 30);
-		if(Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y-1]!="1")
-		{ 
-<<<<<<< Updated upstream
-        g_sChar.m_cLocation.Y-=3;
-=======
-        g_sChar.m_cLocation.Y-=1;
-		sJump--;
-		}	
-		if (sJump <= 0)
+	if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0)
+	{
+		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code == 1 || sJump <= 0)
 		{
 			bCanJump = false;
->>>>>>> Stashed changes
 		}
-        bSomethingHappened = true;
-    }
-    if (g_abKeyPressed[K_LEFT] && g_sChar.m_cLocation.X > 0)
-    {
-        //Beep(1440, 30);
-		if (Map[g_sChar.m_cLocation.X-1][g_sChar.m_cLocation.Y] != "1")
+		//Beep(1440, 30);
+		if (bCanJump)
+		{
+			g_sChar.m_cLocation.Y -= 1;
+			sJump--;
+		}
+		bSomethingHappened = true;
+	}
+	else
+	{
+		bCanJump = false;
+	}
+	if (g_abKeyPressed[K_LEFT] && g_sChar.m_cLocation.X > 0)
+	{
+		//Beep(1440, 30);
+		if (Map[g_sChar.m_cLocation.X - 1][g_sChar.m_cLocation.Y].Code != 1)
 		{
 			g_sChar.m_cLocation.X--;
 		}
-			bSomethingHappened = true;
-    }
-    if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-    {
-        //Beep(1440, 30);
-		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] != "1")
+		bSomethingHappened = true;
+	}
+	/*
+	if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+	{
+		//Beep(1440, 30);
+		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code != 1)
 		{
 			g_sChar.m_cLocation.Y++;
 		}
-			bSomethingHappened = true;
-    }
-    if (g_abKeyPressed[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-    {
-        //Beep(1440, 30);
-		if (Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y] != "1")
+		bSomethingHappened = true;
+	}
+	*/
+	if (g_abKeyPressed[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+	{
+		//Beep(1440, 30);
+		if (Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y].Code != 1)
 		{
-        g_sChar.m_cLocation.X++;
+			g_sChar.m_cLocation.X++;
 		}
-        bSomethingHappened = true;
-    }
-    if (g_abKeyPressed[K_SPACE])
-    {
-        g_sChar.m_bActive = !g_sChar.m_bActive;
-        bSomethingHappened = true;
-    }
-
-<<<<<<< Updated upstream
-	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1] == "")//Gravity
-=======
-	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code != 1&&!bCanJump)//Gravity
->>>>>>> Stashed changes
+		bSomethingHappened = true;
+	}
+	if (g_abKeyPressed[K_SPACE])
+	{
+		g_sChar.m_bActive = !g_sChar.m_bActive;
+		bSomethingHappened = true;
+	}
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code == 1)
+		bIsGrounded = true;
+	if (!bIsGrounded && !bCanJump)//Gravity
 	{
 		g_sChar.m_cLocation.Y++;
+		bSomethingHappened = true;
 	}
-
-    if (bSomethingHappened)
-    {
-        // set the bounce time to some time in the future to prevent accidental triggers
-        g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
-    }
+	if (bSomethingHappened)
+	{
+		// set the bounce time to some time in the future to prevent accidental triggers
+		g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
+	}
 }
 void processUserInput()
 {
@@ -297,25 +280,6 @@ void renderMap()
 	};
 
 	COORD c;
-<<<<<<< Updated upstream
-	for (int i = 0; i < 50; ++i)
-	{
-		c.X = 2 * i;
-			c.Y=4;
-			colour(colors[i]);
-			g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
-			Map[c.X][c.Y] = "1";
-
-			c.X = i;
-			c.Y = 5;
-			colour(colors[i]);
-			g_Console.writeToBuffer(c, "Û", colors[0]);// °±²Û
-			Map[c.X][c.Y] = "1";
-		
-		//g_Console.writeToBuffer(c, " °±²Û", colors[i]);
-
-	}
-=======
 	c.X = 0;
 	c.Y = 2;
 	std::string output;
@@ -392,7 +356,6 @@ void renderMap()
 
 			}
 		}
->>>>>>> Stashed changes
 }
 
 void renderCharacter()
