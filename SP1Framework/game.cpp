@@ -83,7 +83,7 @@ void getInput(void)
 	//g_abKeyPressed[K_P] = isKeyPressed(0x50);
 	//g_abKeyPressed[K_R] = isKeyPressed(0x52);
 }
-
+bool isgamepause = false;
 //--------------------------------------------------------------
 // Purpose  : Update function
 //            This is the update function
@@ -100,21 +100,27 @@ void getInput(void)
 //--------------------------------------------------------------
 void update(double dt)
 {
-	// get the delta time
-	g_dElapsedTime += dt;
-	g_dDeltaTime = dt;
+	
+		// get the delta time
+	if (g_eGameState == S_GAME)
+	{
+		g_dElapsedTime += dt;
+	}
+		g_dDeltaTime = dt;
 
-    switch (g_eGameState)
-    {
-        case S_SPLASHSCREEN : splashScreenWait(); // game logic for the splash screen
-            break;
-        case S_GAME: gameplay(); // gameplay logic when we are in the game
-            break;
+		switch (g_eGameState)
+		{
+		case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
+			break;
+		case S_GAME: gameplay(); // gameplay logic when we are in the game
+			break;
 		case S_PAUSE: pausegame();
 			break;
-    }
+		}
+
 }
-bool isgamepause = false;
+
+
 void pausegame()
 {
 	COORD c = g_Console.getConsoleSize();
@@ -124,8 +130,10 @@ void pausegame()
 	
 		if (isKeyPressed(0x52))
 		{
-			isgamepause == false;
+			isgamepause =	false;
 			g_eGameState = S_GAME;
+			
+			
 		}
 
 		if (g_abKeyPressed[K_ESCAPE] == true)
