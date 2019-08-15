@@ -192,9 +192,10 @@ void playerRespawn()
 	g_sChar.m_cLocation.X = Respawn.X;
 	g_sChar.m_cLocation.Y = Respawn.Y;
 }
-bool bCanJump = true;
 bool bWasGrounded = false;
+bool bCanJump = true;
 short sJump = 2;
+short sDisplacementSinceGrounded=0;
 void moveCharacter()
 {
 	if (g_dBounceTime > g_dElapsedTime)
@@ -206,18 +207,25 @@ void moveCharacter()
 		bIsGrounded = true;
 		bCanJump = true;;
 		sJump = 2;
-		bWasGrounded = false;
+		sDisplacementSinceGrounded = 0;
 	}
+	else
+	{
+		sDisplacementSinceGrounded++;
+	}
+	if(sDisplacementSinceGrounded==1)
+		bWasGrounded = true;
+	/*
 	else
 		if (bWasGrounded)
 		{
 			bWasGrounded = false;
 		}
-		else if (!bIsGrounded && !bCanJump)
+		else if (!bIsGrounded)
 		{
 			bWasGrounded = true;
 		}
-
+		*/
 	// Updating the location of the character based on the key press
 	// providing a beep sound whenver we shift the character
 	//Jumping
@@ -244,6 +252,7 @@ void moveCharacter()
 	else
 	{
 		bCanJump = false;
+		bWasGrounded = true;
 	}
 	if (g_abKeyPressed[K_LEFT] && g_sChar.m_cLocation.X > 0)
 	{
@@ -301,8 +310,6 @@ void moveCharacter()
 	{
 		playerRespawn();
 	}
-
-
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
