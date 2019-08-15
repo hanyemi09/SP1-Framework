@@ -152,12 +152,7 @@ void gameplay()            // gameplay logic
     moveCharacter();    // moves the character, collision detection, physics, etc
                         // sound can be played here too.
 }
-COORD Respawn;
-void setRespawn()
-{
-	Respawn.X = g_sChar.m_cLocation.Y;
-	Respawn.Y= g_sChar.m_cLocation.X;
-}
+
 COORD Respawn;
 void setRespawn()
 {
