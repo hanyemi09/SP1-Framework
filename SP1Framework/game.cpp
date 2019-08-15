@@ -80,7 +80,8 @@ void getInput(void)
 	g_abKeyPressed[K_SPACE] = isKeyPressed(VK_SPACE);
 	g_abKeyPressed[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
 	g_abKeyPressed[K_ENTER] = isKeyPressed(0x0D);
-
+	//g_abKeyPressed[K_P] = isKeyPressed(0x50);
+	//g_abKeyPressed[K_R] = isKeyPressed(0x52);
 }
 
 //--------------------------------------------------------------
@@ -103,14 +104,39 @@ void update(double dt)
 	g_dElapsedTime += dt;
 	g_dDeltaTime = dt;
 
-	switch (g_eGameState)
-	{
-	case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
-		break;
-	case S_GAME: gameplay(); // gameplay logic when we are in the game
-		break;
-	}
+    switch (g_eGameState)
+    {
+        case S_SPLASHSCREEN : splashScreenWait(); // game logic for the splash screen
+            break;
+        case S_GAME: gameplay(); // gameplay logic when we are in the game
+            break;
+		case S_PAUSE: pausegame();
+			break;
+    }
 }
+bool isgamepause = false;
+void pausegame()
+{
+	COORD c = g_Console.getConsoleSize();
+	c.Y /= 3;
+	c.X = c.X / 2 - 9;
+	g_Console.writeToBuffer(c, "Press R to continue", 0x03);
+	
+		if (isKeyPressed(0x52))
+		{
+			isgamepause == false;
+			g_eGameState = S_GAME;
+		}
+
+		if (g_abKeyPressed[K_ESCAPE] == true)
+		{
+			g_bQuitGame = true;
+		}
+			
+	
+}
+
+
 //--------------------------------------------------------------
 // Purpose  : Render function is to update the console screen
 //            At this point, you should know exactly what to draw onto the screen.
@@ -121,16 +147,18 @@ void update(double dt)
 //--------------------------------------------------------------
 void render()
 {
-	clearScreen();      // clears the current screen and draw from scratch 
-	switch (g_eGameState)
-	{
-	case S_SPLASHSCREEN: renderSplashScreen();
-		break;
-	case S_GAME: renderGame();
-		break;
-	}
-	renderFramerate();  // renders debug information, frame rate, elapsed time, etc
-	renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
+    clearScreen();      // clears the current screen and draw from scratch 
+    switch (g_eGameState)
+    {
+        case S_SPLASHSCREEN: renderSplashScreen();
+            break;
+        case S_GAME: renderGame();
+            break;
+		case S_PAUSE: pausegame();
+			break;
+    }
+    renderFramerate();  // renders debug information, frame rate, elapsed time, etc
+    renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
 }
 
 void splashScreenWait()    // waits for time to pass in splash screen
@@ -283,9 +311,15 @@ void moveCharacter()
 }
 void processUserInput()
 {
-	// quits the game if player hits the escape key
-	if (g_abKeyPressed[K_ESCAPE])
-		g_bQuitGame = true;
+    // quits the game if player hits the escape key
+    if (g_abKeyPressed[K_ESCAPE])
+        g_bQuitGame = true;    
+
+	if (isKeyPressed(0x50))
+	{
+		isgamepause = true;
+		g_eGameState = S_PAUSE;
+	}
 }
 
 void clearScreen()
