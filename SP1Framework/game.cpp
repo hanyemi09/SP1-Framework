@@ -166,7 +166,7 @@ void moveCharacter()
 	{
 		bIsGrounded = true;
 		bCanJump = true;;
-		sJump = 3;
+		sJump = 2;
 	}
     if (g_dBounceTime > g_dElapsedTime)
         return;
