@@ -232,6 +232,13 @@ void moveCharacter()
 		g_sChar.m_cLocation.Y++;
 		bSomethingHappened = true;
 	}
+
+	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Code == 5)
+	{
+		playerRespawn();
+	}
+
+
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
