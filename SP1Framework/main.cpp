@@ -21,7 +21,7 @@ int main( void )
     init();      // initialize your variables
     mainLoop();  // main loop
     shutdown();  // do clean up, if any. free memory.
-    
+  
     return 0;
 }
 

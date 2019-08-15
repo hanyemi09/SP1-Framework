@@ -155,12 +155,6 @@ void gameplay()            // gameplay logic
 COORD Respawn;
 void setRespawn()
 {
-	Respawn.X = g_sChar.m_cLocation.Y;
-	Respawn.Y= g_sChar.m_cLocation.X;
-}
-COORD Respawn;
-void setRespawn()
-{
 	Respawn.X = 2;
 	Respawn.Y= 4;
 }
@@ -171,9 +165,12 @@ void playerRespawn()
 	g_sChar.m_cLocation.Y = Respawn.Y;
 }
 bool bCanJump = true;
+bool bWasGrounded = false;
 short sJump = 2;
 void moveCharacter()
 {
+    if (g_dBounceTime > g_dElapsedTime)
+        return;
     bool bSomethingHappened = false;
 	bool bIsGrounded = false;
 	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code == 1)
@@ -181,25 +178,40 @@ void moveCharacter()
 		bIsGrounded = true;
 		bCanJump = true;;
 		sJump = 2;
+		bWasGrounded = false;
 	}
-    if (g_dBounceTime > g_dElapsedTime)
-        return;
+	else
+		if(bWasGrounded)
+		{
+			bWasGrounded = false;
+		}
+		else if(!bIsGrounded&&!bCanJump)
+		{
+			bWasGrounded = true;
+		}
 
     // Updating the location of the character based on the key press
     // providing a beep sound whenver we shift the character
-	if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0)
+	//Jumping
+	if (g_abKeyPressed[K_UP]&&g_sChar.m_cLocation.Y > 0)
 	{
-		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code == 1 || sJump <= 0)
-		{
-			bCanJump = false;
-		}
-		//Beep(1440, 30);
-		if (bCanJump)
-		{
-			g_sChar.m_cLocation.Y -= 1;
-			sJump--;
-		}
-		bSomethingHappened = true;
+			
+			if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code == 1 || sJump <= 0)
+			{
+				bCanJump = false;
+				sJump = 0;
+			}
+			else if (bWasGrounded)
+			{
+				bCanJump = true;
+			}
+			//Beep(1440, 30);
+			if (bCanJump)
+			{
+				g_sChar.m_cLocation.Y -= 1;
+				sJump--;
+			}
+			bSomethingHappened = true;
 	}
 	else
 	{

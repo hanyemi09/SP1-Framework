@@ -3,6 +3,8 @@
 
 #include "Framework\timer.h"
 #include <fstream>
+#include <chrono>
+
 
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
