@@ -361,7 +361,7 @@ void renderSplashScreen()  // renders the splash screen
 {
 	COORD c = g_Console.getConsoleSize();
 	c.Y /= 3;
-	c.X = c.X / 2 - 9;
+	c.X = c.X / 2 - 11;
 	g_Console.writeToBuffer(c, "Press <ENTER> to start", 0x03);
 	c.Y += 1;
 	c.X = g_Console.getConsoleSize().X / 2 - 20;
@@ -400,7 +400,7 @@ void MapPrinting(std::string output, int x) {
 	case '2':
 		*ipColor = 1;
 		*ipTileCode = 2;
-		*cpTileChar = 0x25C9;
+		*cpTileChar = 47;
 		break;
 	case '3':
 		*ipColor = 0;
@@ -463,6 +463,9 @@ void renderMap()
 		}
 	}
 	if (Map[43][7].Active == true) {
+		c.X = 43;
+		c.Y = 7;
+		g_Console.writeToBuffer(c, 124, colors[1]);
 		Map[47][8].Code = 0;
 		c.X = 47;
 		c.Y = 8;
@@ -473,6 +476,9 @@ void renderMap()
 		g_Console.writeToBuffer(c, ' ', colors[12]);
 	}
 	else if (Map[43][7].Active == false) {
+		c.X = 43;
+		c.Y = 7;
+		g_Console.writeToBuffer(c, 47, colors[1]);
 		Map[47][8].Code = 1;
 		c.X = 47;
 		c.Y = 8;
@@ -490,7 +496,7 @@ void renderCharacter()
 	WORD charColor = 0x0C;
 	if (g_sChar[1].m_bActive)
 	{
-		charColor = 0x0A;
+		charColor = 0x808080;
 	}
 	g_Console.writeToBuffer(g_sChar[1].m_cLocation, (char)2, charColor);
 	/*g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
