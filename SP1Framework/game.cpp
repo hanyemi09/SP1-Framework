@@ -10,13 +10,13 @@
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 bool    g_abKeyPressed[K_COUNT];
-
+const short sMapWidth=100, sMapHeight=50;
 // Game specific variables here
 SGameChar   g_sChar[2];
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 //Map objects
-_Object Map[100][50] = {};
+_Object Map[sMapWidth][sMapHeight] = {};
 
 // Console object
 Console g_Console(100, 50, "Game");
@@ -41,8 +41,9 @@ void init(void)
 	g_sChar[1].m_bActive = true;
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
-	//Sets initial spawnpoint
+	//sets initial spawnpoint
 	setRespawn();
+	
 }
 
 //--------------------------------------------------------------
@@ -196,11 +197,32 @@ void setRespawn()
 	Respawn.X = 2;
 	Respawn.Y = 4;
 }
-
 void playerRespawn()
 {
 	g_sChar[1].m_cLocation.X = Respawn.X;
 	g_sChar[1].m_cLocation.Y = Respawn.Y;
+}
+
+void scanMap(char _Link)
+{
+	for (int Y = 0; Y < sMapHeight; Y++)
+	{
+		for (int X = 0; X < sMapWidth; X++)
+		{
+			if (Map[X][Y].Link == _Link && Map[X][Y].Code == 8)
+			{
+				if (Map[X][Y].Active == false)
+				{
+					Map[X][Y].Active = true;
+					Map[X][Y].Code = 1;
+				}
+				else {
+					Map[X][Y].Active = false;
+					Map[X][Y].Code = 0;
+				}
+			}
+		}
+	}
 }
 bool bWasGrounded = false;
 bool bCanJump = true;
@@ -212,7 +234,7 @@ void moveCharacter()
 		return;
 	bool bSomethingHappened = false;
 	bool bIsGrounded = false;
-	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Active == true)
 	{
 		bIsGrounded = true;
 		bCanJump = true;;
@@ -225,24 +247,13 @@ void moveCharacter()
 	}
 	if (sDisplacementSinceGrounded == 1)
 		bWasGrounded = true;
-	/*
-	else
-		if (bWasGrounded)
-		{
-			bWasGrounded = false;
-		}
-		else if (!bIsGrounded)
-		{
-			bWasGrounded = true;
-		}
-		*/
+
 		// Updating the location of the character based on the key press
-		// providing a beep sound whenver we shift the character
 		//Jumping
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0)
 	{
 
-		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code == 1 || sJump <= 0)
+		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active == true || sJump <= 0)
 		{
 			bCanJump = false;
 			sJump = 0;
@@ -267,36 +278,25 @@ void moveCharacter()
 	if (g_abKeyPressed[K_LEFT] && g_sChar[1].m_cLocation.X > 0)
 	{
 		//Beep(1440, 30);
-		if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code != 1)
+		if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Active == false)
 		{
 			g_sChar[1].m_cLocation.X--;
 		}
-		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
+		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Active == true && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active == false && Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Active == false)
 		{
 			g_sChar[1].m_cLocation.X--;
 			g_sChar[1].m_cLocation.Y--;
 		}
 		bSomethingHappened = true;
 	}
-	/*
-	if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-	{
-		//Beep(1440, 30);
-		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code != 1)
-		{
-			g_sChar.m_cLocation.Y++;
-		}
-		bSomethingHappened = true;
-	}
-	*/
 	if (g_abKeyPressed[K_RIGHT] && g_sChar[1].m_cLocation.X < g_Console.getConsoleSize().X - 1)
 	{
 		//Beep(1440, 30);
-		if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Code != 1)
+		if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Active == false)
 		{
 			g_sChar[1].m_cLocation.X++;
 		}
-		else if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
+		else if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Active == true && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active == false && Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Active == false)
 		{
 			g_sChar[1].m_cLocation.X++;
 			g_sChar[1].m_cLocation.Y--;
@@ -310,26 +310,33 @@ void moveCharacter()
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
 		bIsGrounded = true;
-	if (!bIsGrounded && !bCanJump)//Gravity
+	//Gravity
+	if (Map[g_sChar->m_cLocation.X][g_sChar->m_cLocation.Y + 1].Code == 8 && Map[g_sChar->m_cLocation.X][g_sChar->m_cLocation.Y + 1].Active == true)
+	{
+	}
+	else
+	if (!bIsGrounded && !bCanJump  )
 	{
 		g_sChar[1].m_cLocation.Y++;
 		bSomethingHappened = true;
 	}
-
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 5)
 	{
 		playerRespawn();
 	}
-	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 2) {
-		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active == false && g_abKeyPressed[K_DOWN]) {
-			bSomethingHappened = true;
-			Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active = true;
-		}
-		else if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active == true && g_abKeyPressed[K_DOWN]) {
-			bSomethingHappened = true;
-			Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active = false;
+	//Player interation with interactable objects
+	if (g_abKeyPressed[K_DOWN])
+	{
+		switch (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].LeverType)
+		{
+		case Lever:
+			scanMap(Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Link);
+			Sleep(1);
+		default:
+			break;
 		}
 	}
+	
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
@@ -380,10 +387,15 @@ void renderGame()
 	renderCharacter();  // renders the character into the buffer
 }
 int Color, iTileCode;
-char cTileChar;
+char cTileChar, cLinkChar;
+bool bActive;
+short sLeverType;
 int* ipColor = &Color;
 int* ipTileCode = &iTileCode;
 char* cpTileChar = &cTileChar;
+char* cpLinkChar = &cLinkChar;
+bool* bpActive = &bActive;
+short* spLeverType = &sLeverType;
 
 void MapPrinting(std::string output, int x) {
 	switch (output[x]) {
@@ -396,6 +408,7 @@ void MapPrinting(std::string output, int x) {
 		*ipColor = 12;
 		*ipTileCode = 1;
 		*cpTileChar = 'Û';
+		*bpActive = true;
 		break;
 	case '2':
 		*ipColor = 1;
@@ -432,9 +445,40 @@ void MapPrinting(std::string output, int x) {
 		*ipTileCode = 8;
 		*cpTileChar = 'Û';
 		break;
-
+	default:
+		if (output[x] >= 97 && output[x] <= 109)
+		{
+			*ipColor = 12;
+			*ipTileCode = 8;
+			*cpTileChar = 'Û';
+			*cpLinkChar = output[x];
+			*bpActive = false;
+		}
+		else if (output[x] >= 65 && output[x] <= 77)
+		{
+			*ipColor = 12;
+			*ipTileCode = 8;
+			*cpTileChar = 'Û';
+			*cpLinkChar = output[x];	
+			*bpActive = true;
+		}
+		if (output[x] >= 110 && output[x] <= 122)
+		{
+			*ipColor = 1;
+			*ipTileCode = 2;
+			*cpTileChar = 0x25C9;
+			*spLeverType = PressurePlate;
+		}
+		if (output[x] >= 78 && output[x] <= 90)
+		{
+			*ipColor = 1;
+			*ipTileCode = 2;
+			*cpTileChar = 0x25C9;
+			*spLeverType = Lever;
+		}
 	}
 }
+
 void renderMap()
 {
 	// Set up sample colours, and output shadings
@@ -457,11 +501,22 @@ void renderMap()
 				c.Y = y;
 				MapPrinting(output, x);
 				Map[c.X][c.Y].Code = *ipTileCode;
+				Map[c.X][c.Y].Link = *cpLinkChar;
+				if (Map[c.X][c.Y].Code == 8|| Map[c.X][c.Y].Code == 1)
+				{
+					Map[c.X][c.Y].Active = *bpActive;
+				}
+				else
+				if (Map[c.X][c.Y].Code == 2)
+				{
+					Map[c.X][c.Y].LeverType = *spLeverType;
+				}
 				g_Console.writeToBuffer(c, *cpTileChar, colors[*ipColor]);
 			}
 			++y;
 		}
 	}
+	/*
 	if (Map[43][7].Active == true) {
 		Map[47][8].Code = 0;
 		c.X = 47;
@@ -482,6 +537,7 @@ void renderMap()
 		c.Y = 8;
 		g_Console.writeToBuffer(c, 'Û', colors[12]);
 	}
+	*/
 }
 
 void renderCharacter()
