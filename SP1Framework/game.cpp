@@ -13,6 +13,7 @@ bool    g_abKeyPressed[K_COUNT];
 
 // Game specific variables here
 SGameChar   g_sChar[2];
+SGameChar	g_Arrow;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 //Map objects
@@ -39,6 +40,10 @@ void init(void)
 	g_sChar[1].m_cLocation.X = 2; //g_Console.getConsoleSize().X / 2;
 	g_sChar[1].m_cLocation.Y = 5; //g_Console.getConsoleSize().Y / 2;
 	g_sChar[1].m_bActive = true;
+	g_Arrow.m_bActive = true;
+	g_Arrow.m_cLocation.X = 16;
+	g_Arrow.m_cLocation.Y = 5;
+
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
 	//Sets initial spawnpoint
@@ -122,6 +127,33 @@ void update(double dt)
 
 }
 
+void arrowRespawn()
+{
+	g_Arrow.m_cLocation.X = 16;
+	g_Arrow.m_cLocation.Y = 5;
+
+}
+
+void arrow()
+{
+
+	if 
+		(Map[g_Arrow.m_cLocation.X - 1][g_Arrow.m_cLocation.Y].Code != 1 || Map[g_Arrow.m_cLocation.X - 1][g_Arrow.m_cLocation.Y].Code != Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code)
+	{
+		g_Arrow.m_cLocation.X--;
+	}
+
+	if (Map[g_Arrow.m_cLocation.X - 1][g_Arrow.m_cLocation.Y].Code == 1)
+	{
+		arrowRespawn();
+	}
+
+	if (Map[g_Arrow.m_cLocation.X ][g_Arrow.m_cLocation.Y].Code == Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code)
+	{
+		playerRespawn();
+		arrowRespawn();
+	}
+}
 
 void pausegame()
 {
@@ -378,6 +410,7 @@ void renderGame()
 {
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
+	renderArrow();
 }
 int Color, iTileCode;
 char cTileChar;
@@ -482,6 +515,17 @@ void renderMap()
 		c.Y = 8;
 		g_Console.writeToBuffer(c, 'Û', colors[12]);
 	}
+}
+
+void renderArrow()
+{
+	WORD charColor = 0x0C;
+	if (g_Arrow.m_bActive)
+	{
+		charColor = 0x0A;
+	}
+	g_Console.writeToBuffer(g_Arrow.m_cLocation, (char)1, charColor);
+
 }
 
 void renderCharacter()
