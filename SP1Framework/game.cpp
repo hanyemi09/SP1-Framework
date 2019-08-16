@@ -202,15 +202,21 @@ void playerRespawn()
 	g_sChar[1].m_cLocation.X = Respawn.X;
 	g_sChar[1].m_cLocation.Y = Respawn.Y;
 }
+//Jumping
 bool bWasGrounded = false;
 bool bCanJump = true;
 short sJump = 2;
 short sDisplacementSinceGrounded = 0;
+//Wall Jumping
+bool bCanWallJumpR = false;
+bool bCanWallJumpL = false;
+bool bWasWallJ = false;
 void moveCharacter()
 {
 	if (g_dBounceTime > g_dElapsedTime)
 		return;
 	bool bSomethingHappened = false;
+	//Jumping
 	bool bIsGrounded = false;
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
 	{
@@ -225,20 +231,38 @@ void moveCharacter()
 	}
 	if (sDisplacementSinceGrounded == 1)
 		bWasGrounded = true;
-	/*
-	else
-		if (bWasGrounded)
+	//Wall Jumping
+	if (bCanWallJumpL||!bIsGrounded)
+	{
+		bCanWallJumpL = false;
+		bWasWallJ = true;
+		bCanJump = false;
+		sJump = 0;
+	}
+	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0 && bWasWallJ&&Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y-1].Code != 1)
+	{
+		g_sChar[1].m_cLocation.Y--;// PROBLEM HERE, PLAYER CAN FLOAT WHEN HOLDING UP
+		g_dBounceTime = g_dElapsedTime + 0.125;
+	}
+	if (g_abKeyPressed[K_LEFT] && g_sChar[1].m_cLocation.X > 0)
+	{
+		//Beep(1440, 30);
+		if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code != 1)
 		{
-			bWasGrounded = false;
+			g_sChar[1].m_cLocation.X--;
 		}
-		else if (!bIsGrounded)
+		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Code != 1 && bIsGrounded)
 		{
-			bWasGrounded = true;
+			g_sChar[1].m_cLocation.X--;
+			g_sChar[1].m_cLocation.Y--;
+			bWasWallJ = true;
 		}
-		*/
-		// Updating the location of the character based on the key press
-		// providing a beep sound whenver we shift the character
-		//Jumping
+		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code == 1)
+		{
+			bCanWallJumpL = true;
+		}
+		bSomethingHappened = true;
+	}
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0)
 	{
 
@@ -257,6 +281,11 @@ void moveCharacter()
 			g_sChar[1].m_cLocation.Y -= 1;
 			sJump--;
 		}
+		else if (bCanWallJumpL&&Map[g_sChar[1].m_cLocation.X+1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
+		{
+				g_sChar[1].m_cLocation.X++;
+				g_sChar[1].m_cLocation.Y--;
+		}
 		bSomethingHappened = true;
 	}
 	else
@@ -264,31 +293,12 @@ void moveCharacter()
 		bCanJump = false;
 		bWasGrounded = true;
 	}
-	if (g_abKeyPressed[K_LEFT] && g_sChar[1].m_cLocation.X > 0)
+
+	if (g_abKeyPressed[K_DOWN])
 	{
-		//Beep(1440, 30);
-		if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code != 1)
-		{
-			g_sChar[1].m_cLocation.X--;
-		}
-		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
-		{
-			g_sChar[1].m_cLocation.X--;
-			g_sChar[1].m_cLocation.Y--;
-		}
+		bCanWallJumpL = false;
 		bSomethingHappened = true;
 	}
-	/*
-	if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-	{
-		//Beep(1440, 30);
-		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code != 1)
-		{
-			g_sChar.m_cLocation.Y++;
-		}
-		bSomethingHappened = true;
-	}
-	*/
 	if (g_abKeyPressed[K_RIGHT] && g_sChar[1].m_cLocation.X < g_Console.getConsoleSize().X - 1)
 	{
 		//Beep(1440, 30);
@@ -310,7 +320,7 @@ void moveCharacter()
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
 		bIsGrounded = true;
-	if (!bIsGrounded && !bCanJump)//Gravity
+	if (!bIsGrounded && !bCanJump && !bCanWallJumpL)//Gravity
 	{
 		g_sChar[1].m_cLocation.Y++;
 		bSomethingHappened = true;
@@ -330,13 +340,12 @@ void moveCharacter()
 			Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active = false;
 		}
 	}
+	bWasWallJ = false;
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
 		g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
 	}
-
-
 }
 void processUserInput()
 {
