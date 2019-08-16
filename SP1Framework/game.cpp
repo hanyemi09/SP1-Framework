@@ -214,11 +214,11 @@ void scanMap(char _Link)
 				if (Map[X][Y].Active == false)
 				{
 					Map[X][Y].Active = true;
-					Map[X][Y].Code = 1;
+					g_Console.writeToBuffer(X, Y, 1, 1);
 				}
 				else {
 					Map[X][Y].Active = false;
-					Map[X][Y].Code = 0;
+					g_Console.writeToBuffer(X, Y, 1, 1);
 				}
 			}
 		}
@@ -233,7 +233,16 @@ void moveCharacter()
 	if (g_dBounceTime > g_dElapsedTime)
 		return;
 	bool bSomethingHappened = false;
-	bool bIsGrounded = false;
+	bool bIsGrounded = false;	if (g_abKeyPressed[K_DOWN])
+	{
+		switch (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].LeverType)
+		{
+		case Lever:
+			scanMap(Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Link);
+		default:
+			break;
+		}
+	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Active == true)
 	{
 		bIsGrounded = true;
@@ -310,11 +319,8 @@ void moveCharacter()
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
 		bIsGrounded = true;
+
 	//Gravity
-	if (Map[g_sChar->m_cLocation.X][g_sChar->m_cLocation.Y + 1].Code == 8 && Map[g_sChar->m_cLocation.X][g_sChar->m_cLocation.Y + 1].Active == true)
-	{
-	}
-	else
 	if (!bIsGrounded && !bCanJump  )
 	{
 		g_sChar[1].m_cLocation.Y++;
@@ -325,17 +331,6 @@ void moveCharacter()
 		playerRespawn();
 	}
 	//Player interation with interactable objects
-	if (g_abKeyPressed[K_DOWN])
-	{
-		switch (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].LeverType)
-		{
-		case Lever:
-			scanMap(Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Link);
-			Sleep(1);
-		default:
-			break;
-		}
-	}
 	
 	if (bSomethingHappened)
 	{
@@ -459,22 +454,26 @@ void MapPrinting(std::string output, int x) {
 			*ipColor = 12;
 			*ipTileCode = 8;
 			*cpTileChar = 'Û';
-			*cpLinkChar = output[x];	
+			*cpLinkChar = output[x]+32;	
 			*bpActive = true;
 		}
+		else
 		if (output[x] >= 110 && output[x] <= 122)
 		{
 			*ipColor = 1;
 			*ipTileCode = 2;
 			*cpTileChar = 0x25C9;
 			*spLeverType = PressurePlate;
+			*cpLinkChar = output[x]-13;
 		}
+		else
 		if (output[x] >= 78 && output[x] <= 90)
 		{
 			*ipColor = 1;
 			*ipTileCode = 2;
 			*cpTileChar = 0x25C9;
 			*spLeverType = Lever;
+			*cpLinkChar = output[x]+19;
 		}
 	}
 }
@@ -510,6 +509,7 @@ void renderMap()
 				if (Map[c.X][c.Y].Code == 2)
 				{
 					Map[c.X][c.Y].LeverType = *spLeverType;
+					Map[c.X][c.Y].Link = *cpLinkChar;
 				}
 				g_Console.writeToBuffer(c, *cpTileChar, colors[*ipColor]);
 			}
