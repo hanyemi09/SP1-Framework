@@ -12,7 +12,7 @@ double  g_dDeltaTime;
 bool    g_abKeyPressed[K_COUNT];
 
 // Game specific variables here
-SGameChar   g_sChar;
+SGameChar   g_sChar[2];
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 //Map objects
@@ -36,9 +36,9 @@ void init(void)
 
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
-	g_sChar.m_cLocation.X = 2; //g_Console.getConsoleSize().X / 2;
-	g_sChar.m_cLocation.Y = 5; //g_Console.getConsoleSize().Y / 2;
-	g_sChar.m_bActive = true;
+	g_sChar[1].m_cLocation.X = 2; //g_Console.getConsoleSize().X / 2;
+	g_sChar[1].m_cLocation.Y = 5; //g_Console.getConsoleSize().Y / 2;
+	g_sChar[1].m_bActive = true;
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
 	//Sets initial spawnpoint
@@ -80,8 +80,10 @@ void getInput(void)
 	g_abKeyPressed[K_SPACE] = isKeyPressed(VK_SPACE);
 	g_abKeyPressed[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
 	g_abKeyPressed[K_ENTER] = isKeyPressed(0x0D);
-	//g_abKeyPressed[K_P] = isKeyPressed(0x50);
-	//g_abKeyPressed[K_R] = isKeyPressed(0x52);
+	g_abKeyPressed[K_W] = isKeyPressed(0x57);
+	g_abKeyPressed[K_S] = isKeyPressed(0x53);
+	g_abKeyPressed[K_A] = isKeyPressed(0x41);
+	g_abKeyPressed[K_D] = isKeyPressed(0x44);
 }
 bool isgamepause = false;
 //--------------------------------------------------------------
@@ -100,23 +102,23 @@ bool isgamepause = false;
 //--------------------------------------------------------------
 void update(double dt)
 {
-	
-		// get the delta time
+
+	// get the delta time
 	if (g_eGameState == S_GAME)
 	{
 		g_dElapsedTime += dt;
 	}
-		g_dDeltaTime = dt;
+	g_dDeltaTime = dt;
 
-		switch (g_eGameState)
-		{
-		case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
-			break;
-		case S_GAME: gameplay(); // gameplay logic when we are in the game
-			break;
-		case S_PAUSE: pausegame();
-			break;
-		}
+	switch (g_eGameState)
+	{
+	case S_SPLASHSCREEN: splashScreenWait(); // game logic for the splash screen
+		break;
+	case S_GAME: gameplay(); // gameplay logic when we are in the game
+		break;
+	case S_PAUSE: pausegame();
+		break;
+	}
 
 }
 
@@ -127,21 +129,21 @@ void pausegame()
 	c.Y /= 3;
 	c.X = c.X / 2 - 9;
 	g_Console.writeToBuffer(c, "Press R to continue", 0x03);
-	
-		if (isKeyPressed(0x52))
-		{
-			isgamepause =	false;
-			g_eGameState = S_GAME;
-			
-			
-		}
 
-		if (g_abKeyPressed[K_ESCAPE] == true)
-		{
-			g_bQuitGame = true;
-		}
-			
-	
+	if (isKeyPressed(0x52))
+	{
+		isgamepause = false;
+		g_eGameState = S_GAME;
+
+
+	}
+
+	if (g_abKeyPressed[K_ESCAPE] == true)
+	{
+		g_bQuitGame = true;
+	}
+
+
 }
 
 
@@ -155,18 +157,18 @@ void pausegame()
 //--------------------------------------------------------------
 void render()
 {
-    clearScreen();      // clears the current screen and draw from scratch 
-    switch (g_eGameState)
-    {
-        case S_SPLASHSCREEN: renderSplashScreen();
-            break;
-        case S_GAME: renderGame();
-            break;
-		case S_PAUSE: pausegame();
-			break;
-    }
-    renderFramerate();  // renders debug information, frame rate, elapsed time, etc
-    renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
+	clearScreen();      // clears the current screen and draw from scratch 
+	switch (g_eGameState)
+	{
+	case S_SPLASHSCREEN: renderSplashScreen();
+		break;
+	case S_GAME: renderGame();
+		break;
+	case S_PAUSE: pausegame();
+		break;
+	}
+	renderFramerate();  // renders debug information, frame rate, elapsed time, etc
+	renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
 }
 
 void splashScreenWait()    // waits for time to pass in splash screen
@@ -197,20 +199,20 @@ void setRespawn()
 
 void playerRespawn()
 {
-	g_sChar.m_cLocation.X = Respawn.X;
-	g_sChar.m_cLocation.Y = Respawn.Y;
+	g_sChar[1].m_cLocation.X = Respawn.X;
+	g_sChar[1].m_cLocation.Y = Respawn.Y;
 }
 bool bWasGrounded = false;
 bool bCanJump = true;
 short sJump = 2;
-short sDisplacementSinceGrounded=0;
+short sDisplacementSinceGrounded = 0;
 void moveCharacter()
 {
 	if (g_dBounceTime > g_dElapsedTime)
 		return;
 	bool bSomethingHappened = false;
 	bool bIsGrounded = false;
-	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code == 1)
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
 	{
 		bIsGrounded = true;
 		bCanJump = true;;
@@ -221,7 +223,7 @@ void moveCharacter()
 	{
 		sDisplacementSinceGrounded++;
 	}
-	if(sDisplacementSinceGrounded==1)
+	if (sDisplacementSinceGrounded == 1)
 		bWasGrounded = true;
 	/*
 	else
@@ -234,13 +236,13 @@ void moveCharacter()
 			bWasGrounded = true;
 		}
 		*/
-	// Updating the location of the character based on the key press
-	// providing a beep sound whenver we shift the character
-	//Jumping
-	if (g_abKeyPressed[K_UP] && g_sChar.m_cLocation.Y > 0)
+		// Updating the location of the character based on the key press
+		// providing a beep sound whenver we shift the character
+		//Jumping
+	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0)
 	{
 
-		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code == 1 || sJump <= 0)
+		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code == 1 || sJump <= 0)
 		{
 			bCanJump = false;
 			sJump = 0;
@@ -252,7 +254,7 @@ void moveCharacter()
 		//Beep(1440, 30);
 		if (bCanJump)
 		{
-			g_sChar.m_cLocation.Y -= 1;
+			g_sChar[1].m_cLocation.Y -= 1;
 			sJump--;
 		}
 		bSomethingHappened = true;
@@ -262,17 +264,17 @@ void moveCharacter()
 		bCanJump = false;
 		bWasGrounded = true;
 	}
-	if (g_abKeyPressed[K_LEFT] && g_sChar.m_cLocation.X > 0)
+	if (g_abKeyPressed[K_LEFT] && g_sChar[1].m_cLocation.X > 0)
 	{
 		//Beep(1440, 30);
-		if (Map[g_sChar.m_cLocation.X - 1][g_sChar.m_cLocation.Y].Code != 1)
+		if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code != 1)
 		{
-			g_sChar.m_cLocation.X--;
+			g_sChar[1].m_cLocation.X--;
 		}
-		else if (Map[g_sChar.m_cLocation.X - 1][g_sChar.m_cLocation.Y].Code == 1 && Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code != 1 && Map[g_sChar.m_cLocation.X - 1][g_sChar.m_cLocation.Y - 1].Code != 1)
+		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 		{
-			g_sChar.m_cLocation.X--;
-			g_sChar.m_cLocation.Y--;
+			g_sChar[1].m_cLocation.X--;
+			g_sChar[1].m_cLocation.Y--;
 		}
 		bSomethingHappened = true;
 	}
@@ -287,45 +289,45 @@ void moveCharacter()
 		bSomethingHappened = true;
 	}
 	*/
-	if (g_abKeyPressed[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+	if (g_abKeyPressed[K_RIGHT] && g_sChar[1].m_cLocation.X < g_Console.getConsoleSize().X - 1)
 	{
 		//Beep(1440, 30);
-		if (Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y].Code != 1)
+		if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Code != 1)
 		{
-			g_sChar.m_cLocation.X++;
+			g_sChar[1].m_cLocation.X++;
 		}
-		else if (Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y].Code == 1 && Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y - 1].Code != 1 && Map[g_sChar.m_cLocation.X + 1][g_sChar.m_cLocation.Y - 1].Code != 1)
+		else if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 		{
-			g_sChar.m_cLocation.X++;
-			g_sChar.m_cLocation.Y--;
+			g_sChar[1].m_cLocation.X++;
+			g_sChar[1].m_cLocation.Y--;
 		}
 		bSomethingHappened = true;
 	}
 	if (g_abKeyPressed[K_SPACE])
 	{
-		g_sChar.m_bActive = !g_sChar.m_bActive;
+		g_sChar[1].m_bActive = !g_sChar[1].m_bActive;
 		bSomethingHappened = true;
 	}
-	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code == 1)
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
 		bIsGrounded = true;
 	if (!bIsGrounded && !bCanJump)//Gravity
 	{
-		g_sChar.m_cLocation.Y++;
+		g_sChar[1].m_cLocation.Y++;
 		bSomethingHappened = true;
 	}
 
-	if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Code == 5)
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 5)
 	{
 		playerRespawn();
 	}
-if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Code == 2) {
-		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Active == false&&g_abKeyPressed[K_DOWN]) {
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 2) {
+		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active == false && g_abKeyPressed[K_DOWN]) {
 			bSomethingHappened = true;
-			Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Active = true;
+			Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active = true;
 		}
-		else if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Active == true && g_abKeyPressed[K_DOWN]) {
+		else if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active == true && g_abKeyPressed[K_DOWN]) {
 			bSomethingHappened = true;
-			Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Active = false;
+			Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active = false;
 		}
 	}
 	if (bSomethingHappened)
@@ -334,13 +336,13 @@ if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y].Code == 2) {
 		g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
 	}
 
-	
+
 }
 void processUserInput()
 {
-    // quits the game if player hits the escape key
-    if (g_abKeyPressed[K_ESCAPE])
-        g_bQuitGame = true;    
+	// quits the game if player hits the escape key
+	if (g_abKeyPressed[K_ESCAPE])
+		g_bQuitGame = true;
 
 	if (isKeyPressed(0x50))
 	{
@@ -486,11 +488,11 @@ void renderCharacter()
 {
 	// Draw the location of the character
 	WORD charColor = 0x0C;
-	if (g_sChar.m_bActive)
+	if (g_sChar[1].m_bActive)
 	{
 		charColor = 0x0A;
 	}
-	g_Console.writeToBuffer(g_sChar.m_cLocation, (char)2, charColor);
+	g_Console.writeToBuffer(g_sChar[1].m_cLocation, (char)2, charColor);
 	/*g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
 	for (int i = -1; i < 2; i++)
 	{
