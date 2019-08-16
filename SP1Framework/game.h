@@ -54,6 +54,8 @@ void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
 
+void playerRespawn();
+void renderArrow();
 void setRespawn();			// Sets respawn point
 void pausegame();
 void splashScreenWait();    // waits for time to pass in splash screen
@@ -67,5 +69,6 @@ void renderMap();           // renders the map to the buffer first
 void renderCharacter();     // renders the character into the buffer
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
+void arrow();
 
 #endif // _GAME_H
