@@ -51,7 +51,7 @@ enum LeverTypes
 struct _Object
 {
 	short Code;
-	short LeverType;
+	short LeverType=100;
 	bool Active=false;
 	char Link;
 };

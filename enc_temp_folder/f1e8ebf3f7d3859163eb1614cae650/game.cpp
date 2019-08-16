@@ -44,42 +44,6 @@ void init(void)
 	//sets initial spawnpoint
 	setRespawn();
 	
-		// Set up sample colours, and output shadings
-	const WORD colors[] = {
-		0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-		0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6,0x808080
-	};
-	// initializes map
-	COORD c;
-	c.X = 0;
-	c.Y = 2;
-	std::string output;
-	// °±²Û
-	std::ifstream map("map.txt");
-	if (map.is_open()) {
-		int y = 1;
-		while (getline(map, output)) {
-			for (int x = 0; x < output.size(); ++x) {
-				c.X = x;
-				c.Y = y;
-				MapPrinting(output, x);
-				Map[c.X][c.Y].Code = *ipTileCode;
-				Map[c.X][c.Y].Link = *cpLinkChar;
-				if (Map[c.X][c.Y].Code == 8|| Map[c.X][c.Y].Code == 1)
-				{
-					Map[c.X][c.Y].Active = *bpActive;
-				}
-				else
-				if (Map[c.X][c.Y].Code == 2)
-				{
-					Map[c.X][c.Y].LeverType = *spLeverType;
-					Map[c.X][c.Y].Link = *cpLinkChar;
-				}
-				g_Console.writeToBuffer(c, *cpTileChar, colors[*ipColor]);
-			}
-			++y;
-		}
-	}
 }
 
 //--------------------------------------------------------------
@@ -554,6 +518,28 @@ void renderMap()
 			++y;
 		}
 	}
+	/*
+	if (Map[43][7].Active == true) {
+		Map[47][8].Code = 0;
+		c.X = 47;
+		c.Y = 8;
+		g_Console.writeToBuffer(c, ' ', colors[12]);
+		Map[48][8].Code = 0;
+		c.X = 48;
+		c.Y = 8;
+		g_Console.writeToBuffer(c, ' ', colors[12]);
+	}
+	else if (Map[43][7].Active == false) {
+		Map[47][8].Code = 1;
+		c.X = 47;
+		c.Y = 8;
+		g_Console.writeToBuffer(c, 'Û', colors[12]);
+		Map[48][8].Code = 1;
+		c.X = 48;
+		c.Y = 8;
+		g_Console.writeToBuffer(c, 'Û', colors[12]);
+	}
+	*/
 }
 
 void renderCharacter()
