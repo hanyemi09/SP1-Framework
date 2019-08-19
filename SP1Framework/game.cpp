@@ -136,23 +136,24 @@ void arrowRespawn()
 
 void arrow()
 {
-
-	if 
-		(Map[g_Arrow.m_cLocation.X - 1][g_Arrow.m_cLocation.Y].Code != 1 || Map[g_Arrow.m_cLocation.X - 1][g_Arrow.m_cLocation.Y].Code != Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code)
+	//arrow is gonna go left
+	if (Map[g_Arrow.m_cLocation.X + 1][g_Arrow.m_cLocation.Y].Code != 1)
 	{
-		g_Arrow.m_cLocation.X--;
+		g_Arrow.m_cLocation.X++;
 	}
 
-	if (Map[g_Arrow.m_cLocation.X - 1][g_Arrow.m_cLocation.Y].Code == 1)
+	if (Map[g_Arrow.m_cLocation.X + 1][g_Arrow.m_cLocation.Y].Code == 1)
 	{
 		arrowRespawn();
 	}
 
-	if (Map[g_Arrow.m_cLocation.X ][g_Arrow.m_cLocation.Y].Code == Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code)
+	if (Map[g_Arrow.m_cLocation.X + 1][g_Arrow.m_cLocation.Y].Code == Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code)
 	{
+		arrowRespawn();
 		playerRespawn();
-		arrowRespawn();
 	}
+
+
 }
 
 void pausegame()
@@ -221,6 +222,7 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter();    // moves the character, collision detection, physics, etc
 						// sound can be played here too.
+	arrow();
 }
 COORD Respawn;
 void setRespawn()
@@ -410,7 +412,6 @@ void renderGame()
 {
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
-	renderArrow();
 }
 int Color, iTileCode;
 char cTileChar;
@@ -517,16 +518,7 @@ void renderMap()
 	}
 }
 
-void renderArrow()
-{
-	WORD charColor = 0x0C;
-	if (g_Arrow.m_bActive)
-	{
-		charColor = 0x0A;
-	}
-	g_Console.writeToBuffer(g_Arrow.m_cLocation, (char)1, charColor);
 
-}
 
 void renderCharacter()
 {
@@ -537,6 +529,7 @@ void renderCharacter()
 		charColor = 0x0A;
 	}
 	g_Console.writeToBuffer(g_sChar[1].m_cLocation, (char)2, charColor);
+	
 	/*g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
 	for (int i = -1; i < 2; i++)
 	{
