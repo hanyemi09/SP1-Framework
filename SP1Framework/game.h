@@ -55,6 +55,20 @@ struct _Object
 	bool Active=false;
 	char Link;
 };
+struct PlayerVar
+{
+	//Jumping
+	bool bIsGrounded = false;
+	bool bWasGrounded = false;
+	bool bCanJump = true;
+	short sJump = 2;
+	short sDisplacementSinceGrounded = 0;
+	bool bSomethingHappened = false;
+	//Wall Jumping
+	bool bCanWallJumpR = false;
+	bool bCanWallJumpL = false;
+	bool bWasWallJ = false;
+}Player1,Player2;
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
@@ -67,7 +81,8 @@ void setRespawn();			// sets respawn point
 void pausegame();			// pauses game
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
-void moveCharacter();       // moves the character, collision detection, physics, etc
+void moveCharacter1();      // moves the character, collision detection, physics, etc
+void moveCharacter2();		// moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderSplashScreen();  // renders the splash screen
