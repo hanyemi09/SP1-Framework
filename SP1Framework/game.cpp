@@ -330,6 +330,16 @@ void moveCharacter()
 			g_sChar[1].m_cLocation.Y -= 1;
 			sJump--;
 		}
+		else if (bCanWallJumpL && !Map[g_sChar[1].m_cLocation.X -1][g_sChar[1].m_cLocation.Y - 1].Active)
+		{
+			g_sChar[1].m_cLocation.X--;
+			g_sChar[1].m_cLocation.Y--;
+		}
+		else if (bCanWallJumpR && !Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Active)
+		{
+			g_sChar[1].m_cLocation.X++;
+			g_sChar[1].m_cLocation.Y--;
+		}
 		else if (bCanWallJumpL&&!Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Active)
 		{
 			g_sChar[1].m_cLocation.X++;
@@ -422,20 +432,6 @@ void renderGame()
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
 }
-
-/*
-int Color, iTileCode;
-char cTileChar, cLinkChar;
-bool bActive;
-short sLeverType;
-int* ipColor = &Color;
-int* ipTileCode = &iTileCode;
-char* cpTileChar = &cTileChar;
-char* cpLinkChar = &cLinkChar;
-bool* bpActive = &bActive;
-short* spLeverType = &sLeverType;
-*/
-
 void MapPrinting() {
 	//initialise things in map array
 	std::string output;
@@ -538,7 +534,7 @@ void renderMap()
 				Map[x][y].Code = 2;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, 'Û', 0x25C9);
+				g_Console.writeToBuffer(c, '/', 0x25C9);
 				break;
 			case 3:
 				Map[x][y].Code = 3;
@@ -556,7 +552,7 @@ void renderMap()
 				Map[x][y].Code = 5;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, 'Û', colors[1]);
+				g_Console.writeToBuffer(c, 'Û', colors[2]);
 				break;
 			case 6:
 				Map[x][y].Code = 6;
