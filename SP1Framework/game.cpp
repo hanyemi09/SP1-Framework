@@ -365,6 +365,7 @@ void moveCharacter()
 	if (g_abKeyPressed[K_DOWN])
 	{
 		bCanWallJumpL = false;
+		bCanWallJumpR = false;
 		bSomethingHappened = true;
 	}
 	if (g_abKeyPressed[K_SPACE])
