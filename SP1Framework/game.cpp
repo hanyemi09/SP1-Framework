@@ -293,12 +293,11 @@ void moveCharacter()
 	}
 	if (g_abKeyPressed[K_RIGHT] && g_sChar[1].m_cLocation.X < g_Console.getConsoleSize().X - 1)
 	{
-		//Beep(1440, 30);
 		if (!Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Active)
 		{
 			g_sChar[1].m_cLocation.X++;
 		}
-		else if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Active&& !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active && !Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Active)
+		else if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Active && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active && !Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Active && bIsGrounded)
 		{
 			g_sChar[1].m_cLocation.X++;
 			g_sChar[1].m_cLocation.Y--;
