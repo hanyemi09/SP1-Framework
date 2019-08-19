@@ -9,6 +9,7 @@
 
 double  g_dElapsedTime;
 double  g_dDeltaTime;
+double  g_aBounceTime;
 bool    g_abKeyPressed[K_COUNT];
 const short sMapWidth=100, sMapHeight=50;
 // Game specific variables here
@@ -612,8 +613,13 @@ void MapSetting(std::string output, int y) {
 		case '5':
 			Map[x][y].Code = 5;
 			break;
-		case '6':
+		case '>':
 			Map[x][y].Code = 6;
+			Map[x][y].Active = true;
+			break;
+		case '<':
+			Map[x][y].Code = 6;
+			Map[x][y].Active = false;
 			break;
 		case '7':
 			Map[x][y].Code = 7;
@@ -769,7 +775,14 @@ void renderMap()
 				Map[x][y].Code = 6;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, 'Û', colors[1]);
+				if (Map[x][y].Active)
+				{
+				g_Console.writeToBuffer(c, 'Ф', colors[1]); // NEED NEW ASCII CHARACTERS HERE!!!!!!!!
+				}
+				else
+				{
+					g_Console.writeToBuffer(c, 'Ф', colors[1]);
+				}
 				break;
 			case 7:
 				Map[x][y].Code = 7;
@@ -805,7 +818,6 @@ void renderMap()
 		MapReset();
 		init();
 	}
-
 }
 
 void renderCharacter()
