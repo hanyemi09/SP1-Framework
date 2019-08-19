@@ -68,7 +68,8 @@ struct PlayerVar
 	bool bCanWallJumpR = false;
 	bool bCanWallJumpL = false;
 	bool bWasWallJ = false;
-}Player1,Player2;
+};
+
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
