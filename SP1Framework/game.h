@@ -42,11 +42,18 @@ struct SGameChar
     bool  m_bActive;
 };
 
-//struct for map objects
+//variables for for map objects
+enum LeverTypes
+{
+	Lever,
+	PressurePlate
+};
 struct _Object
 {
 	short Code;
+	short LeverType;
 	bool Active=false;
+	char Link;
 };
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
@@ -54,8 +61,10 @@ void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
 
-void setRespawn();			// Sets respawn point
-void pausegame();
+void MapPrinting();         //Printing of the map
+void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
+void setRespawn();			// sets respawn point
+void pausegame();			// pauses game
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
 void moveCharacter();       // moves the character, collision detection, physics, etc

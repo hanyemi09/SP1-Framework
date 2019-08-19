@@ -10,13 +10,13 @@
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 bool    g_abKeyPressed[K_COUNT];
-
+const short sMapWidth=100, sMapHeight=50;
 // Game specific variables here
 SGameChar   g_sChar[2];
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 //Map objects
-_Object Map[100][50] = {};
+_Object Map[sMapWidth][sMapHeight] = {};
 
 // Console object
 Console g_Console(100, 50, "Game");
@@ -41,8 +41,9 @@ void init(void)
 	g_sChar[1].m_bActive = true;
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
-	//Sets initial spawnpoint
+	//sets initial spawnpoint
 	setRespawn();
+	MapPrinting();
 }
 
 //--------------------------------------------------------------
@@ -196,11 +197,31 @@ void setRespawn()
 	Respawn.X = 2;
 	Respawn.Y = 4;
 }
-
 void playerRespawn()
 {
 	g_sChar[1].m_cLocation.X = Respawn.X;
 	g_sChar[1].m_cLocation.Y = Respawn.Y;
+}
+
+void scanMap(char _Link)
+{
+	for (int Y = 0; Y < sMapHeight; Y++)
+	{
+		for (int X = 0; X < sMapWidth; X++)
+		{
+			if (Map[X][Y].Link == _Link && Map[X][Y].Code == 8)
+			{
+				if (Map[X][Y].Active == false)
+				{
+					Map[X][Y].Active = true;
+				}
+				else if(Map[X][Y].Active == true)
+				{
+					Map[X][Y].Active = false;
+				}
+			}
+		}
+	}
 }
 bool bWasGrounded = false;
 bool bCanJump = true;
@@ -212,7 +233,18 @@ void moveCharacter()
 		return;
 	bool bSomethingHappened = false;
 	bool bIsGrounded = false;
-	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
+	if (g_abKeyPressed[K_DOWN]&& Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code==2)
+	{
+		switch (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].LeverType)
+		{
+		case Lever:
+			scanMap(Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Link);
+		default:
+			break;
+		}
+		bSomethingHappened = true;
+	}
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Active == true)
 	{
 		bIsGrounded = true;
 		bCanJump = true;;
@@ -225,24 +257,13 @@ void moveCharacter()
 	}
 	if (sDisplacementSinceGrounded == 1)
 		bWasGrounded = true;
-	/*
-	else
-		if (bWasGrounded)
-		{
-			bWasGrounded = false;
-		}
-		else if (!bIsGrounded)
-		{
-			bWasGrounded = true;
-		}
-		*/
+
 		// Updating the location of the character based on the key press
-		// providing a beep sound whenver we shift the character
 		//Jumping
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0)
 	{
 
-		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code == 1 || sJump <= 0)
+		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active == true || sJump <= 0)
 		{
 			bCanJump = false;
 			sJump = 0;
@@ -267,36 +288,25 @@ void moveCharacter()
 	if (g_abKeyPressed[K_LEFT] && g_sChar[1].m_cLocation.X > 0)
 	{
 		//Beep(1440, 30);
-		if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code != 1)
+		if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Active == false)
 		{
 			g_sChar[1].m_cLocation.X--;
 		}
-		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
+		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Active == true && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active == false && Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Active == false)
 		{
 			g_sChar[1].m_cLocation.X--;
 			g_sChar[1].m_cLocation.Y--;
 		}
 		bSomethingHappened = true;
 	}
-	/*
-	if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-	{
-		//Beep(1440, 30);
-		if (Map[g_sChar.m_cLocation.X][g_sChar.m_cLocation.Y + 1].Code != 1)
-		{
-			g_sChar.m_cLocation.Y++;
-		}
-		bSomethingHappened = true;
-	}
-	*/
 	if (g_abKeyPressed[K_RIGHT] && g_sChar[1].m_cLocation.X < g_Console.getConsoleSize().X - 1)
 	{
 		//Beep(1440, 30);
-		if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Code != 1)
+		if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Active == false)
 		{
 			g_sChar[1].m_cLocation.X++;
 		}
-		else if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
+		else if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Active == true && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active == false && Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Active == false)
 		{
 			g_sChar[1].m_cLocation.X++;
 			g_sChar[1].m_cLocation.Y--;
@@ -310,26 +320,19 @@ void moveCharacter()
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
 		bIsGrounded = true;
-	if (!bIsGrounded && !bCanJump)//Gravity
+
+	//Gravity
+	if (!bIsGrounded && !bCanJump  )
 	{
 		g_sChar[1].m_cLocation.Y++;
 		bSomethingHappened = true;
 	}
-
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 5)
 	{
 		playerRespawn();
 	}
-	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 2) {
-		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active == false && g_abKeyPressed[K_DOWN]) {
-			bSomethingHappened = true;
-			Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active = true;
-		}
-		else if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active == true && g_abKeyPressed[K_DOWN]) {
-			bSomethingHappened = true;
-			Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active = false;
-		}
-	}
+	//Player interation with interactable objects
+	
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
@@ -361,7 +364,7 @@ void renderSplashScreen()  // renders the splash screen
 {
 	COORD c = g_Console.getConsoleSize();
 	c.Y /= 3;
-	c.X = c.X / 2 - 11;
+	c.X = c.X / 2 - 9;
 	g_Console.writeToBuffer(c, "Press <ENTER> to start", 0x03);
 	c.Y += 1;
 	c.X = g_Console.getConsoleSize().X / 2 - 20;
@@ -379,93 +382,217 @@ void renderGame()
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
 }
+
+/*
 int Color, iTileCode;
-char cTileChar;
+char cTileChar, cLinkChar;
+bool bActive;
+short sLeverType;
 int* ipColor = &Color;
 int* ipTileCode = &iTileCode;
 char* cpTileChar = &cTileChar;
+char* cpLinkChar = &cLinkChar;
+bool* bpActive = &bActive;
+short* spLeverType = &sLeverType;
+*/
 
-void MapPrinting(std::string output, int x) {
-	switch (output[x]) {
-	case ' ':
-		*ipColor = 12;//color picker
-		*ipTileCode = 0;//object map.code
-		*cpTileChar = ' ';//visual in console
-		break;
-	case '1':
-		*ipColor = 12;
-		*ipTileCode = 1;
-		*cpTileChar = 'Û';
-		break;
-	case '2':
-		*ipColor = 1;
-		*ipTileCode = 2;
-		*cpTileChar = 47;
-		break;
-	case '3':
-		*ipColor = 0;
-		*ipTileCode = 3;
-		*cpTileChar = '3';
-		break;
-	case '4':
-		*ipColor = 0;
-		*ipTileCode = 4;
-		*cpTileChar = '4';
-		break;
-	case '5':
-		*ipColor = 2;
-		*ipTileCode = 5;
-		*cpTileChar = 'Û';
-		break;
-	case '6':
-		*ipColor = 0;
-		*ipTileCode = 6;
-		*cpTileChar = '6';
-		break;
-	case '7':
-		*ipColor = 0;
-		*ipTileCode = 7;
-		*cpTileChar = '7';
-		break;
-	case '8':
-		*ipColor = 0;
-		*ipTileCode = 8;
-		*cpTileChar = 'Û';
-		break;
-
-	}
-}
-void renderMap()
-{
-	// Set up sample colours, and output shadings
-	const WORD colors[] = {
-		0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
-		0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6,0x808080
-	};
-
-	COORD c;
-	c.X = 0;
-	c.Y = 2;
+void MapPrinting() {
+	//initialise things in map array
 	std::string output;
-	// °±²Û
 	std::ifstream map("map.txt");
 	if (map.is_open()) {
 		int y = 1;
 		while (getline(map, output)) {
 			for (int x = 0; x < output.size(); ++x) {
-				c.X = x;
-				c.Y = y;
-				MapPrinting(output, x);
-				Map[c.X][c.Y].Code = *ipTileCode;
-				g_Console.writeToBuffer(c, *cpTileChar, colors[*ipColor]);
+				switch (output[x]) {
+				case ' ':
+					Map[x][y].Code = 0;
+					break;
+				case '1':
+					Map[x][y].Code = 1;
+					Map[x][y].Active = true;
+					break;
+				case '2':
+					Map[x][y].Code = 2;
+					break;
+				case '3':
+					Map[x][y].Code = 3;
+					break;
+				case '4':
+					Map[x][y].Code = 4;
+					break;
+				case '5':
+					Map[x][y].Code = 5;
+					break;
+				case '6':
+					Map[x][y].Code = 6;
+					break;
+				case '7':
+					Map[x][y].Code = 7;
+					break;
+				default:
+					if (output[x] >= 97 && output[x] <= 109)
+					{
+						Map[x][y].Code = 8;
+						Map[x][y].Link = output[x];
+						Map[x][y].Active = true;
+					}
+					else if (output[x] >= 65 && output[x] <= 77)
+					{
+						Map[x][y].Code = 8;
+						Map[x][y].Link = output[x] + 32;
+						Map[x][y].Active = false;
+					}
+					else {
+						if (output[x] >= 110 && output[x] <= 122)
+						{
+							Map[x][y].Code = 2;
+							Map[x][y].Link = output[x] - 13;
+							Map[x][y].LeverType = PressurePlate;
+						}
+						else
+							if (output[x] >= 78 && output[x] <= 90)
+							{
+								Map[x][y].Code = 2;
+								Map[x][y].Link = output[x] + 19;
+								Map[x][y].LeverType = Lever;
+							}
+					}
+				}
 			}
 			++y;
+			}
+		}
+}
+	
+
+void renderMap()
+{
+	// Set up sample colours, and output shadings
+	const WORD colors[] = {
+		0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
+		0xA1, 0xB2, 0xC3, 0xD4, 0xE5, 0xF6,0x808080,//0x25C9
+	};
+	// °±²Û
+	COORD c;
+	c.X = 0;
+	c.Y = 2;
+
+	//rendering from Map array
+	for (int x = 0; x < sMapWidth; ++x) {
+		for (int y = 1; y <= sMapHeight; ++y) {
+			switch (Map[x][y].Code) {
+			case 0:
+				Map[x][y].Code = 0;
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, ' ', colors[12]);
+				break;
+			case 1:
+				Map[x][y].Code = 1;
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, 'Û', colors[12]);
+				break;
+			case 2:
+				Map[x][y].Code = 2;
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, 'Û', 0x25C9);
+				break;
+			case 3:
+				Map[x][y].Code = 3;
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, 'Û', colors[1]);
+				break;
+			case 4:
+				Map[x][y].Code = 4;
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, 'Û', colors[1]);
+				break;
+			case 5:
+				Map[x][y].Code = 5;
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, 'Û', colors[1]);
+				break;
+			case 6:
+				Map[x][y].Code = 6;
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, 'Û', colors[1]);
+				break;
+			case 7:
+				Map[x][y].Code = 7;
+				c.X = x;
+				c.Y = y;
+				if (Map[x][y].LeverType == Lever) {
+					g_Console.writeToBuffer(c, 'Û', colors[4]);
+				}
+				else {
+					g_Console.writeToBuffer(c, 'Û', colors[1]);
+				}
+				
+				break;
+			case 8:
+				Map[x][y].Code = 8;
+				c.X = x;
+				c.Y = y;
+				if (Map[x][y].Active == false) {
+					g_Console.writeToBuffer(c, ' ', colors[12]);
+				}
+				else {
+					g_Console.writeToBuffer(c, 'Û', colors[12]);
+				}
+				break;
+			/*
+			default:
+					if (Map[x][y] >= 97 && Map[x][y] <= 109)
+					{
+						*ipTileCode = 8;
+						*cpTileChar = 'Û';
+						*cpLinkChar = output[x];
+						*bpActive = false;
+					}
+					else if (output[x] >= 65 && output[x] <= 77)
+					{
+						*ipColor = 12;
+						*ipTileCode = 8;
+						*cpTileChar = 'Û';
+						*cpLinkChar = output[x] + 32;
+						*bpActive = true;
+					}
+					else
+						if (output[x] >= 110 && output[x] <= 122)
+						{
+							*ipColor = 1;
+							*ipTileCode = 2;
+							*cpTileChar = 0x25C9;
+							*spLeverType = PressurePlate;
+							*cpLinkChar = output[x] - 13;
+						}
+						else
+							if (output[x] >= 78 && output[x] <= 90)
+							{
+								*ipColor = 1;
+								*ipTileCode = 2;
+								*cpTileChar = 0x25C9;
+								*spLeverType = Lever;
+								*cpLinkChar = output[x] + 19;
+			
+				}
+			*/
+			}
+
 		}
 	}
+
+	
+
+	/*
 	if (Map[43][7].Active == true) {
-		c.X = 43;
-		c.Y = 7;
-		g_Console.writeToBuffer(c, 124, colors[1]);
 		Map[47][8].Code = 0;
 		c.X = 47;
 		c.Y = 8;
@@ -476,9 +603,6 @@ void renderMap()
 		g_Console.writeToBuffer(c, ' ', colors[12]);
 	}
 	else if (Map[43][7].Active == false) {
-		c.X = 43;
-		c.Y = 7;
-		g_Console.writeToBuffer(c, 47, colors[1]);
 		Map[47][8].Code = 1;
 		c.X = 47;
 		c.Y = 8;
@@ -488,6 +612,7 @@ void renderMap()
 		c.Y = 8;
 		g_Console.writeToBuffer(c, 'Û', colors[12]);
 	}
+	*/
 }
 
 void renderCharacter()
@@ -496,7 +621,7 @@ void renderCharacter()
 	WORD charColor = 0x0C;
 	if (g_sChar[1].m_bActive)
 	{
-		charColor = 0x808080;
+		charColor = 0x0A;
 	}
 	g_Console.writeToBuffer(g_sChar[1].m_cLocation, (char)2, charColor);
 	/*g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
