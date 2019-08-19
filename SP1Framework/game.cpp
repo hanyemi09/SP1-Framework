@@ -202,63 +202,55 @@ void playerRespawn()
 	g_sChar[1].m_cLocation.X = Respawn.X;
 	g_sChar[1].m_cLocation.Y = Respawn.Y;
 }
-//Jumping
-bool bWasGrounded = false;
-bool bCanJump = true;
-short sJump = 2;
-short sDisplacementSinceGrounded = 0;
-//Wall Jumping
-bool bCanWallJumpR = false;
-bool bCanWallJumpL = false;
-bool bWasWallJ = false;
+
 void moveCharacter()
 {
 	if (g_dBounceTime > g_dElapsedTime)
 		return;
 	bool bSomethingHappened = false;
 	//Jumping
-	bool bIsGrounded = false;
+	g_sChar[1].bIsGrounded= false;
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
 	{
-		bIsGrounded = true;
-		bCanJump = true;
-		sJump = 2;
-		sDisplacementSinceGrounded = 0;
+		g_sChar[1].bIsGrounded = true;
+		g_sChar[1].bCanJump = true;
+		g_sChar[1].sJump = 2;
+		g_sChar[1].sDisplacementSinceGrounded = 0;
 	}
-	else if(!bWasWallJ)
+	else if(!g_sChar[1].bWasWallJ)
 	{
-		sDisplacementSinceGrounded++;
+		g_sChar[1].sDisplacementSinceGrounded++;
 	}
-	if (sDisplacementSinceGrounded == 1)
-		bWasGrounded = true;
+	if (g_sChar[1].sDisplacementSinceGrounded == 1)
+		g_sChar[1].bWasGrounded = true;
 	//Wall Jumping
-	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0 && bWasWallJ && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1)
+	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0 && g_sChar[1].bWasWallJ && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[1].m_cLocation.Y--;
 		g_dBounceTime = g_dElapsedTime + 0.125;
-		bIsGrounded = true;
+		g_sChar[1].bIsGrounded = true;
 	}
-	bWasWallJ = false;
+	g_sChar[1].bWasWallJ = false;
 	if (g_abKeyPressed[K_LEFT] && g_sChar[1].m_cLocation.X > 0)
 	{
 		if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code != 1)
 		{
 			g_sChar[1].m_cLocation.X--;
 		}
-		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Code != 1 && bIsGrounded)
+		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code == 1 && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1 && Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Code != 1 && g_sChar[1].bIsGrounded)
 		{
 			g_sChar[1].m_cLocation.X--;
 			g_sChar[1].m_cLocation.Y--;
 		}
 		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code == 1)
 		{
-			bCanWallJumpL = true;
+			g_sChar[1].bCanWallJumpL = true;
 		}
 		bSomethingHappened = true;
 	}
 	if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Code != 1)
 	{
-		bCanWallJumpL = false;
+		g_sChar[1].bCanWallJumpL = false;
 	}
 	if (g_abKeyPressed[K_RIGHT] && g_sChar[1].m_cLocation.X < g_Console.getConsoleSize().X - 1)
 	{
@@ -274,57 +266,57 @@ void moveCharacter()
 		}
 		else if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Code == 1)
 		{
-			bCanWallJumpR = true;
+			g_sChar[1].bCanWallJumpR = true;
 		}
 		bSomethingHappened = true;
 	}
 	if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Code != 1)
 	{
-		bCanWallJumpR = false;
+		g_sChar[1].bCanWallJumpR = false;
 	}
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0)
 	{
 
-		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code == 1 || sJump <= 0)
+		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code == 1 || g_sChar[1].sJump <= 0)
 		{
-			bCanJump = false;
-			sJump = 0;
+			g_sChar[1].bCanJump = false;
+			g_sChar[1].sJump = 0;
 		}
-		else if (bWasGrounded)
+		else if (g_sChar[1].bWasGrounded)
 		{
-			bCanJump = true;
+			g_sChar[1].bCanJump = true;
 		}
 		//Beep(1440, 30);
-		if (bCanJump)
+		if (g_sChar[1].bCanJump)
 		{
 			g_sChar[1].m_cLocation.Y -= 1;
-			sJump--;
+			g_sChar[1].sJump--;
 		}
-		else if (bCanWallJumpL&&Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
+		else if (g_sChar[1].bCanWallJumpL&&Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 		{
 			g_sChar[1].m_cLocation.X++;
 			g_sChar[1].m_cLocation.Y--;
-			bCanWallJumpL = false;
-			bWasWallJ = true;
+			g_sChar[1].bCanWallJumpL = false;
+			g_sChar[1].bWasWallJ = true;
 		}
-		else if (bCanWallJumpR&&Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
+		else if (g_sChar[1].bCanWallJumpR&&Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 		{
 			g_sChar[1].m_cLocation.X--;
 			g_sChar[1].m_cLocation.Y--;
-			bCanWallJumpR = false;
-			bWasWallJ = true;
+			g_sChar[1].bCanWallJumpR = false;
+			g_sChar[1].bWasWallJ = true;
 		}
 		bSomethingHappened = true;
 	}
 	else
 	{
-		bCanJump = false;
-		bWasGrounded = true;
+		g_sChar[1].bCanJump = false;
+		g_sChar[1].bWasGrounded = true;
 	}
 
 	if (g_abKeyPressed[K_DOWN])
 	{
-		bCanWallJumpL = false;
+		g_sChar[1].bCanWallJumpL = false;
 		bSomethingHappened = true;
 	}
 	if (g_abKeyPressed[K_SPACE])
@@ -333,8 +325,8 @@ void moveCharacter()
 		bSomethingHappened = true;
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
-		bIsGrounded = true;
-	if (!bIsGrounded && !bCanJump && !bCanWallJumpL && !bCanWallJumpR && !bWasWallJ)//Gravity
+		g_sChar[1].bIsGrounded = true;
+	if (!g_sChar[1].bIsGrounded && !g_sChar[1].bCanJump && !g_sChar[1].bCanWallJumpL && !g_sChar[1].bCanWallJumpR && !g_sChar[1].bWasWallJ)//Gravity
 	{
 		g_sChar[1].m_cLocation.Y++;
 		bSomethingHappened = true;

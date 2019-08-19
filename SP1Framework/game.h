@@ -40,6 +40,16 @@ struct SGameChar
 {
     COORD m_cLocation;
     bool  m_bActive;
+	//Jumping
+	bool bIsGrounded = false;
+	bool bWasGrounded = false;
+	bool bCanJump = true;
+	short sJump = 2;
+	short sDisplacementSinceGrounded = 0;
+	//Wall Jumping
+	bool bCanWallJumpR = false;
+	bool bCanWallJumpL = false;
+	bool bWasWallJ = false;
 };
 
 //struct for map objects
