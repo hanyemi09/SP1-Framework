@@ -13,9 +13,10 @@ bool    g_abKeyPressed[K_COUNT];
 
 // Game specific variables here
 SGameChar   g_sChar[2];
-SGameChar	g_Arrow;
+SGameChar	g_Arrow[2];
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
+double g_aBounceTime;
 //Map objects
 _Object Map[100][50] = {};
 
@@ -34,16 +35,15 @@ void init(void)
 	// Set precision for floating point output
 	g_dElapsedTime = 0.0;
 	g_dBounceTime = 0.0;
+	g_aBounceTime = 0.0;
 
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
 	g_sChar[1].m_cLocation.X = 2; //g_Console.getConsoleSize().X / 2;
 	g_sChar[1].m_cLocation.Y = 5; //g_Console.getConsoleSize().Y / 2;
 	g_sChar[1].m_bActive = true;
-	g_Arrow.m_bActive = true;
-	g_Arrow.m_cLocation.X = 16;
-	g_Arrow.m_cLocation.Y = 5;
-
+	arrowRespawn();
+	g_Arrow[1].m_bActive = true;
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
 	//Sets initial spawnpoint
@@ -127,34 +127,9 @@ void update(double dt)
 
 }
 
-void arrowRespawn()
-{
-	g_Arrow.m_cLocation.X = 16;
-	g_Arrow.m_cLocation.Y = 5;
-
-}
-
-void arrow()
-{
-	//arrow is gonna go left
-	if (Map[g_Arrow.m_cLocation.X + 1][g_Arrow.m_cLocation.Y].Code != 1)
-	{
-		g_Arrow.m_cLocation.X++;
-	}
-
-	if (Map[g_Arrow.m_cLocation.X + 1][g_Arrow.m_cLocation.Y].Code == 1)
-	{
-		arrowRespawn();
-	}
-
-	if (Map[g_Arrow.m_cLocation.X + 1][g_Arrow.m_cLocation.Y].Code == Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code)
-	{
-		arrowRespawn();
-		playerRespawn();
-	}
 
 
-}
+
 
 void pausegame()
 {
@@ -221,8 +196,9 @@ void gameplay()            // gameplay logic
 {
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter();    // moves the character, collision detection, physics, etc
-						// sound can be played here too.
 	arrow();
+						// sound can be played here too.
+	
 }
 COORD Respawn;
 void setRespawn()
@@ -242,6 +218,7 @@ short sJump = 2;
 short sDisplacementSinceGrounded = 0;
 void moveCharacter()
 {
+
 	if (g_dBounceTime > g_dElapsedTime)
 		return;
 	bool bSomethingHappened = false;
@@ -249,7 +226,7 @@ void moveCharacter()
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Code == 1)
 	{
 		bIsGrounded = true;
-		bCanJump = true;;
+		bCanJump = true;
 		sJump = 2;
 		sDisplacementSinceGrounded = 0;
 	}
@@ -354,6 +331,12 @@ void moveCharacter()
 	{
 		playerRespawn();
 	}
+
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 6)
+	{
+		playerRespawn();
+	}
+	
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 2) {
 		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active == false && g_abKeyPressed[K_DOWN]) {
 			bSomethingHappened = true;
@@ -364,6 +347,9 @@ void moveCharacter()
 			Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active = false;
 		}
 	}
+
+	
+
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
@@ -371,6 +357,39 @@ void moveCharacter()
 	}
 
 
+}
+
+void arrowRespawn()
+{
+	g_Arrow[1].m_cLocation.X = 16;
+	g_Arrow[1].m_cLocation.Y = 5;
+	
+}
+void arrow()
+{
+	if (g_aBounceTime > g_dElapsedTime)
+		return;
+	bool bSomethingHappened = false;
+		//arrow is gonna go left
+	if (Map[g_Arrow[1].m_cLocation.X - 1][g_Arrow[1].m_cLocation.Y].Code != 1 || Map[g_Arrow[1].m_cLocation.X - 1][g_Arrow[1].m_cLocation.Y].Code != Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code)
+	{
+		g_Arrow[1].m_cLocation.X--;
+		bSomethingHappened = true;
+	 
+	}
+	if (Map[g_Arrow[1].m_cLocation.X - 1][g_Arrow[1].m_cLocation.Y].Code == 1)
+	{
+		arrowRespawn();	
+
+	}
+
+	if (bSomethingHappened)
+	{
+		// set the bounce time to some time in the future to prevent accidental triggers
+		g_aBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
+	}
+
+	
 }
 void processUserInput()
 {
@@ -413,6 +432,7 @@ void renderGame()
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
 }
+
 int Color, iTileCode;
 char cTileChar;
 int* ipColor = &Color;
@@ -529,7 +549,13 @@ void renderCharacter()
 		charColor = 0x0A;
 	}
 	g_Console.writeToBuffer(g_sChar[1].m_cLocation, (char)2, charColor);
-	
+	if (g_Arrow[1].m_bActive)
+	{
+		charColor = 0x2B;
+		Map[g_Arrow[1].m_cLocation.X][g_Arrow[1].m_cLocation.Y].Code = 6;
+
+	}
+	g_Console.writeToBuffer(g_Arrow[1].m_cLocation, (char)27, charColor);
 
 
 	/*g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
