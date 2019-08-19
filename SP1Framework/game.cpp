@@ -800,7 +800,7 @@ void renderMap()
 
 		}
 	}
-	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 9) {
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 9&& Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 9) {
 		++level;
 		MapReset();
 		init();
