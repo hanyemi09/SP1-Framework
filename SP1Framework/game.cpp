@@ -471,13 +471,13 @@ void MapPrinting() {
 					{
 						Map[x][y].Code = 8;
 						Map[x][y].Link = output[x];
-						Map[x][y].Active = true;
+						Map[x][y].Active = false;
 					}
 					else if (output[x] >= 65 && output[x] <= 77)
 					{
 						Map[x][y].Code = 8;
 						Map[x][y].Link = output[x] + 32;
-						Map[x][y].Active = false;
+						Map[x][y].Active = true;
 					}
 					else {
 						if (output[x] >= 110 && output[x] <= 122)
