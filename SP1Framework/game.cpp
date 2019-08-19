@@ -385,67 +385,6 @@ void renderGame()
 	renderCharacter();  // renders the character into the buffer
 }
 
-<<<<<<< Updated upstream
-/*
-int Color, iTileCode;
-char cTileChar, cLinkChar;
-bool bActive;
-short sLeverType;
-int* ipColor = &Color;
-int* ipTileCode = &iTileCode;
-char* cpTileChar = &cTileChar;
-char* cpLinkChar = &cLinkChar;
-bool* bpActive = &bActive;
-short* spLeverType = &sLeverType;
-*/
-
-void MapPrinting() {
-	//initialise things in map array
-	std::string output;
-	std::ifstream map("map.txt");
-	if (map.is_open()) {
-		int y = 1;
-		while (getline(map, output)) {
-			for (int x = 0; x < output.size(); ++x) {
-				switch (output[x]) {
-				case ' ':
-					Map[x][y].Code = 0;
-					break;
-				case '1':
-					Map[x][y].Code = 1;
-					Map[x][y].Active = true;
-					break;
-				case '2':
-					Map[x][y].Code = 2;
-					break;
-				case '3':
-					Map[x][y].Code = 3;
-					break;
-				case '4':
-					Map[x][y].Code = 4;
-					break;
-				case '5':
-					Map[x][y].Code = 5;
-					break;
-				case '6':
-					Map[x][y].Code = 6;
-					break;
-				case '7':
-					Map[x][y].Code = 7;
-					break;
-				default:
-					if (output[x] >= 97 && output[x] <= 109)
-					{
-						Map[x][y].Code = 8;
-						Map[x][y].Link = output[x];
-						Map[x][y].Active = true;
-					}
-					else if (output[x] >= 65 && output[x] <= 77)
-					{
-						Map[x][y].Code = 8;
-						Map[x][y].Link = output[x] + 32;
-						Map[x][y].Active = false;
-=======
 void MapSetting(std::string output, int y) {
 	for (int x = 0; x < output.size(); ++x) {
 		switch (output[x]) {
@@ -474,6 +413,9 @@ void MapSetting(std::string output, int y) {
 		case '7':
 			Map[x][y].Code = 7;
 			break;
+		case '9':
+			Map[x][y].Code = 9;
+			break;
 		default:
 			if (output[x] >= 97 && output[x] <= 109)
 			{
@@ -500,12 +442,13 @@ void MapSetting(std::string output, int y) {
 						Map[x][y].Code = 2;
 						Map[x][y].Link = output[x] + 19;
 						Map[x][y].LeverType = Lever;
->>>>>>> Stashed changes
+
 					}
 			}
 		}
 	}
 }
+
 
 void MapPrinting() {
 	//initialise things in map array
@@ -520,9 +463,11 @@ void MapPrinting() {
 				++y;
 			}
 		}
+		break;
 	}
 	case 1: {
 		std::string output;
+		output.clear();
 		std::ifstream map("map1.txt");
 		if (map.is_open()) {
 			int y = 1;
@@ -531,9 +476,11 @@ void MapPrinting() {
 				++y;
 			}
 		}
+		break;
 	}
 	case 2: {
 		std::string output;
+		output.clear();
 		std::ifstream map(".txt");
 		if (map.is_open()) {
 			int y = 1;
@@ -542,12 +489,20 @@ void MapPrinting() {
 				++y;
 			}
 		}
+		break;
 	}
 	}
 	
 }
 
-	
+void MapReset() {
+	COORD c;
+	for (int x = 0; x < sMapWidth; ++x) {
+		for (int y = 0; y < sMapHeight; ++y) {
+			Map[x][y] = {' '};
+		}
+	}
+}
 
 void renderMap()
 {
@@ -581,16 +536,13 @@ void renderMap()
 				Map[x][y].Code = 2;
 				c.X = x;
 				c.Y = y;
-<<<<<<< Updated upstream
 				g_Console.writeToBuffer(c, 'Û', 0x25C9);
-=======
 				if (Map[x][y].LeverType == Lever) {
 					g_Console.writeToBuffer(c, '/', 0x25C9);
 				}
 				else {
 					g_Console.writeToBuffer(c, 'Û', colors[1]);
 				}
->>>>>>> Stashed changes
 				break;
 			case 3:
 				Map[x][y].Code = 3;
@@ -634,11 +586,20 @@ void renderMap()
 					g_Console.writeToBuffer(c, 'Û', colors[12]);
 				}
 				break;
+			case 9:
+				Map[x][y].Code = 9;
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, 'Û', colors[4]);
+				break;
 			}
+			
+
 		}
 	}
-	if (Map[g_sChar->m_cLocation.X][g_sChar->m_cLocation.Y].Code == 9) {
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 9) {
 		++level;
+		MapReset();
 		init();
 	}
 
