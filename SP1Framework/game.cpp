@@ -123,10 +123,10 @@ void update(double dt)
 		break;
 	case S_PAUSE: pausegame();
 		break;
+	
 	}
 
 }
-
 
 
 
@@ -414,15 +414,21 @@ void renderSplashScreen()  // renders the splash screen
 {
 	COORD c = g_Console.getConsoleSize();
 	c.Y /= 3;
-	c.X = c.X / 2 - 9;
-	g_Console.writeToBuffer(c, "Press <ENTER> to start", 0x03);
-	c.Y += 1;
+	c.X = c.X / 2 - 6;
+	g_Console.writeToBuffer(c, "Zero Tower", 0x03);
+	c.Y += 2;
+	c.X = g_Console.getConsoleSize().X / 2 - 10;
+	g_Console.writeToBuffer(c, "Press <ENTER> to start", 0x09);
+	c.Y += 2;
 	c.X = g_Console.getConsoleSize().X / 2 - 20;
 	g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
-	c.Y += 1;
+	c.Y += 2;
+	c.X = g_Console.getConsoleSize().X / 2 - 15;
+	g_Console.writeToBuffer(c, "ARROW KEYS - PLAYER 1 MOVEMENT", 0x09);
+	c.Y += 2;
 	c.X = g_Console.getConsoleSize().X / 2 - 12;
-	g_Console.writeToBuffer(c, "Use the Arrow Keys to move", 0x09);
-	c.Y += 1;
+	g_Console.writeToBuffer(c, "WASD - PLAYER 2 MOVEMENT", 0x09);
+	c.Y += 2;
 	c.X = g_Console.getConsoleSize().X / 2 - 9;
 	g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
 }
