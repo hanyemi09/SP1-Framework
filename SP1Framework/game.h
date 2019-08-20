@@ -42,12 +42,35 @@ struct SGameChar
     bool  m_bActive;
 };
 
-//struct for map objects
+//variables for for map objects
+enum LeverTypes
+{
+	Lever,
+	PressurePlate
+};
 struct _Object
 {
 	short Code;
+	short LeverType;
 	bool Active=false;
+	char Link;
 };
+struct PlayerVar
+{
+	//Jumping
+	bool bIsGrounded = false;
+	bool bWasGrounded = false;
+	bool bCanJump = false;
+	short sJump = 2;
+	short sDisplacementSinceGrounded = 0;
+	bool bSomethingHappened = false;
+	//Wall Jumping
+	bool bCanWallJumpR = false;
+	bool bCanWallJumpL = false;
+	bool bWasWallJ = false;//detection if player was Wall jumping
+	bool bWasWallJC = false;//checking if player was Wall jumping
+};
+
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
@@ -55,11 +78,14 @@ void render      ( void );      // renders the current state of the game to the 
 void shutdown    ( void );      // do clean up, free memory
 
 void playerRespawn();
-void setRespawn();			// Sets respawn point
-void pausegame();
+void MapPrinting();         //Printing of the map
+void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
+void setRespawn();			// sets respawn point
+void pausegame();			// pauses game
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
-void moveCharacter();       // moves the character, collision detection, physics, etc
+void moveCharacter1();      // moves the character, collision detection, physics, etc
+void moveCharacter2();		// moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderSplashScreen();  // renders the splash screen
