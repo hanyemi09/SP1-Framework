@@ -7,6 +7,8 @@
 #include <iomanip>
 #include <sstream>
 
+
+
 double  g_dElapsedTime;
 double  g_dDeltaTime;
 double  g_aBounceTime;
@@ -50,6 +52,12 @@ void init(void)
 	//sets initial spawnpoint
 	setRespawn();
 	MapPrinting();
+	switch (level) {
+	case 0:
+		MainMenuMusic();
+		break;
+	}
+	//JumpMusic();
 }
 
 //--------------------------------------------------------------
@@ -192,7 +200,7 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
-						 // sound can be played here too.
+	//MovementSounds();   // sound can be played here too.
 }
 COORD Respawn;
 void setRespawn()
@@ -311,7 +319,7 @@ void moveCharacter1()
 	}
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0)
 	{
-
+		
 		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active || Player1.sJump <= 0)
 		{
 			Player1.bCanJump = false;
@@ -352,6 +360,7 @@ void moveCharacter1()
 			Player1.bWasWallJ = true;
 		}
 		Player1.bSomethingHappened = true;
+		
 	}
 	else
 	{
@@ -382,7 +391,8 @@ void moveCharacter1()
 		playerRespawn();
 	}
 	//Player interation with interactable objects
-	
+
+
 	if (Player1.bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
@@ -537,6 +547,7 @@ void moveCharacter2()
 	{
 		g_sChar[0].m_cLocation.Y++;
 		Player2.bSomethingHappened = true;
+		g_dBounceTime = g_dElapsedTime + 0.125;
 	}
 	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 5)
 	{
@@ -566,24 +577,52 @@ void processUserInput()
 void clearScreen()
 {
 	// Clears the buffer with this colour attribute
-	g_Console.clearBuffer(0x1F);
+	g_Console.clearBuffer(0x888888);
 }
 
 void renderSplashScreen()  // renders the splash screen
 {
-	COORD c = g_Console.getConsoleSize();
-	c.Y /= 3;
-	c.X = c.X / 2 - 9;
-	g_Console.writeToBuffer(c, "Press <ENTER> to start", 0x03);
-	c.Y += 1;
-	c.X = g_Console.getConsoleSize().X / 2 - 20;
-	g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
-	c.Y += 1;
-	c.X = g_Console.getConsoleSize().X / 2 - 12;
-	g_Console.writeToBuffer(c, "Use the Arrow Keys to move", 0x09);
-	c.Y += 1;
-	c.X = g_Console.getConsoleSize().X / 2 - 9;
-	g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
+	switch (level) {
+	case 0: {
+
+		/*COORD c = g_Console.getConsoleSize();
+		c.Y /= 3;
+		c.X = c.X / 2 - 9;
+		g_Console.writeToBuffer(c, "Press <ENTER> to start", 0x03);
+		c.Y += 1;
+		c.X = g_Console.getConsoleSize().X / 2 - 20;
+		g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
+		c.Y += 1;
+		c.X = g_Console.getConsoleSize().X / 2 - 12;
+		g_Console.writeToBuffer(c, "Use the Arrow Keys to move", 0x09);
+		c.Y += 1;
+		c.X = g_Console.getConsoleSize().X / 2 - 9;
+		g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);*/
+		COORD c;
+		c.Y = 1;
+		std::string output;
+		output.clear();
+		std::ifstream map("Main_menu_Splash_Art.txt");
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X +=1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x09);
+						break;
+					}
+				}
+				++y;
+			}
+		}
+	}
+	}
 }
 
 void renderGame()
@@ -716,6 +755,8 @@ void MapReset() {
 
 void renderMap()
 {
+	PlaySound(NULL, NULL, 0);
+
 	// Set up sample colours, and output shadings
 	const WORD colors[] = {
 		0x1A, 0x2B, 0x3C, 0x4D, 0x5E, 0x6F,
@@ -819,6 +860,23 @@ void renderMap()
 		init();
 	}
 }
+
+void MainMenuMusic() {
+	TCHAR wavfile[]= _T("main_menu.wav");
+	PlaySound(wavfile, NULL, SND_LOOP | SND_ASYNC);
+}
+
+//void JumpMusic() {
+//	TCHAR wavfile[] = _T("jump_04.wav");
+//	PlaySound(wavfile,NULL,SND_ASYNC);
+//}
+//
+//void MovementSounds() {
+//	if (g_abKeyPressed[K_UP]) {
+//		Beep(1440, 300);
+//		//JumpMusic();
+//	}
+//}
 
 void renderCharacter()
 {
