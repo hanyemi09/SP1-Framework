@@ -79,7 +79,7 @@ void shutdown    ( void );      // do clean up, free memory
 
 void MapPrinting();         //Printing of the map
 void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
-void setRespawn();			// sets respawn point
+void setRespawn(int PlayerNumber);// sets respawn point
 void pausegame();			// pauses game
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic

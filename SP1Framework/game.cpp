@@ -10,6 +10,9 @@
 double  g_dElapsedTime[2];
 double  g_dDeltaTime[2];
 double  g_aBounceTime[2];
+double  g_dArrowElapsedTime;
+double  g_dArrowDeltaTime;
+double  g_aArrowBounceTime;
 bool    g_abKeyPressed[K_COUNT];
 const short sMapWidth=100, sMapHeight=50;
 // Game specific variables here
@@ -50,7 +53,7 @@ void init(void)
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
 	//sets initial spawnpoint
-	setRespawn();
+	setRespawn(1);
 	MapPrinting();
 }
 
@@ -113,9 +116,11 @@ void update(double dt)
 	{
 		g_dElapsedTime[1] += dt;
 		g_dElapsedTime[0] += dt;
+		g_dArrowElapsedTime += dt;
 	}
 	g_dDeltaTime[1] = dt;
 	g_dDeltaTime[0] = dt;
+	g_dArrowDeltaTime = dt;
 
 	switch (g_eGameState)
 	{
@@ -199,10 +204,10 @@ void gameplay()            // gameplay logic
 						 // sound can be played here too.
 }
 COORD Respawn;
-void setRespawn()
+void setRespawn(int PlayerNumber)
 {
-		Respawn.X = g_sChar[1].m_cLocation.X;
-		Respawn.Y = g_sChar[1].m_cLocation.Y;
+		Respawn.X = g_sChar[PlayerNumber].m_cLocation.X;
+		Respawn.Y = g_sChar[PlayerNumber].m_cLocation.Y;
 }
 void playerRespawn()
 {
@@ -405,7 +410,7 @@ void moveCharacter1()
 		g_dBounceTime[1] = g_dElapsedTime[1] + 0.125; // 125ms should be enough
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 4) {
-		setRespawn();
+		setRespawn(1);
 	}
 }
 
@@ -583,7 +588,7 @@ void moveCharacter2()
 		g_dBounceTime[0] = g_dElapsedTime[0] + 0.125; // 125ms should be enough
 	}
 	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 4) {
-		setRespawn();
+		setRespawn(0);
 	}
 }
 void processUserInput()
