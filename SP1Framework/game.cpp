@@ -10,15 +10,15 @@
 double  g_dElapsedTime[2];
 double  g_dDeltaTime[2];
 double  g_aBounceTime[2];
-double  g_dArrowElapsedTime;
-double  g_dArrowDeltaTime;
-double  g_aArrowBounceTime;
+double  g_dArrowElapsedTime[2];
+double  g_dArrowDeltaTime[2];
 bool    g_abKeyPressed[K_COUNT];
 const short sMapWidth=100, sMapHeight=50;
 // Game specific variables here
 SGameChar   g_sChar[2];
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigger keypresses more than once
+double g_dArrowBounceTime[2]; //to control speed and rate of fire of darts
 //Map objects
 _Object Map[sMapWidth][sMapHeight] = {};
 
@@ -41,7 +41,10 @@ void init(void)
 	g_dBounceTime[1] = 0.0;
 	g_dElapsedTime[0] = 0.0;
 	g_dBounceTime[0] = 0.0;
-
+	g_dArrowBounceTime[0] = 0.0;
+	g_dArrowBounceTime[1] = 0.0;
+	g_dArrowElapsedTime[0] = 0.0;
+	g_dArrowElapsedTime[1] = 0.0;
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
 	g_sChar[1].m_cLocation.X = 2; //g_Console.getConsoleSize().X / 2;
@@ -116,11 +119,13 @@ void update(double dt)
 	{
 		g_dElapsedTime[1] += dt;
 		g_dElapsedTime[0] += dt;
-		g_dArrowElapsedTime += dt;
+		g_dArrowElapsedTime[0] += dt;
+		g_dArrowElapsedTime[1] += dt;
 	}
 	g_dDeltaTime[1] = dt;
 	g_dDeltaTime[0] = dt;
-	g_dArrowDeltaTime = dt;
+	g_dArrowDeltaTime[0] = dt;
+	g_dArrowDeltaTime[1] = dt;
 
 	switch (g_eGameState)
 	{
@@ -201,6 +206,8 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
+	ArrowAI();
+	TrapAI();
 						 // sound can be played here too.
 }
 COORD Respawn;
@@ -238,8 +245,69 @@ void scanMap(char _Link)
 }
 void TrapAI()
 {
-	/*if (g_dArrowBounceTime > g_dArrowElapsedTime)
-		return;*/
+	if (g_dArrowBounceTime[0] > g_dArrowElapsedTime[0])
+		return;
+	for (int x = 0; x < sMapWidth; x++)
+	{
+		for (int y = 0; y < sMapHeight; y++)
+		{
+			switch (Map[x][y].Code)
+			{
+			case 6:
+				if (Map[x][y].Active)
+				{
+					Map[x + 1][y].Code = 6;
+					Map[x + 1][y].Active = false;
+				}
+				break;
+			case 7:
+				if (Map[x][y].Active)
+				{
+					Map[x - 1][y].Code = 7;
+					Map[x - 1][y].Active = false;
+				}
+				break;
+			}
+		}
+	}
+	g_dArrowBounceTime[0] = g_dArrowElapsedTime[0] + 1.5;
+}
+void ArrowAI() {
+	if (g_dArrowBounceTime[1] > g_dArrowElapsedTime[1])
+		return;
+		for (int y = 0; y < sMapHeight; y++)
+	{
+	for (int x = 0; x < sMapWidth; x++)
+		{
+			if (!Map[x][y].Active)
+			{
+				switch (Map[x][y].Code)
+				{
+				case 6:
+					Map[x][y].Code = 0;
+					if (!Map[x + 1][y].Active)
+					{
+						Map[x + 1][y].Code = 6;
+						Map[x + 1][y].Active = false;
+						x++;
+					}
+					break;
+				case 7:
+					Map[x][y].Code = 0;
+					if (!Map[x - 1][y].Active)
+					{
+						Map[x - 1][y].Code = 7;
+						Map[x - 1][y].Active = false;
+						x++;
+					}
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+	g_dArrowBounceTime[1] = g_dArrowElapsedTime[1] + 0.1;
 }
 PlayerVar Player1, Player2;
 void moveCharacter1()
