@@ -201,10 +201,8 @@ void gameplay()            // gameplay logic
 COORD Respawn;
 void setRespawn()
 {
-	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 4 || Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 4) {
 		Respawn.X = g_sChar[1].m_cLocation.X;
 		Respawn.Y = g_sChar[1].m_cLocation.Y;
-	}
 }
 void playerRespawn()
 {
@@ -406,6 +404,9 @@ void moveCharacter1()
 		// set the bounce time to some time in the future to prevent accidental triggers
 		g_dBounceTime[1] = g_dElapsedTime[1] + 0.125; // 125ms should be enough
 	}
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 4) {
+		setRespawn();
+	}
 }
 
 
@@ -580,6 +581,9 @@ void moveCharacter2()
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
 		g_dBounceTime[0] = g_dElapsedTime[0] + 0.125; // 125ms should be enough
+	}
+	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 4) {
+		setRespawn();
 	}
 }
 void processUserInput()
