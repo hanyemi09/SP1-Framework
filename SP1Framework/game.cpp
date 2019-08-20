@@ -201,8 +201,10 @@ void gameplay()            // gameplay logic
 COORD Respawn;
 void setRespawn()
 {
-	Respawn.X = 2;
-	Respawn.Y = 4;
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 4 || Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 4) {
+		Respawn.X = g_sChar[1].m_cLocation.X;
+		Respawn.Y = g_sChar[1].m_cLocation.Y;
+	}
 }
 void playerRespawn()
 {
@@ -590,6 +592,9 @@ void processUserInput()
 	{
 		isgamepause = true;
 		g_eGameState = S_PAUSE;
+	}
+	if (isKeyPressed(0x45)) {
+		playerRespawn();
 	}
 }
 
