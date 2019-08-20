@@ -386,7 +386,7 @@ void arrow()
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
-		g_aBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
+		g_aBounceTime = g_dElapsedTime + 0.25; // 125ms should be enough
 	}
 
 	
