@@ -7,15 +7,15 @@
 #include <iomanip>
 #include <sstream>
 
-double  g_dElapsedTime;
-double  g_dDeltaTime;
-double  g_aBounceTime;
+double  g_dElapsedTime[2];
+double  g_dDeltaTime[2];
+double  g_aBounceTime[2];
 bool    g_abKeyPressed[K_COUNT];
 const short sMapWidth=100, sMapHeight=50;
 // Game specific variables here
 SGameChar   g_sChar[2];
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
-double  g_dBounceTime; // this is to prevent key bouncing, so we won't trigger keypresses more than once
+double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 //Map objects
 _Object Map[sMapWidth][sMapHeight] = {};
 
@@ -34,8 +34,10 @@ int level = 0;
 void init(void)
 {
 	// Set precision for floating point output
-	g_dElapsedTime = 0.0;
-	g_dBounceTime = 0.0;
+	g_dElapsedTime[1] = 0.0;
+	g_dBounceTime[1] = 0.0;
+	g_dElapsedTime[0] = 0.0;
+	g_dBounceTime[0] = 0.0;
 
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
@@ -109,9 +111,11 @@ void update(double dt)
 	// get the delta time
 	if (g_eGameState == S_GAME)
 	{
-		g_dElapsedTime += dt;
+		g_dElapsedTime[1] += dt;
+		g_dElapsedTime[0] += dt;
 	}
-	g_dDeltaTime = dt;
+	g_dDeltaTime[1] = dt;
+	g_dDeltaTime[0] = dt;
 
 	switch (g_eGameState)
 	{
@@ -230,12 +234,13 @@ void scanMap(char _Link)
 PlayerVar Player1, Player2;
 void moveCharacter1()
 {
-	if (g_dBounceTime > g_dElapsedTime)
+	if (g_dBounceTime[1] > g_dElapsedTime[1])
 		return;
 	Player1.bSomethingHappened = false;
 	//Jumping
 	Player1.bIsGrounded = false;
-	if (g_abKeyPressed[K_DOWN]&& Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code==2)
+	//Lever interaction
+	if (g_abKeyPressed[K_DOWN] && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 2)
 	{
 		switch (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].LeverType)
 		{
@@ -253,18 +258,24 @@ void moveCharacter1()
 		Player1.sJump = 2;
 		Player1.sDisplacementSinceGrounded = 0;
 	}
-	else if(!Player1.bWasWallJ)
+	else if (!Player1.bWasWallJ && !Player1.bCanWallJumpL && !Player1.bCanWallJumpR)
 	{
 		Player1.sDisplacementSinceGrounded++;
 	}
 	if (Player1.sDisplacementSinceGrounded == 1)
+	{
 		Player1.bWasGrounded = true;
+	}
+	else
+	{
+		Player1.bWasGrounded = false;
+	}
 	//Wall Jumping
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0 && Player1.bWasWallJ && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[1].m_cLocation.Y--;
-		g_dBounceTime = g_dElapsedTime + 0.125;
-		Player1.bIsGrounded = true;
+		g_dBounceTime[1] = g_dElapsedTime[1] + 0.125;
+		Player1.bWasWallJC = true;
 	}
 	Player1.bWasWallJ = false;
 	if (g_abKeyPressed[K_LEFT] && g_sChar[1].m_cLocation.X > 0)
@@ -311,7 +322,6 @@ void moveCharacter1()
 	}
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0)
 	{
-
 		if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Active || Player1.sJump <= 0)
 		{
 			Player1.bCanJump = false;
@@ -327,7 +337,7 @@ void moveCharacter1()
 			g_sChar[1].m_cLocation.Y -= 1;
 			Player1.sJump--;
 		}
-		else if (Player1.bCanWallJumpL && !Map[g_sChar[1].m_cLocation.X -1][g_sChar[1].m_cLocation.Y - 1].Active)
+		else if (Player1.bCanWallJumpL && !Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Active)
 		{
 			g_sChar[1].m_cLocation.X--;
 			g_sChar[1].m_cLocation.Y--;
@@ -337,12 +347,13 @@ void moveCharacter1()
 			g_sChar[1].m_cLocation.X++;
 			g_sChar[1].m_cLocation.Y--;
 		}
-		else if (Player1.bCanWallJumpL&&!Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Active)
+		else if (Player1.bCanWallJumpL && !Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y - 1].Active)
 		{
 			g_sChar[1].m_cLocation.X++;
 			g_sChar[1].m_cLocation.Y--;
 			Player1.bCanWallJumpL = false;
 			Player1.bWasWallJ = true;
+			Player1.bWasWallJC = true;
 		}
 		else if (Player1.bCanWallJumpR && !Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y - 1].Active)
 		{
@@ -350,6 +361,7 @@ void moveCharacter1()
 			g_sChar[1].m_cLocation.Y--;
 			Player1.bCanWallJumpR = false;
 			Player1.bWasWallJ = true;
+			Player1.bWasWallJC = true;
 		}
 		Player1.bSomethingHappened = true;
 	}
@@ -372,31 +384,38 @@ void moveCharacter1()
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y + 1].Active)
 		Player1.bIsGrounded = true;
-	if (!Player1.bIsGrounded && !Player1.bCanJump && !Player1.bCanWallJumpL && !Player1.bCanWallJumpR && !Player1.bWasWallJ)//Gravity
+	if (!Player1.bIsGrounded && !Player1.bCanJump && !Player1.bCanWallJumpL && !Player1.bCanWallJumpR && !Player1.bWasWallJC)//Gravity
 	{
 		g_sChar[1].m_cLocation.Y++;
 		Player1.bSomethingHappened = true;
+	}
+	if (Player1.bWasWallJC)
+	{
+		Player1.bWasWallJC = false;
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 5)
 	{
 		playerRespawn();
 	}
 	//Player interation with interactable objects
-	
+
 	if (Player1.bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
-		g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
+		g_dBounceTime[1] = g_dElapsedTime[1] + 0.125; // 125ms should be enough
 	}
 }
+
+
 void moveCharacter2()
 {
-	if (g_dBounceTime > g_dElapsedTime)
+	if (g_dBounceTime[0] > g_dElapsedTime[0])
 		return;
 	Player2.bSomethingHappened = false;
 	//Jumping
 	Player2.bIsGrounded = false;
-	if (isKeyPressed(0x57) && Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 2)
+	//Lever interaction
+	if (isKeyPressed(0x53) && Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 2)
 	{
 		switch (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].LeverType)
 		{
@@ -414,18 +433,24 @@ void moveCharacter2()
 		Player2.sJump = 2;
 		Player2.sDisplacementSinceGrounded = 0;
 	}
-	else if (!Player2.bWasWallJ)
+	else if (!Player2.bWasWallJ && !Player2.bCanWallJumpL && !Player2.bCanWallJumpR)
 	{
 		Player2.sDisplacementSinceGrounded++;
 	}
 	if (Player2.sDisplacementSinceGrounded == 1)
+	{
 		Player2.bWasGrounded = true;
+	}
+	else
+	{
+		Player2.bWasGrounded = false;
+	}
 	//Wall Jumping
 	if (isKeyPressed(0x57) && g_sChar[0].m_cLocation.Y > 0 && Player2.bWasWallJ && Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[0].m_cLocation.Y--;
-		g_dBounceTime = g_dElapsedTime + 0.125;
-		Player2.bIsGrounded = true;
+		g_dBounceTime[0] = g_dElapsedTime[0] + 0.125;
+		Player2.bWasWallJC = true;
 	}
 	Player2.bWasWallJ = false;
 	if (isKeyPressed(0x41) && g_sChar[0].m_cLocation.X > 0)
@@ -472,7 +497,6 @@ void moveCharacter2()
 	}
 	if (isKeyPressed(0x57) && g_sChar[0].m_cLocation.Y > 0)
 	{
-
 		if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y - 1].Active || Player2.sJump <= 0)
 		{
 			Player2.bCanJump = false;
@@ -504,6 +528,7 @@ void moveCharacter2()
 			g_sChar[0].m_cLocation.Y--;
 			Player2.bCanWallJumpL = false;
 			Player2.bWasWallJ = true;
+			Player2.bWasWallJC = true;
 		}
 		else if (Player2.bCanWallJumpR && !Map[g_sChar[0].m_cLocation.X - 1][g_sChar[0].m_cLocation.Y - 1].Active)
 		{
@@ -511,6 +536,7 @@ void moveCharacter2()
 			g_sChar[0].m_cLocation.Y--;
 			Player2.bCanWallJumpR = false;
 			Player2.bWasWallJ = true;
+			Player2.bWasWallJC = true;
 		}
 		Player2.bSomethingHappened = true;
 	}
@@ -533,10 +559,14 @@ void moveCharacter2()
 	}
 	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y + 1].Active)
 		Player2.bIsGrounded = true;
-	if (!Player2.bIsGrounded && !Player2.bCanJump && !Player2.bCanWallJumpL && !Player2.bCanWallJumpR && !Player2.bWasWallJ)//Gravity
+	if (!Player2.bIsGrounded && !Player2.bCanJump && !Player2.bCanWallJumpL && !Player2.bCanWallJumpR && !Player2.bWasWallJC)//Gravity
 	{
 		g_sChar[0].m_cLocation.Y++;
 		Player2.bSomethingHappened = true;
+	}
+	if (Player2.bWasWallJC)
+	{
+		Player2.bWasWallJC = false;
 	}
 	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 5)
 	{
@@ -547,7 +577,7 @@ void moveCharacter2()
 	if (Player2.bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
-		g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
+		g_dBounceTime[0] = g_dElapsedTime[0] + 0.125; // 125ms should be enough
 	}
 }
 void processUserInput()
@@ -618,8 +648,8 @@ void MapSetting(std::string output, int y) {
 			Map[x][y].Active = true;
 			break;
 		case '<':
-			Map[x][y].Code = 6;
-			Map[x][y].Active = false;
+			Map[x][y].Code = 7;
+			Map[x][y].Active = true;
 			break;
 		case '7':
 			Map[x][y].Code = 7;
@@ -713,7 +743,6 @@ void MapReset() {
 		}
 	}
 }
-
 void renderMap()
 {
 	// Set up sample colours, and output shadings
@@ -750,7 +779,7 @@ void renderMap()
 					g_Console.writeToBuffer(c, '/', 0x25C9);
 				}
 				else {
-					g_Console.writeToBuffer(c, '▄', colors[1]);
+					g_Console.writeToBuffer(c, ' ', colors[1]);
 				}
 				break;
 			case 3:
@@ -777,20 +806,26 @@ void renderMap()
 				c.Y = y;
 				if (Map[x][y].Active)
 				{
-				g_Console.writeToBuffer(c, 'Ф', colors[1]); // NEED NEW ASCII CHARACTERS HERE!!!!!!!!
+				g_Console.writeToBuffer(c, (char)10, colors[12]);
 				}
 				else
 				{
-					g_Console.writeToBuffer(c, 'Ф', colors[1]);
+					g_Console.writeToBuffer(c, (char)15, colors[12]);
 				}
 				break;
 			case 7:
 				Map[x][y].Code = 7;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, 'Û', colors[4]);
+				if (Map[x][y].Active)
+				{
+					g_Console.writeToBuffer(c, (char)10, colors[12]);
+				}
+				else
+				{
+					g_Console.writeToBuffer(c, (char)15, colors[12]);
+				}
 				break;
-				
 			case 8:
 				Map[x][y].Code = 8;
 				c.X = x;
@@ -852,7 +887,7 @@ void renderFramerate()
 	// displays the framerate
 	std::ostringstream ss;
 	ss << std::fixed << std::setprecision(3);
-	ss << 1.0 / g_dDeltaTime << "fps";
+	ss << 1.0 / g_dDeltaTime[1] << "fps";
 	c.X = g_Console.getConsoleSize().X - 9;
 	c.Y = 0;
 	g_Console.writeToBuffer(c, ss.str());

@@ -60,14 +60,15 @@ struct PlayerVar
 	//Jumping
 	bool bIsGrounded = false;
 	bool bWasGrounded = false;
-	bool bCanJump = true;
+	bool bCanJump = false;
 	short sJump = 2;
 	short sDisplacementSinceGrounded = 0;
 	bool bSomethingHappened = false;
 	//Wall Jumping
 	bool bCanWallJumpR = false;
 	bool bCanWallJumpL = false;
-	bool bWasWallJ = false;
+	bool bWasWallJ = false;//detection if player was Wall jumping
+	bool bWasWallJC = false;//checking if player was Wall jumping
 };
 
 void init        ( void );      // initialize your variables, allocate memory, etc
