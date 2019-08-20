@@ -236,6 +236,11 @@ void scanMap(char _Link)
 		}
 	}
 }
+void TrapAI()
+{
+	/*if (g_dArrowBounceTime > g_dArrowElapsedTime)
+		return;*/
+}
 PlayerVar Player1, Player2;
 void moveCharacter1()
 {
