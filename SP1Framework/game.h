@@ -4,6 +4,10 @@
 #include "Framework\timer.h"
 #include <fstream>
 #include <chrono>
+#include <windows.h>
+#include <mmsystem.h>
+#include <tchar.h>
+#pragma comment( lib, "Winmm.lib" )
 
 
 extern CStopWatch g_swTimer;
@@ -95,5 +99,8 @@ void renderMap();           // renders the map to the buffer first
 void renderCharacter();     // renders the character into the buffer
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
+void MainMenuMusic();
+//void JumpMusic();
+//void MovementSounds();
 
 #endif // _GAME_H
