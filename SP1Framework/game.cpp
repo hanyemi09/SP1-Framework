@@ -1067,26 +1067,28 @@ void renderFramerate()
 	c.X = 0;
 	c.Y = 0;
 	g_Console.writeToBuffer(c, ss.str(), 0x59);
+	if (g_eGameState == S_GAME)
+	{
+		ss.str("");
+		ss << "Player 1 HP : ";
+		c.X = 10;
+		c.Y = 0;
+		for (int i = 0; i < Player1.health; i++)
+		{
+			ss << (char)3 << " ";
+		}
+		g_Console.writeToBuffer(c, ss.str(), 0x0C);
+		ss.str("");
+		c.X = 35;
+		c.Y = 0;
+		ss << "Player 2 HP : ";
 
-	ss.str("");
-	ss << "Player 1 HP : ";
-	c.X = 10;
-	c.Y = 0;
-	for (int i = 0; i < Player1.health; i++)
-	{
-		ss << (char)3 << " ";
+		for (int i = 0; i < Player2.health; i++)
+		{
+			ss << (char)3 << " ";
+		}
+		g_Console.writeToBuffer(c, ss.str(), 0x0C);
 	}
-	g_Console.writeToBuffer(c, ss.str(), 0x0C);
-	ss.str("");
-	c.X = 35;
-	c.Y = 0;
-	ss << "Player 2 HP : ";
-	
-	for (int i = 0; i < Player2.health; i++)
-	{
-		ss << (char)3 << " ";
-	}
-	g_Console.writeToBuffer(c, ss.str(), 0x0C);
 }
 void renderToScreen()
 {
