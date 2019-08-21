@@ -61,8 +61,7 @@ struct _Object
 };
 struct PlayerVar
 {
-	short X;
-	short Y;
+	COORD C;
 	bool bGravity=false;
 	//Jumping
 	bool bIsGrounded = false;
