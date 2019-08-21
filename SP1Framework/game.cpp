@@ -896,7 +896,7 @@ void MapReset() {
 	COORD c;
 	for (int x = 0; x < sMapWidth; ++x) {
 		for (int y = 0; y < sMapHeight; ++y) {
-			Map[x][y] = {' '};
+			Map[x][y] = {" "};
 		}
 	}
 }
