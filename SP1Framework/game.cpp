@@ -1069,9 +1069,21 @@ void renderFramerate()
 	g_Console.writeToBuffer(c, ss.str(), 0x59);
 
 	ss.str("");
-	ss << "Player 1 HP : " << Player1.health << " Player 2 HP : " << Player2.health;
+	ss << "Player 1 HP : ";
 	c.X = 10;
 	c.Y = 0;
+	for (int i = 0; i < Player1.health; i++)
+	{
+		ss << (char)3 << " ";
+	}
+
+	ss << " Player 2 HP: ";
+	
+	for (int i = 0; i < Player2.health; i++)
+	{
+		ss << (char)3 << " ";
+	}
+
 	g_Console.writeToBuffer(c, ss.str(), 0x0C);
 }
 void renderToScreen()
