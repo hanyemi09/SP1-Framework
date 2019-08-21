@@ -7,10 +7,9 @@
 #include <iomanip>
 #include <sstream>
 
-double  g_dElapsedTime[2];
+double  g_dElapsedTime;
 double  g_dDeltaTime[2];
-double  g_aBounceTime[2];
-double  g_dArrowElapsedTime[2];
+double  g_dInvincibleTime[2];
 double  g_dArrowDeltaTime[2];
 bool    g_abKeyPressed[K_COUNT];
 const short sMapWidth=100, sMapHeight=50;
@@ -18,7 +17,8 @@ const short sMapWidth=100, sMapHeight=50;
 SGameChar   g_sChar[2];
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigger keypresses more than once
-double g_dArrowBounceTime[2]; //to control speed and rate of fire of darts
+double  g_dArrowBounceTime[2]; //to control speed and rate of fire of darts
+double  g_dWallJTime[2]; //To track how long player has been wall climbing 
 //Map objects
 _Object Map[sMapWidth][sMapHeight] = {};
 
@@ -37,14 +37,11 @@ int level = 0;
 void init(void)
 {
 	// Set precision for floating point output
-	g_dElapsedTime[1] = 0.0;
+	g_dElapsedTime = 0.0;
 	g_dBounceTime[1] = 0.0;
-	g_dElapsedTime[0] = 0.0;
 	g_dBounceTime[0] = 0.0;
 	g_dArrowBounceTime[0] = 0.0;
 	g_dArrowBounceTime[1] = 0.0;
-	g_dArrowElapsedTime[0] = 0.0;
-	g_dArrowElapsedTime[1] = 0.0;
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
 	g_sChar[1].m_cLocation.X = 2; //g_Console.getConsoleSize().X / 2;
@@ -117,10 +114,7 @@ void update(double dt)
 	// get the delta time
 	if (g_eGameState == S_GAME)
 	{
-		g_dElapsedTime[1] += dt;
-		g_dElapsedTime[0] += dt;
-		g_dArrowElapsedTime[0] += dt;
-		g_dArrowElapsedTime[1] += dt;
+		g_dElapsedTime += dt;
 	}
 	g_dDeltaTime[1] = dt;
 	g_dDeltaTime[0] = dt;
@@ -245,7 +239,7 @@ void scanMap(char _Link)
 }
 void TrapAI()
 {
-	if (g_dArrowBounceTime[0] > g_dArrowElapsedTime[0])
+	if (g_dArrowBounceTime[0] > g_dElapsedTime)
 		return;
 	for (int x = 0; x < sMapWidth; x++)
 	{
@@ -270,10 +264,10 @@ void TrapAI()
 			}
 		}
 	}
-	g_dArrowBounceTime[0] = g_dArrowElapsedTime[0] + 1.5;
+	g_dArrowBounceTime[0] = g_dElapsedTime + 1.5;
 }
 void ArrowAI() {
-	if (g_dArrowBounceTime[1] > g_dArrowElapsedTime[1])
+	if (g_dArrowBounceTime[1] > g_dElapsedTime)
 		return;
 		for (int y = 0; y < sMapHeight; y++)
 	{
@@ -307,12 +301,12 @@ void ArrowAI() {
 			}
 		}
 	}
-	g_dArrowBounceTime[1] = g_dArrowElapsedTime[1] + 0.1;
+	g_dArrowBounceTime[1] = g_dElapsedTime + 0.1;
 }
 PlayerVar Player1, Player2;
 void moveCharacter1()
 {
-	if (g_dBounceTime[1] > g_dElapsedTime[1])
+	if (g_dBounceTime[1] > g_dElapsedTime)
 		return;
 	Player1.bSomethingHappened = false;
 	//Jumping
@@ -352,7 +346,7 @@ void moveCharacter1()
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0 && Player1.bWasWallJ && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[1].m_cLocation.Y--;
-		g_dBounceTime[1] = g_dElapsedTime[1] + 0.125;
+		g_dBounceTime[1] = g_dElapsedTime + 0.125;
 		Player1.bWasWallJC = true;
 	}
 	Player1.bWasWallJ = false;
@@ -370,6 +364,7 @@ void moveCharacter1()
 		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Active)
 		{
 			Player1.bCanWallJumpL = true;
+			g_dWallJTime[1] = g_dElapsedTime + 1;
 		}
 		Player1.bSomethingHappened = true;
 	}
@@ -480,7 +475,7 @@ void moveCharacter1()
 	if (Player1.bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
-		g_dBounceTime[1] = g_dElapsedTime[1] + 0.125; // 125ms should be enough
+		g_dBounceTime[1] = g_dElapsedTime + 0.125; // 125ms should be enough
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 4) {
 		setRespawn(1);
@@ -490,7 +485,7 @@ void moveCharacter1()
 
 void moveCharacter2()
 {
-	if (g_dBounceTime[0] > g_dElapsedTime[0])
+	if (g_dBounceTime[0] > g_dElapsedTime)
 		return;
 	Player2.bSomethingHappened = false;
 	//Jumping
@@ -530,7 +525,7 @@ void moveCharacter2()
 	if (isKeyPressed(0x57) && g_sChar[0].m_cLocation.Y > 0 && Player2.bWasWallJ && Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[0].m_cLocation.Y--;
-		g_dBounceTime[0] = g_dElapsedTime[0] + 0.125;
+		g_dBounceTime[0] = g_dElapsedTime + 0.125;
 		Player2.bWasWallJC = true;
 	}
 	Player2.bWasWallJ = false;
@@ -658,7 +653,7 @@ void moveCharacter2()
 	if (Player2.bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
-		g_dBounceTime[0] = g_dElapsedTime[0] + 0.125; // 125ms should be enough
+		g_dBounceTime[0] = g_dElapsedTime + 0.125; // 125ms should be enough
 	}
 	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 4) {
 		setRespawn(0);
@@ -981,7 +976,7 @@ void renderFramerate()
 
 	// displays the elapsed time
 	ss.str("");
-	ss << g_dElapsedTime[0] << "secs";
+	ss << g_dElapsedTime << "secs";
 	c.X = 0;
 	c.Y = 0;
 	g_Console.writeToBuffer(c, ss.str(), 0x59);
