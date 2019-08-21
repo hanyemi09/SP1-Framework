@@ -263,9 +263,9 @@ void TrapAI()
 void ArrowAI() {
 	if (g_dArrowBounceTime[1] > g_dElapsedTime)
 		return;
-		for (int y = 0; y < sMapHeight; y++)
+	for (int y = 0; y < sMapHeight; y++)
 	{
-	for (int x = 0; x < sMapWidth; x++)
+		for (int x = 0; x < sMapWidth; x++)
 		{
 			if (!Map[x][y].Active)
 			{
@@ -273,7 +273,7 @@ void ArrowAI() {
 				{
 				case 6:
 					Map[x][y].Code = 0;
-					if (!Map[x + 1][y].Active)
+					if (Map[x + 1][y].Code==0)
 					{
 						Map[x + 1][y].Code = 6;
 						Map[x + 1][y].Active = false;
@@ -281,12 +281,11 @@ void ArrowAI() {
 					}
 					break;
 				case 7:
-					Map[x][y].Code = 0;
-					if (!Map[x - 1][y].Active)
+					 Map[x][y].Code = 0;
+					if (Map[x - 1][y].Code == 0)
 					{
 						Map[x - 1][y].Code = 7;
 						Map[x - 1][y].Active = false;
-						x++;
 					}
 					break;
 				default:
@@ -420,7 +419,7 @@ void moveCharacter1()
 	}
 	if (g_abKeyPressed[K_UP] && Player1.C.Y > 0)
 	{
-		if ((Map[Player1.C.X][Player1.C.Y - 1].Active && !Map[Player1.C.X][Player1.C.Y - 1].Occupied) || Player1.sJump <= 0)
+		if ((Map[Player1.C.X][Player1.C.Y - 1].Active && !Map[Player1.C.X][Player1.C.Y - 1].Occupied) || Player1.sJump <= 0 || (Map[Player1.C.X][Player1.C.Y - 1].Occupied && Map[Player1.C.X][Player1.C.Y - 2].Active))
 		{
 			Player1.bCanJump = false;
 			Player1.sJump = 0;
@@ -431,7 +430,7 @@ void moveCharacter1()
 		}
 		if (Player1.bCanJump)
 		{
-			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied)//FIX BOOST JUMPING
+			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied)
 			{
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
 				Player2.C.Y--;
@@ -506,7 +505,7 @@ void moveCharacter1()
 
 		Player1.health--;
 		HpUpdate(&Player1);
-		Player1.bSomethingHappened = true;
+		Map[Player1.C.X][Player1.C.Y].Code = 0;
 
 	}
 	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Active) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Active)) {
@@ -653,7 +652,7 @@ void moveCharacter2()
 	}
 	if (isKeyPressed(0x57) && Player2.C.Y > 0)
 	{
-		if ((Map[Player2.C.X][Player2.C.Y - 1].Active && !Map[Player2.C.X][Player2.C.Y - 1].Occupied) || Player2.sJump <= 0)
+		if ((Map[Player2.C.X][Player2.C.Y - 1].Active && !Map[Player2.C.X][Player2.C.Y - 1].Occupied) || Player2.sJump <= 0 || (Map[Player2.C.X][Player2.C.Y - 1].Occupied && Map[Player2.C.X][Player2.C.Y - 2].Active))
 		{
 			Player2.bCanJump = false;
 			Player2.sJump = 0;
@@ -740,7 +739,7 @@ void moveCharacter2()
 	{
 		Player2.health--;
 		HpUpdate(&Player2);
-		Player2.bSomethingHappened = true;
+		Map[Player2.C.X][Player2.C.Y].Code = 0;
 	}		
 
 	if (Player2.bSomethingHappened)
