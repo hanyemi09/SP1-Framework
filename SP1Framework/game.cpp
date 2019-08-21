@@ -223,6 +223,9 @@ void playerRespawn()
 	g_sChar[0].m_cLocation.X = Respawn.X-1;
 	g_sChar[0].m_cLocation.Y = Respawn.Y;
 }
+
+
+
 void scanMap(char _Link)
 {
 	for (int Y = 0; Y < sMapHeight; Y++)
@@ -310,6 +313,24 @@ void ArrowAI() {
 	g_dArrowBounceTime[1] = g_dElapsedTime + 0.1;
 }
 PlayerVar Player1, Player2;
+
+
+void health()
+{
+	
+	if (Player1.health = 0)
+	{
+		playerRespawn();
+	}
+
+
+	if (Player2.health = 0)
+	{
+		playerRespawn();
+	}
+
+}
+
 void moveCharacter1()
 {
 	if (g_dBounceTime[1] > g_dElapsedTime)
@@ -488,7 +509,7 @@ void moveCharacter1()
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 5)
 	{
-		playerRespawn();
+		Player1.health--;
 	}
 	if ((Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 6 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active) || (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 7 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active)) {
 
@@ -684,7 +705,7 @@ void moveCharacter2()
 	}
 	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 5)
 	{
-		playerRespawn();
+		Player2.health--;
 	}
 	if ((Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 6 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active) || (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 7 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active))
 	{
