@@ -471,12 +471,9 @@ void moveCharacter1()
 	{
 		Player1.bWasWallJC = false;
 	}
-	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 5)
+	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 5||(Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code==6 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active)||(Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 7 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active))
 	{
 		playerRespawn();
-	}
-	if ((Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 6 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active) || (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 7 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active)) {
-
 	}
 	//Player interation with interactable objects
 
@@ -652,16 +649,11 @@ void moveCharacter2()
 	{
 		Player2.bWasWallJC = false;
 	}
-	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 5)
+	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 5 || (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 6 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active) || (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 7 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active))
 	{
 		playerRespawn();
 	}
-	if ((Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 6 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active) || (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 7 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active))
-	{
-
-	}
-		
-		//Player interation with interactable objects
+	//Player interation with interactable objects
 
 	if (Player2.bSomethingHappened)
 	{
