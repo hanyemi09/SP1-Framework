@@ -59,7 +59,7 @@ struct _Object
 	bool Active=false;
 	char Link;
 };
-struct PlayerVar
+struct PlayerVar 
 {
 	COORD C;
 	bool bGravity=false;
@@ -89,7 +89,7 @@ void TrapAI();
 
 void MapPrinting();         //Printing of the map
 void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
-void setRespawn(SGameChar g_sChar);// sets respawn point
+void setRespawn(PlayerVar Player);// sets respawn point
 void pausegame();			// pauses game
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
@@ -107,7 +107,7 @@ void MainMenuMusic();
 //void JumpMusic();
 //void MovementSounds();
 
-void HpUpdate(PlayerVar Player, SGameChar g_sChar);
-void Player1Respawn(SGameChar g_sChar);
-void Player2Respawn(SGameChar g_sChar);
+void HpUpdate(PlayerVar Player);
+void Player1Respawn(PlayerVar Player);
+void Player2Respawn(PlayerVar Player);
 #endif // _GAME_H

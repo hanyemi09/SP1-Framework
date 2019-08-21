@@ -2,33 +2,33 @@
 
 COORD Respawn;
 
-void setRespawn(SGameChar g_sChar)
+void setRespawn(PlayerVar Player)
 {
-	Respawn.X = g_sChar.m_cLocation.X;
-	Respawn.Y = g_sChar.m_cLocation.Y;
+	Respawn.X = Player.C.X;
+	Respawn.Y = Player.C.Y;
 }
-void Player1Respawn(SGameChar g_sChar)
+void Player1Respawn(PlayerVar Player)
 {
-	g_sChar.m_cLocation.X = Respawn.X;
-	g_sChar.m_cLocation.Y = Respawn.Y;
+	Player.C.X = Respawn.X;
+	Player.C.Y = Respawn.Y;
 }
-void Player2Respawn(SGameChar g_sChar)
+void Player2Respawn(PlayerVar Player)
 {
-	g_sChar.m_cLocation.X = Respawn.X - 1;
-	g_sChar.m_cLocation.Y = Respawn.Y;
+	Player.C.X = Respawn.X - 1;
+	Player.C.Y = Respawn.Y;
 }
 
-void HpUpdate(PlayerVar Player, SGameChar g_sChar)
+void HpUpdate(PlayerVar Player)
 {
 	if (Player.health == 0)
 	{
-		Player1Respawn(g_sChar);
+		Player1Respawn(Player);
 		Player.health = 3;
 	}
 
 	if (Player.health == 0)
 	{
-		Player2Respawn(g_sChar);
+		Player2Respawn(Player);
 		Player.health = 3;
 	}
 
