@@ -208,6 +208,7 @@ void gameplay()            // gameplay logic
 	moveCharacter2();
 	ArrowAI();
 	TrapAI();
+
 	//MovementSounds(); // sound can be played here too.
 }
 void scanMap(char _Link)
@@ -300,9 +301,10 @@ void moveCharacter1()
 {
 	if (g_dBounceTime[1] > g_dElapsedTime)
 		return;
-	Map[Player1.C.X][Player1.C.Y].Occupied = false;
 	Player1.bSomethingHappened = false;
 	Player1.bGravity = true;
+	COORD PrevPos1 = Player1.C;
+	//Map[Player1.C.X][Player1.C.Y].Active = false;
 	//Jumping
 	Player1.bIsGrounded = false;
 	//Lever interaction
@@ -351,7 +353,6 @@ void moveCharacter1()
 	if (g_abKeyPressed[K_UP] && Player1.C.Y > 0 && Player1.bWasWallJ && Map[Player1.C.X][Player1.C.Y - 1].Code != 1)
 	{
 		Player1.C.Y--;
-		//g_dBounceTime[1] = g_dElapsedTime + 0.125;
 		Player1.bWasWallJC = true;
 	}
 	Player1.bWasWallJ = false;
@@ -360,6 +361,14 @@ void moveCharacter1()
 		if (!Map[Player1.C.X - 1][Player1.C.Y].Active)
 		{
 			Player1.C.X--;
+			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X-1][Player2.C.Y].Active)
+			{
+				Map[Player2.C.X][Player2.C.Y].Active = false;
+				Map[Player2.C.X][Player2.C.Y].Occupied = false;
+				Player2.C.X--;
+				Map[Player2.C.X][Player2.C.Y].Active = true;
+				Map[Player2.C.X][Player2.C.Y].Occupied = true;
+			}
 		}
 		else if (Map[Player1.C.X - 1][Player1.C.Y].Active && !Map[Player1.C.X][Player1.C.Y - 1].Active && !Map[Player1.C.X - 1][Player1.C.Y - 1].Active && Player1.bIsGrounded)
 		{
@@ -383,6 +392,14 @@ void moveCharacter1()
 		if (!Map[Player1.C.X + 1][Player1.C.Y].Active)
 		{
 			Player1.C.X++;
+			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X + 1][Player2.C.Y].Active)
+			{
+				Map[Player2.C.X][Player2.C.Y].Active = false;
+				Map[Player2.C.X][Player2.C.Y].Occupied = false;
+				Player2.C.X++;
+				Map[Player2.C.X][Player2.C.Y].Active = true;
+				Map[Player2.C.X][Player2.C.Y].Occupied = true;
+			}
 		}
 		else if (Map[Player1.C.X + 1][Player1.C.Y].Active && !Map[Player1.C.X][Player1.C.Y - 1].Active && !Map[Player1.C.X + 1][Player1.C.Y - 1].Active && Player1.bIsGrounded)
 		{
@@ -403,7 +420,7 @@ void moveCharacter1()
 	}
 	if (g_abKeyPressed[K_UP] && Player1.C.Y > 0)
 	{
-		if (Map[Player1.C.X][Player1.C.Y - 1].Active || Player1.sJump <= 0)
+		if ((Map[Player1.C.X][Player1.C.Y - 1].Active && !Map[Player1.C.X][Player1.C.Y - 1].Occupied) || Player1.sJump <= 0)
 		{
 			Player1.bCanJump = false;
 			Player1.sJump = 0;
@@ -412,9 +429,13 @@ void moveCharacter1()
 		{
 			Player1.bCanJump = true;
 		}
-		//Beep(1440, 30);
 		if (Player1.bCanJump)
 		{
+			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied)//FIX BOOST JUMPING
+			{
+				Map[Player1.C.X][Player1.C.Y].Occupied = false;
+				Player2.C.Y--;
+			}
 			Player1.C.Y -= 1;
 			Player1.sJump--;
 		}
@@ -501,18 +522,21 @@ void moveCharacter1()
 	if (Map[Player1.C.X][Player1.C.Y].Code == 4) {
 		setRespawn(&Player1);
 	}
-
+	Map[PrevPos1.X][PrevPos1.Y].Occupied = false;
+	Map[PrevPos1.X][PrevPos1.Y].Active = false;
+	Map[Player1.C.X][Player1.C.Y].Active = true;
 	Map[Player1.C.X][Player1.C.Y].Occupied = true;
 }
 
 
 void moveCharacter2()
 {
-	Map[Player1.C.X][Player1.C.Y].Occupied = false;
 	if (g_dBounceTime[0] > g_dElapsedTime)
 		return;
 	Player2.bSomethingHappened = false;
 	Player2.bGravity = true;
+	COORD PrevPos2 = Player2.C;
+	//Map[Player2.C.X][Player2.C.Y].Active = false;
 	//Jumping
 	Player2.bIsGrounded = false;
 	//Lever interaction
@@ -570,6 +594,14 @@ void moveCharacter2()
 		if (!Map[Player2.C.X - 1][Player2.C.Y].Active)
 		{
 			Player2.C.X--;
+			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X - 1][Player1.C.Y].Active)
+			{
+				Map[Player1.C.X][Player1.C.Y].Active = false;
+				Map[Player1.C.X][Player1.C.Y].Occupied = false;
+				Player1.C.X--;
+				Map[Player1.C.X][Player1.C.Y].Active = true;
+				Map[Player1.C.X][Player1.C.Y].Occupied = true;
+			}
 		}
 		else if (Map[Player2.C.X - 1][Player2.C.Y].Active && !Map[Player2.C.X][Player2.C.Y - 1].Active && !Map[Player2.C.X - 1][Player2.C.Y - 1].Active && Player2.bIsGrounded)
 		{
@@ -593,6 +625,14 @@ void moveCharacter2()
 		if (!Map[Player2.C.X + 1][Player2.C.Y].Active)
 		{
 			Player2.C.X++;
+			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X + 1][Player1.C.Y].Active)
+			{
+				Map[Player1.C.X][Player1.C.Y].Active = false;
+				Map[Player1.C.X][Player1.C.Y].Occupied = false;
+				Player1.C.X++;
+				Map[Player1.C.X][Player1.C.Y].Active = true;
+				Map[Player1.C.X][Player1.C.Y].Occupied = true;
+			}
 		}
 		else if (Map[Player2.C.X + 1][Player2.C.Y].Active && !Map[Player2.C.X][Player2.C.Y - 1].Active && !Map[Player2.C.X + 1][Player2.C.Y - 1].Active && Player2.bIsGrounded)
 		{
@@ -613,7 +653,7 @@ void moveCharacter2()
 	}
 	if (isKeyPressed(0x57) && Player2.C.Y > 0)
 	{
-		if (Map[Player2.C.X][Player2.C.Y - 1].Active || Player2.sJump <= 0)
+		if ((Map[Player2.C.X][Player2.C.Y - 1].Active && !Map[Player2.C.X][Player2.C.Y - 1].Occupied) || Player2.sJump <= 0)
 		{
 			Player2.bCanJump = false;
 			Player2.sJump = 0;
@@ -625,6 +665,11 @@ void moveCharacter2()
 		//Beep(1440, 30);
 		if (Player2.bCanJump)
 		{
+			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied)
+			{
+				Map[Player1.C.X][Player1.C.Y].Occupied = false;
+				Player1.C.Y--;
+			}
 			Player2.C.Y -= 1;
 			Player2.sJump--;
 		}
@@ -706,9 +751,12 @@ void moveCharacter2()
 	if (Map[Player2.C.X][Player2.C.Y].Code == 4) {
 		setRespawn(&Player2);
 	}
-
-	Map[Player1.C.X][Player1.C.Y].Occupied = true;
+	Map[PrevPos2.X][PrevPos2.Y].Occupied = false;
+	Map[PrevPos2.X][PrevPos2.Y].Active = false;
+	Map[Player2.C.X][Player2.C.Y].Occupied = true;
+	Map[Player2.C.X][Player2.C.Y].Active = true;
 }
+
 void processUserInput()
 {
 	// quits the game if player hits the escape key
@@ -896,7 +944,7 @@ void MapReset() {
 	COORD c;
 	for (int x = 0; x < sMapWidth; ++x) {
 		for (int y = 0; y < sMapHeight; ++y) {
-			Map[x][y] = {' '};
+			Map[x][y] = {" "};
 		}
 	}
 }
@@ -916,6 +964,12 @@ void renderMap()
 	//rendering from Map array
 	for (int x = 0; x < sMapWidth; ++x) {
 		for (int y = 1; y <= sMapHeight; ++y) {
+			if (Map[x][y].Active)
+			{
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, '\\', colors[5]);
+			}
 			switch (Map[x][y].Code) {
 			case 0:
 				Map[x][y].Code = 0;
@@ -1002,8 +1056,12 @@ void renderMap()
 				g_Console.writeToBuffer(c, 'Û', colors[4]);
 				break;
 			}
-			
-
+			if (Map[x][y].Occupied)
+			{
+				c.X = x;
+				c.Y = y;
+				g_Console.writeToBuffer(c, '/', colors[4]);
+			}
 		}
 	}
 	if (Map[Player1.C.X][Player1.C.Y].Code == 9&& Map[Player2.C.X][Player2.C.Y].Code == 9) {
