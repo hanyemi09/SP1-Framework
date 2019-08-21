@@ -73,9 +73,8 @@ struct PlayerVar
 	bool bCanWallJumpL = false;
 	bool bWasWallJ = false;//detection if player was Wall jumping
 	bool bWasWallJC = false;//checking if player was Wall jumping
-	//Health
+	//health
 	short health = 3;
-
 };
 
 void init        ( void );      // initialize your variables, allocate memory, etc
@@ -106,4 +105,5 @@ void MainMenuMusic();
 //void JumpMusic();
 //void MovementSounds();
 void health();
+
 #endif // _GAME_H

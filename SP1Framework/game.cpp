@@ -220,11 +220,12 @@ void playerRespawn()
 {
 	g_sChar[1].m_cLocation.X = Respawn.X;
 	g_sChar[1].m_cLocation.Y = Respawn.Y;
-	g_sChar[0].m_cLocation.X = Respawn.X-1;
+	}
+void player2Respawn()
+{
+	g_sChar[0].m_cLocation.X = Respawn.X - 1;
 	g_sChar[0].m_cLocation.Y = Respawn.Y;
 }
-
-
 
 void scanMap(char _Link)
 {
@@ -314,21 +315,20 @@ void ArrowAI() {
 }
 PlayerVar Player1, Player2;
 
-
 void health()
 {
+	if (Player1.health == 0)
+	{
+		playerRespawn();
+		Player1.health = 3;
+	}
+
+	if (Player2.health == 0)
+	{
+		player2Respawn();
+		Player2.health = 3;
+	}
 	
-	if (Player1.health = 0)
-	{
-		playerRespawn();
-	}
-
-
-	if (Player2.health = 0)
-	{
-		playerRespawn();
-	}
-
 }
 
 void moveCharacter1()
@@ -509,7 +509,14 @@ void moveCharacter1()
 	}
 	if (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 5)
 	{
+		playerRespawn();
+	}
+	if ((Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 6 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active) || (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 7 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active)) {
+
 		Player1.health--;
+		health();
+		Player1.bSomethingHappened = true;
+
 	}
 	if ((Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 6 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active) || (Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Code == 7 && !Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y].Active)) {
 
@@ -703,16 +710,17 @@ void moveCharacter2()
 	{
 		Player2.bWasWallJC = false;
 	}
+		//Player interation with interactable objects
 	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 5)
 	{
-		Player2.health--;
+		player2Respawn();
 	}
 	if ((Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 6 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active) || (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 7 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active))
 	{
-
-	}
-		
-		//Player interation with interactable objects
+		Player2.health--;
+		health();
+		Player2.bSomethingHappened = true;
+	}		
 
 	if (Player2.bSomethingHappened)
 	{
@@ -736,6 +744,7 @@ void processUserInput()
 	}
 	if (isKeyPressed(0x45)) {
 		playerRespawn();
+		player2Respawn();
 	}
 }
 
