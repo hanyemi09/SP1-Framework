@@ -770,6 +770,17 @@ void processUserInput()
 	if (isKeyPressed(0x45)) {
 		Player1Respawn(&Player1);
 		Player2Respawn(&Player2);
+		for (int y = 0; y < sMapHeight; y++)
+		{
+			for (int x = 0; x < sMapWidth; x++)
+			{
+				if (Map[x][y].Occupied)
+				{
+					Map[x][y].Occupied = false;
+					Map[x][y].Active = false;
+				}
+			}
+		}
 	}
 }
 
