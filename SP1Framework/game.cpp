@@ -1065,6 +1065,12 @@ void renderFramerate()
 	c.X = 0;
 	c.Y = 0;
 	g_Console.writeToBuffer(c, ss.str(), 0x59);
+
+	ss.str("");
+	ss << "Player 1 HP : " << Player[1].health << " Player 2 HP : " << Player[2].health;
+	c.X = 10;
+	c.Y = 0;
+	g_Console.writeToBuffer(c, ss.str(), 0x0C);
 }
 void renderToScreen()
 {
