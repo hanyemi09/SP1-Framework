@@ -300,6 +300,7 @@ void moveCharacter1()
 {
 	if (g_dBounceTime[1] > g_dElapsedTime)
 		return;
+	Map[Player1.C.X][Player1.C.Y].Occupied = false;
 	Player1.bSomethingHappened = false;
 	Player1.bGravity = true;
 	//Jumping
@@ -500,11 +501,14 @@ void moveCharacter1()
 	if (Map[Player1.C.X][Player1.C.Y].Code == 4) {
 		setRespawn(&Player1);
 	}
+
+	Map[Player1.C.X][Player1.C.Y].Occupied = true;
 }
 
 
 void moveCharacter2()
 {
+	Map[Player1.C.X][Player1.C.Y].Occupied = false;
 	if (g_dBounceTime[0] > g_dElapsedTime)
 		return;
 	Player2.bSomethingHappened = false;
@@ -702,6 +706,8 @@ void moveCharacter2()
 	if (Map[Player2.C.X][Player2.C.Y].Code == 4) {
 		setRespawn(&Player2);
 	}
+
+	Map[Player1.C.X][Player1.C.Y].Occupied = true;
 }
 void processUserInput()
 {
