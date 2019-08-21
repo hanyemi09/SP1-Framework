@@ -649,7 +649,7 @@ void moveCharacter2()
 	{
 		Player2.bWasWallJC = false;
 	}
-	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 5)
+	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 5 || (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 6 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active) || (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 7 && !Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Active))
 	{
 		playerRespawn();
 	}
