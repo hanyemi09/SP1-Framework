@@ -478,6 +478,7 @@ void moveCharacter1()
 	if (Map[Player1.C.X][Player1.C.Y].Code == 5)
 	{
 		Player1Respawn(&Player1);
+		Player1.health = 3;
 	}
 	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Active) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Active)) {
 
@@ -684,6 +685,7 @@ void moveCharacter2()
 	if (Map[Player2.C.X][Player2.C.Y].Code == 5)
 	{
 		Player2Respawn(&Player2);
+		Player2.health = 3;
 	}
 	if ((Map[Player2.C.X][Player2.C.Y].Code == 6 && !Map[Player2.C.X][Player2.C.Y].Active) || (Map[Player2.C.X][Player2.C.Y].Code == 7 && !Map[Player2.C.X][Player2.C.Y].Active))
 	{
