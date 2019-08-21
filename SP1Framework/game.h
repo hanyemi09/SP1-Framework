@@ -4,10 +4,7 @@
 #include "Framework\timer.h"
 #include <fstream>
 #include <chrono>
-#include <windows.h>
-#include <mmsystem.h>
-#include <tchar.h>
-#pragma comment( lib, "Winmm.lib" )
+
 
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
@@ -70,10 +67,6 @@ struct PlayerVar
 	//Wall Jumping
 	bool bCanWallJumpR = false;
 	bool bCanWallJumpL = false;
-	//sound
-	void JumpMusic() {
-		TCHAR wavfile[] = _T("jump_04.wav");
-		PlaySound(wavfile, NULL, SND_FILENAME | SND_ASYNC);
 	bool bWasWallJ = false;//detection if player was Wall jumping
 	bool bWasWallJC = false;//checking if player was Wall jumping
 };
@@ -102,8 +95,5 @@ void renderMap();           // renders the map to the buffer first
 void renderCharacter();     // renders the character into the buffer
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
-void MainMenuMusic();
-//void JumpMusic();
-//void MovementSounds();
 
 #endif // _GAME_H
