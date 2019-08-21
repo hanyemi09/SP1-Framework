@@ -18,7 +18,7 @@ SGameChar   g_sChar[2];
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 double  g_dArrowBounceTime[2]; //to control speed and rate of fire of darts
-double  g_dWallJTime[2]; //To track how long player has been wall climbing 
+double  g_dSlideTime[2]; //To track how long player has been wall climbing 
 //Map objects
 _Object Map[sMapWidth][sMapHeight] = {};
 
@@ -327,6 +327,8 @@ void moveCharacter1()
 	{
 		Player1.bIsGrounded = true;
 		Player1.bCanJump = true;
+		Player1.bCanWallJumpL = false;
+		Player1.bCanWallJumpR = false;
 		Player1.sJump = 2;
 		Player1.sDisplacementSinceGrounded = 0;
 	}
@@ -343,6 +345,14 @@ void moveCharacter1()
 		Player1.bWasGrounded = false;
 	}
 	//Wall Jumping
+	if (Player1.bCanWallJumpL || Player1.bCanWallJumpR)
+	{
+		if (g_dSlideTime[1] < g_dElapsedTime)
+		{
+			g_sChar[1].m_cLocation.Y++;
+			g_dSlideTime[1] = g_dElapsedTime + 1;
+		}
+	}
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0 && Player1.bWasWallJ && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[1].m_cLocation.Y--;
@@ -364,7 +374,8 @@ void moveCharacter1()
 		else if (Map[g_sChar[1].m_cLocation.X - 1][g_sChar[1].m_cLocation.Y].Active)
 		{
 			Player1.bCanWallJumpL = true;
-			g_dWallJTime[1] = g_dElapsedTime + 1;
+			if(g_dElapsedTime> g_dSlideTime[1])
+			g_dSlideTime[1] = g_dElapsedTime + 1;
 		}
 		Player1.bSomethingHappened = true;
 	}
@@ -386,6 +397,8 @@ void moveCharacter1()
 		else if (Map[g_sChar[1].m_cLocation.X + 1][g_sChar[1].m_cLocation.Y].Active)
 		{
 			Player1.bCanWallJumpR = true;
+			if (g_dElapsedTime > g_dSlideTime[1])
+				g_dSlideTime[1] = g_dElapsedTime + 1;
 		}
 		Player1.bSomethingHappened = true;
 	}
@@ -448,6 +461,7 @@ void moveCharacter1()
 	{
 		Player1.bCanWallJumpL = false;
 		Player1.bCanWallJumpR = false;
+		g_dSlideTime[1] = NULL;
 		Player1.bSomethingHappened = true;
 	}
 	if (g_abKeyPressed[K_SPACE])
@@ -522,6 +536,14 @@ void moveCharacter2()
 		Player2.bWasGrounded = false;
 	}
 	//Wall Jumping
+	if (Player2.bCanWallJumpL || Player2.bCanWallJumpR)
+	{
+		if (g_dSlideTime[0] < g_dElapsedTime)
+		{
+			g_sChar[0].m_cLocation.Y++;
+			g_dSlideTime[0] = g_dElapsedTime + 1;
+		}
+	}
 	if (isKeyPressed(0x57) && g_sChar[0].m_cLocation.Y > 0 && Player2.bWasWallJ && Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[0].m_cLocation.Y--;
@@ -543,6 +565,8 @@ void moveCharacter2()
 		else if (Map[g_sChar[0].m_cLocation.X - 1][g_sChar[0].m_cLocation.Y].Active)
 		{
 			Player2.bCanWallJumpL = true;
+			if (g_dElapsedTime > g_dSlideTime[0])
+				g_dSlideTime[0] = g_dElapsedTime + 1;
 		}
 		Player2.bSomethingHappened = true;
 	}
@@ -564,6 +588,8 @@ void moveCharacter2()
 		else if (Map[g_sChar[0].m_cLocation.X + 1][g_sChar[0].m_cLocation.Y].Active)
 		{
 			Player2.bCanWallJumpR = true;
+			if (g_dElapsedTime > g_dSlideTime[0])
+				g_dSlideTime[0] = g_dElapsedTime + 1;
 		}
 		Player2.bSomethingHappened = true;
 	}
@@ -626,6 +652,7 @@ void moveCharacter2()
 	{
 		Player2.bCanWallJumpL = false;
 		Player2.bCanWallJumpR = false;
+		g_dSlideTime[0] = NULL;
 		Player2.bSomethingHappened = true;
 	}
 	if (g_abKeyPressed[K_SPACE])
