@@ -1070,7 +1070,7 @@ void renderFramerate()
 
 	ss.str("");
 	ss << "Player 1 HP : ";
-	c.X = 20;
+	c.X = 10;
 	c.Y = 0;
 	for (int i = 0; i < Player1.health; i++)
 	{
@@ -1078,16 +1078,15 @@ void renderFramerate()
 	}
 	g_Console.writeToBuffer(c, ss.str(), 0x0C);
 	ss.str("");
-	c.X = 45;
+	c.X = 35;
 	c.Y = 0;
-	ss << " Player 2 HP: ";
+	ss << "Player 2 HP : ";
 	
 	for (int i = 0; i < Player2.health; i++)
 	{
 		ss << (char)3 << " ";
 	}
 	g_Console.writeToBuffer(c, ss.str(), 0x0C);
-	
 }
 void renderToScreen()
 {
