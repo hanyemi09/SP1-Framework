@@ -70,12 +70,13 @@ struct PlayerVar
 	//Wall Jumping
 	bool bCanWallJumpR = false;
 	bool bCanWallJumpL = false;
+	bool bWasWallJ = false;//detection if player was Wall jumping
+	bool bWasWallJC = false;//checking if player was Wall jumping
 	//sound
 	void JumpMusic() {
 		TCHAR wavfile[] = _T("jump_04.wav");
 		PlaySound(wavfile, NULL, SND_FILENAME | SND_ASYNC);
-	bool bWasWallJ = false;//detection if player was Wall jumping
-	bool bWasWallJC = false;//checking if player was Wall jumping
+	}
 };
 
 void init        ( void );      // initialize your variables, allocate memory, etc

@@ -56,7 +56,7 @@ void init(void)
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
 	//sets initial spawnpoint
-	setRespawn();
+	setRespawn(1);
 	MapPrinting();
 	switch (level) {
 	case 0:
@@ -217,10 +217,10 @@ void gameplay()            // gameplay logic
 	//MovementSounds();
 }
 COORD Respawn;
-void setRespawn()
+void setRespawn(int PlayerNumber)
 {
-	Respawn.X = 2;
-	Respawn.Y = 4;
+	Respawn.X = g_sChar[PlayerNumber].m_cLocation.X;
+	Respawn.Y = g_sChar[PlayerNumber].m_cLocation.Y;
 }
 void playerRespawn()
 {
@@ -318,7 +318,7 @@ void ArrowAI() {
 PlayerVar Player1, Player2;
 void moveCharacter1()
 {
-	if (g_dBounceTime > g_dElapsedTime)
+	if (g_dBounceTime[1] > g_dElapsedTime[1])
 		return;
 	Player1.bSomethingHappened = false;
 	//Jumping
@@ -351,7 +351,7 @@ void moveCharacter1()
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0 && Player1.bWasWallJ && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[1].m_cLocation.Y--;
-		g_dBounceTime = g_dElapsedTime + 0.125;
+		g_dBounceTime[1] = g_dElapsedTime[1] + 0.125;
 		Player1.bIsGrounded = true;
 	}
 	Player1.bWasWallJ = false;
@@ -475,17 +475,19 @@ void moveCharacter1()
 		playerRespawn();
 	}
 	//Player interation with interactable objects
-
-
+	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 4)
+	{
+		setRespawn(1);
+	}
 	if (Player1.bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
-		g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
+		g_dBounceTime[1] = g_dElapsedTime[1] + 0.125; // 125ms should be enough
 	}
 }
 void moveCharacter2()
 {
-	if (g_dBounceTime > g_dElapsedTime)
+	if (g_dBounceTime[0] > g_dElapsedTime[0])
 		return;
 	Player2.bSomethingHappened = false;
 	//Jumping
@@ -518,7 +520,7 @@ void moveCharacter2()
 	if (isKeyPressed(0x57) && g_sChar[0].m_cLocation.Y > 0 && Player2.bWasWallJ && Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[0].m_cLocation.Y--;
-		g_dBounceTime = g_dElapsedTime + 0.125;
+		g_dBounceTime[0] = g_dElapsedTime[0] + 0.125;
 		Player2.bIsGrounded = true;
 	}
 	Player2.bWasWallJ = false;
@@ -631,18 +633,21 @@ void moveCharacter2()
 	{
 		g_sChar[0].m_cLocation.Y++;
 		Player2.bSomethingHappened = true;
-		g_dBounceTime = g_dElapsedTime + 0.125;
+		g_dBounceTime[0] = g_dElapsedTime[0] + 0.125;
 	}
 	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 5)
 	{
 		playerRespawn();
 	}
 	//Player interation with interactable objects
-
+	if (Map[g_sChar[0].m_cLocation.X][g_sChar[0].m_cLocation.Y].Code == 4)
+	{
+		setRespawn(0);
+	}
 	if (Player2.bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
-		g_dBounceTime = g_dElapsedTime + 0.125; // 125ms should be enough
+		g_dBounceTime[0] = g_dElapsedTime[0] + 0.125; // 125ms should be enough
 	}
 }
 void processUserInput()
@@ -994,7 +999,7 @@ void renderFramerate()
 	// displays the framerate
 	std::ostringstream ss;
 	ss << std::fixed << std::setprecision(3);
-	ss << 1.0 / g_dDeltaTime << "fps";
+	ss << 1.0 / g_dDeltaTime[0] << "fps";
 	c.X = g_Console.getConsoleSize().X - 9;
 	c.Y = 0;
 	g_Console.writeToBuffer(c, ss.str());
