@@ -356,7 +356,7 @@ void moveCharacter1()
 	if (g_abKeyPressed[K_UP] && g_sChar[1].m_cLocation.Y > 0 && Player1.bWasWallJ && Map[g_sChar[1].m_cLocation.X][g_sChar[1].m_cLocation.Y - 1].Code != 1)
 	{
 		g_sChar[1].m_cLocation.Y--;
-		g_dBounceTime[1] = g_dElapsedTime + 0.125;
+		//g_dBounceTime[1] = g_dElapsedTime + 0.125;
 		Player1.bWasWallJC = true;
 	}
 	Player1.bWasWallJ = false;
@@ -523,6 +523,8 @@ void moveCharacter2()
 	{
 		Player2.bIsGrounded = true;
 		Player2.bCanJump = true;
+		Player2.bCanWallJumpL = false;
+		Player2.bCanWallJumpR = false;
 		Player2.sJump = 2;
 		Player2.sDisplacementSinceGrounded = 0;
 	}
