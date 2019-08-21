@@ -54,6 +54,7 @@ enum LeverTypes
 };
 struct _Object
 {
+	bool Occupied = false;
 	short Code;
 	short LeverType;
 	bool Active=false;

@@ -300,6 +300,7 @@ void moveCharacter1()
 {
 	if (g_dBounceTime[1] > g_dElapsedTime)
 		return;
+	Map[Player1.C.X][Player1.C.Y].Occupied = false;
 	Player1.bSomethingHappened = false;
 	Player1.bGravity = true;
 	//Jumping
@@ -478,6 +479,7 @@ void moveCharacter1()
 	if (Map[Player1.C.X][Player1.C.Y].Code == 5)
 	{
 		Player1Respawn(&Player1);
+		Player1.health = 3;
 	}
 	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Active) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Active)) {
 
@@ -499,11 +501,14 @@ void moveCharacter1()
 	if (Map[Player1.C.X][Player1.C.Y].Code == 4) {
 		setRespawn(&Player1);
 	}
+
+	Map[Player1.C.X][Player1.C.Y].Occupied = true;
 }
 
 
 void moveCharacter2()
 {
+	Map[Player1.C.X][Player1.C.Y].Occupied = false;
 	if (g_dBounceTime[0] > g_dElapsedTime)
 		return;
 	Player2.bSomethingHappened = false;
@@ -684,6 +689,7 @@ void moveCharacter2()
 	if (Map[Player2.C.X][Player2.C.Y].Code == 5)
 	{
 		Player2Respawn(&Player2);
+		Player2.health = 3;
 	}
 	if ((Map[Player2.C.X][Player2.C.Y].Code == 6 && !Map[Player2.C.X][Player2.C.Y].Active) || (Map[Player2.C.X][Player2.C.Y].Code == 7 && !Map[Player2.C.X][Player2.C.Y].Active))
 	{
@@ -700,6 +706,8 @@ void moveCharacter2()
 	if (Map[Player2.C.X][Player2.C.Y].Code == 4) {
 		setRespawn(&Player2);
 	}
+
+	Map[Player1.C.X][Player1.C.Y].Occupied = true;
 }
 void processUserInput()
 {
@@ -1067,9 +1075,21 @@ void renderFramerate()
 	g_Console.writeToBuffer(c, ss.str(), 0x59);
 
 	ss.str("");
-	ss << "Player 1 HP : " << Player1.health << " Player 2 HP : " << Player2.health;
+	ss << "Player 1 HP : ";
 	c.X = 10;
 	c.Y = 0;
+	for (int i = 0; i < Player1.health; i++)
+	{
+		ss << (char)3 << " ";
+	}
+
+	ss << " Player 2 HP: ";
+	
+	for (int i = 0; i < Player2.health; i++)
+	{
+		ss << (char)3 << " ";
+	}
+
 	g_Console.writeToBuffer(c, ss.str(), 0x0C);
 }
 void renderToScreen()
