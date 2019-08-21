@@ -69,6 +69,9 @@ struct PlayerVar
 	bool bCanWallJumpL = false;
 	bool bWasWallJ = false;//detection if player was Wall jumping
 	bool bWasWallJC = false;//checking if player was Wall jumping
+	//Health
+	short health = 3;
+
 };
 
 void init        ( void );      // initialize your variables, allocate memory, etc
@@ -95,5 +98,5 @@ void renderMap();           // renders the map to the buffer first
 void renderCharacter();     // renders the character into the buffer
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
-
+void health();
 #endif // _GAME_H
