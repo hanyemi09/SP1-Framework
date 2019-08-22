@@ -149,9 +149,9 @@ void pausegame()
 	COORD c = g_Console.getConsoleSize();
 	c.Y /= 3;
 	c.X = c.X / 2 - 9;
-	g_Console.writeToBuffer(c, "Press R to continue", 0x03);
+	g_Console.writeToBuffer(c, "Press O to continue", 0x03);
 
-	if (isKeyPressed(0x52))
+	if (isKeyPressed(0x4F))
 	{
 		isgamepause = false;
 		g_eGameState = S_GAME;
@@ -807,7 +807,7 @@ void processUserInput()
 		isgamepause = true;
 		g_eGameState = S_PAUSE;
 	}
-	if (isKeyPressed(0x45)) {
+	if (isKeyPressed(0x55)) {
 		Player1Respawn(&Player1);
 		Player2Respawn(&Player2);
 		for (int y = 0; y < sMapHeight; y++)
@@ -1186,13 +1186,15 @@ void renderFramerate()
 	g_Console.writeToBuffer(c, ss.str());
 
 	// displays the elapsed time
-	ss.str("");
-	ss << g_dElapsedTime << "secs";
-	c.X = 0;
-	c.Y = 0;
-	g_Console.writeToBuffer(c, ss.str(), 0x59);
+	
 	if (g_eGameState == S_GAME)
 	{
+		ss.str("");
+		ss << g_dElapsedTime << "secs";
+		c.X = 0;
+		c.Y = 0;
+		g_Console.writeToBuffer(c, ss.str(), 0x59);
+
 		ss.str("");
 		ss << "Player 1 HP : ";
 		c.X = 10;
