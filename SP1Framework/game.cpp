@@ -26,7 +26,64 @@ _Object Map[100][50];
 Console g_Console(100, 50, "Game");
 //level counter
 int level = 0;
-
+struct Arrow
+{
+	COORD C;
+	bool Direction;
+	double BounceTime = 0.0;
+	double DeltaTime = 0.0;
+	void MoveArrow(double ElapsedTime)
+	{
+		if (!Map[C.X][C.Y].Solid)
+		{
+			if (Direction == A_RIGHT)
+			{
+				Map[C.X][C.Y].Code = 0;
+				if (Map[C.X + 1][C.Y].Code == 0)
+				{
+					Map[C.X + 1][C.Y].Code = 6;
+					Map[C.X + 1][C.Y].Solid = false;
+					C.X++;
+				}
+			}
+			if (Direction == A_LEFT)
+			{
+				Map[C.X][C.Y].Code = 0;
+				if (Map[C.X - 1][C.Y].Code == 0)
+				{
+					Map[C.Y - 1][C.Y].Code = 7;
+					Map[C.Y - 1][C.Y].Solid = false;
+				}
+			}
+			BounceTime = ElapsedTime + 0.1;
+		}
+	}
+};
+std::vector<Arrow> Arrows;
+struct Trap
+{
+	COORD C;
+	bool Direction;
+	double BounceTime = 0.0;
+	double DeltaTime = 0.0;
+	void CreateArrow(double ElapsedTime)
+	{
+		if (BounceTime > ElapsedTime)
+			return;
+		if (Direction == A_RIGHT)
+		{
+			Arrow temp = { C.X + 1,C.Y,A_RIGHT };
+			Arrows.push_back(temp);
+		}
+		if (Direction == A_LEFT)
+		{
+			Arrow temp = { C.X - 1,C.Y,A_LEFT };
+			Arrows.push_back(temp);
+		}
+		BounceTime = ElapsedTime + 1.5;
+	}
+};
+std::vector<Trap> Traps;
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
 //            Initialize variables, allocate memory, load data from file, etc. 
@@ -126,7 +183,10 @@ void update(double dt)
 	{
 		Arrows[i].DeltaTime = dt;
 	}
-	g_dArrowDeltaTime[1] = dt;
+	for (int i; i < Traps.size(); i++)
+	{
+		Traps[i].DeltaTime = dt;
+	}
 
 	switch (g_eGameState)
 	{
@@ -152,10 +212,7 @@ void pausegame()
 	{
 		isgamepause = false;
 		g_eGameState = S_GAME;
-
-
 	}
-
 	if (g_abKeyPressed[K_ESCAPE] == true)
 	{
 		g_bQuitGame = true;
@@ -205,7 +262,6 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
-	TrapAI();
 	//MovementSounds(); // sound can be played here too.
 }
 void scanMap(char _Link)
@@ -228,61 +284,7 @@ void scanMap(char _Link)
 		}
 	}
 }
-struct Arrow
-{
-	COORD C;
-	bool Direction;
-	double BounceTime=0.0;
-	double DeltaTime= 0.0;
-	void MoveArrow()
-	{
-		if (!Map[C.X][C.Y].Solid)
-		{
-			if (Direction == A_RIGHT)
-			{
-				Map[C.X][C.Y].Code = 0;
-				if (Map[C.X + 1][C.Y].Code == 0)
-				{
-					Map[C.X + 1][C.Y].Code = 6;
-					Map[C.X + 1][C.Y].Solid = false;
-					C.X++;
-				}
-			}
-			if (Direction == A_LEFT)
-			{
-				Map[C.X][C.Y].Code = 0;
-				if (Map[C.X - 1][C.Y].Code == 0)
-				{
-					Map[C.Y - 1][C.Y].Code = 7;
-					Map[C.Y - 1][C.Y].Solid = false;
-				}
-			}
 
-		}
-	}
-};
-std::vector<Arrow> Arrows;
-struct Trap
-{
-	COORD C;
-	bool Direction;
-	double BounceTime = 0.0;
-	double DeltaTime = 0.0;
-void TrapAI(double ElapsedTime)
-{
-	if (BounceTime > ElapsedTime)
-		return;
-	if (Direction == A_RIGHT)
-	{
-
-	}
-	if (Direction == A_LEFT)
-	{
-
-	}
-	BounceTime = ElapsedTime + 1.5;
-}
-};
 void moveCharacter1()
 {
 	if (g_dBounceTime[1] > g_dElapsedTime)

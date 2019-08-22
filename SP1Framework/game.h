@@ -92,7 +92,6 @@ void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
-void TrapAI();
 
 void PPFunc();
 void MapPrinting();         //Printing of the map
