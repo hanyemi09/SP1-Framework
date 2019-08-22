@@ -6,6 +6,8 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <irrKlang.h>
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
 double  g_dElapsedTime;
 double  g_dDeltaTime[2];
@@ -22,6 +24,7 @@ double  g_dArrowBounceTime[2]; //to control speed and rate of fire of darts
 double  g_dSlideTime[2]; //To track how long player has been wall climbing 
 //Map objects
 _Object Map[sMapWidth][sMapHeight] = {};
+irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
 
 // Console object
 Console g_Console(100, 50, "Game");
@@ -351,12 +354,15 @@ void moveCharacter1()
 	}
 	if (g_abKeyPressed[K_UP] && Player1.C.Y > 0 && Player1.bWasWallJ && Map[Player1.C.X][Player1.C.Y - 1].Code != 1)
 	{
+		
 		Player1.C.Y--;
 		Player1.bWasWallJC = true;
+		
 	}
 	Player1.bWasWallJ = false;
 	if (g_abKeyPressed[K_LEFT] && Player1.C.X > 0)
 	{
+		
 		if (!Map[Player1.C.X - 1][Player1.C.Y].Active)
 		{
 			Player1.C.X--;
@@ -421,11 +427,13 @@ void moveCharacter1()
 	{
 		if ((Map[Player1.C.X][Player1.C.Y - 1].Active && !Map[Player1.C.X][Player1.C.Y - 1].Occupied) || Player1.sJump <= 0 || (Map[Player1.C.X][Player1.C.Y - 1].Occupied && Map[Player1.C.X][Player1.C.Y - 2].Active))
 		{
+
 			Player1.bCanJump = false;
 			Player1.sJump = 0;
 		}
 		else if (Player1.bWasGrounded)
 		{
+
 			Player1.bCanJump = true;
 		}
 		if (Player1.bCanJump)
@@ -435,6 +443,9 @@ void moveCharacter1()
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
 				Player2.C.Y--;
 			}
+			if (Player1.sJump == 2){
+				engine->play2D("jumpmp3.mp3", false, false);
+		}
 			Player1.C.Y -= 1;
 			Player1.sJump--;
 		}
@@ -668,6 +679,9 @@ void moveCharacter2()
 			{
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
 				Player1.C.Y--;
+			}
+			if (Player2.sJump == 2) {
+				engine->play2D("jumpmp3.mp3", false, false);
 			}
 			Player2.C.Y -= 1;
 			Player2.sJump--;
@@ -1117,6 +1131,7 @@ void renderCharacter()
 }
 
 void MainMenuMusic() {
+
 	TCHAR wavfile[] = _T("main_menu.wav");
 	PlaySound(wavfile, NULL, SND_LOOP | SND_ASYNC);
 }
