@@ -7,13 +7,12 @@
 #include <windows.h>
 #include <mmsystem.h>
 #include <tchar.h>
+#include <vector>
 #pragma comment( lib, "Winmm.lib" )
 #include <sstream>
 
-
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
-
 // Enumeration to store the control keys that your game will have
 enum EKEYS
 {
@@ -58,6 +57,7 @@ struct _Object
 	bool Occupied = false;
 	short Code;
 	short LeverType;
+	bool Solid;
 	bool Active=false;
 	char Link;
 };
@@ -80,16 +80,22 @@ struct PlayerVar
 	//health
 	short health = 3;
 };
+enum Direction
+{
+	A_LEFT,
+	A_RIGHT
+};
+
 
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
-void ArrowAI(_Object Map[100][50], double* BounceTime, double* ElapsedTime);
-void TrapAI(_Object Map[100][50], double *BounceTime, double *ElapsedTime);
-
         //Printing of the map
+
+void PPFunc();
+void MapPrinting();         //Printing of the map
 void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
 void setRespawn(PlayerVar *Player);// sets respawn point
 void pausegame();			// pauses game

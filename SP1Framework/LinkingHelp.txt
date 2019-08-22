@@ -1,0 +1,15 @@
+INSTRUCTION MANUAL FOR LINKING LEVERS TO BLOCKS
+
+N:a
+O:b
+P:c
+Q:d
+R:e
+S:f
+T:g
+U:h
+V:i
+W:j
+X:k
+Y:l
+Z:m
