@@ -1220,13 +1220,15 @@ void renderFramerate()
 	g_Console.writeToBuffer(c, ss.str());
 
 	// displays the elapsed time
-	ss.str("");
-	ss << g_dElapsedTime << "secs";
-	c.X = 0;
-	c.Y = 0;
-	g_Console.writeToBuffer(c, ss.str(), 0x59);
+	
 	if (g_eGameState == S_GAME)
 	{
+		ss.str("");
+		ss << g_dElapsedTime << "secs";
+		c.X = 0;
+		c.Y = 0;
+		g_Console.writeToBuffer(c, ss.str(), 0x59);
+
 		ss.str("");
 		ss << "Player 1 HP : ";
 		c.X = 10;
