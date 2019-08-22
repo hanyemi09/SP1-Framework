@@ -46,7 +46,6 @@ void init(void)
 	g_eGameState = S_SPLASHSCREEN;
 	Player1.C.X = 2; //g_Console.getConsoleSize().X / 2;
 	Player1.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
-	//Player1.m_bSolid = true;
 	Player2.C.X = 3; //g_Console.getConsoleSize().X / 2;
 	Player2.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
 	//Player2.m_bSolid = true;
@@ -207,6 +206,7 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
+
 	//MovementSounds(); // sound can be played here too.
 }
 void scanMap(char _Link)
@@ -846,6 +846,10 @@ void renderGame()
 	}
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
+	for (int i = 0; i < Traps.size(); i++)
+	{
+		Traps[i].CreateArrow(g_dElapsedTime, Arrows);
+	}
 }
 void MapSetting(std::string output, int y) {
 	for (int x = 0; x < output.size(); ++x) {
