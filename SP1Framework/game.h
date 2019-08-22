@@ -85,7 +85,63 @@ enum Direction
 	A_LEFT,
 	A_RIGHT
 };
+struct Arrow
+{
+	COORD C;
+	bool Direction;
+	double BounceTime = 0.0;
+	double DeltaTime = 0.0;
+	void MoveArrow(double ElapsedTime, _Object Map[][50])
+	{
+		if (!Map[C.X][C.Y].Solid)
+		{
+			if (Direction == A_RIGHT)
+			{
+				Map[C.X][C.Y].Code = 0;
+				if (Map[C.X + 1][C.Y].Code == 0)
+				{
+					Map[C.X + 1][C.Y].Code = 6;
+					Map[C.X + 1][C.Y].Solid = false;
+					C.X++;
+				}
+			}
+			if (Direction == A_LEFT)
+			{
+				Map[C.X][C.Y].Code = 0;
+				if (Map[C.X - 1][C.Y].Code == 0)
+				{
+					Map[C.Y - 1][C.Y].Code = 7;
+					Map[C.Y - 1][C.Y].Solid = false;
+				}
+			}
+			BounceTime = ElapsedTime + 0.1;
+		}
+	}
+};
 
+struct Trap
+{
+	COORD C;
+	bool Direction;
+	double BounceTime = 0.0;
+	double DeltaTime = 0.0;
+	void CreateArrow(double ElapsedTime, std::vector<Arrow> Arrows)
+	{
+		if (BounceTime > ElapsedTime)
+			return;
+		if (Direction == A_RIGHT)
+		{
+			Arrow temp = { C.X + 1,C.Y,A_RIGHT };
+			Arrows.push_back(temp);
+		}
+		if (Direction == A_LEFT)
+		{
+			Arrow temp = { C.X - 1,C.Y,A_LEFT };
+			Arrows.push_back(temp);
+		}
+		BounceTime = ElapsedTime + 1.5;
+	}
+};
 
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player

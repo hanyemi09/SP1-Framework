@@ -22,68 +22,13 @@ double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigge
 double  g_dSlideTime[2]; //To track how long player has been wall climbing 
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
 _Object Map[100][50];
+std::vector<Arrow> Arrows;
+std::vector<Trap> Traps;
 // Console object
 Console g_Console(100, 50, "Game");
 //level counter
 int level = 0;
-struct Arrow
-{
-	COORD C;
-	bool Direction;
-	double BounceTime = 0.0;
-	double DeltaTime = 0.0;
-	void MoveArrow(double ElapsedTime)
-	{
-		if (!Map[C.X][C.Y].Solid)
-		{
-			if (Direction == A_RIGHT)
-			{
-				Map[C.X][C.Y].Code = 0;
-				if (Map[C.X + 1][C.Y].Code == 0)
-				{
-					Map[C.X + 1][C.Y].Code = 6;
-					Map[C.X + 1][C.Y].Solid = false;
-					C.X++;
-				}
-			}
-			if (Direction == A_LEFT)
-			{
-				Map[C.X][C.Y].Code = 0;
-				if (Map[C.X - 1][C.Y].Code == 0)
-				{
-					Map[C.Y - 1][C.Y].Code = 7;
-					Map[C.Y - 1][C.Y].Solid = false;
-				}
-			}
-			BounceTime = ElapsedTime + 0.1;
-		}
-	}
-};
-std::vector<Arrow> Arrows;
-struct Trap
-{
-	COORD C;
-	bool Direction;
-	double BounceTime = 0.0;
-	double DeltaTime = 0.0;
-	void CreateArrow(double ElapsedTime)
-	{
-		if (BounceTime > ElapsedTime)
-			return;
-		if (Direction == A_RIGHT)
-		{
-			Arrow temp = { C.X + 1,C.Y,A_RIGHT };
-			Arrows.push_back(temp);
-		}
-		if (Direction == A_LEFT)
-		{
-			Arrow temp = { C.X - 1,C.Y,A_LEFT };
-			Arrows.push_back(temp);
-		}
-		BounceTime = ElapsedTime + 1.5;
-	}
-};
-std::vector<Trap> Traps;
+
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
 //            Initialize variables, allocate memory, load data from file, etc. 
@@ -1027,10 +972,10 @@ void renderMap()
 	COORD c;
 	c.X = 0;
 	c.Y = 2;
-
+	Trap temp;
 	//rendering from Map array
-	for (int x = 0; x < sMapWidth; ++x) {
-		for (int y = 1; y <= sMapHeight; ++y) {
+	for (short x = 0; x < sMapWidth; ++x) {
+		for (short y = 1; y <= sMapHeight; ++y) {
 			if (y<=sYDisplacement)
 			{
 				continue;
@@ -1087,27 +1032,17 @@ void renderMap()
 				Map[x][y].Code = 6;
 				c.X = x;
 				c.Y = y;
-				if (Map[x][y].Solid)
-				{
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
-				}
-				else
-				{
-					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
-				}
+				temp = { x, y, A_RIGHT };
+				Traps.push_back(temp);
 				break;
 			case 7:
 				Map[x][y].Code = 7;
 				c.X = x;
 				c.Y = y;
-				if (Map[x][y].Solid)
-				{
-					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
-				}
-				else
-				{
-					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
-				}
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
+				temp = { x, y, A_LEFT };
+				Traps.push_back(temp);
 				break;
 			case 8:
 				Map[x][y].Code = 8;
