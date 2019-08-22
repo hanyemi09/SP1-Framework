@@ -8,6 +8,7 @@
 #include <mmsystem.h>
 #include <tchar.h>
 #pragma comment( lib, "Winmm.lib" )
+#include <sstream>
 
 
 extern CStopWatch g_swTimer;
@@ -88,7 +89,7 @@ void shutdown    ( void );      // do clean up, free memory
 void ArrowAI(_Object Map[100][50], double* BounceTime, double* ElapsedTime);
 void TrapAI(_Object Map[100][50], double *BounceTime, double *ElapsedTime);
 
-void MapPrinting();         //Printing of the map
+        //Printing of the map
 void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
 void setRespawn(PlayerVar *Player);// sets respawn point
 void pausegame();			// pauses game
@@ -107,6 +108,9 @@ void renderToScreen();      // dump the contents of the buffer to the screen, on
 void MainMenuMusic();
 //void JumpMusic();
 //void MovementSounds();
+
+void MapInitialise(int level,_Object Map[100][50]);
+void MapReset(int sMapWidth, int sMapHeight, _Object Map[100][50]);
 
 void HpUpdate(PlayerVar *Player);
 void Player1Respawn(PlayerVar *Player);
