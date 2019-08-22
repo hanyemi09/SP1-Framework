@@ -85,8 +85,8 @@ void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
 void render      ( void );      // renders the current state of the game to the console
 void shutdown    ( void );      // do clean up, free memory
-void ArrowAI();
-void TrapAI();
+void ArrowAI(_Object Map[100][50], double* BounceTime, double* ElapsedTime);
+void TrapAI(_Object Map[100][50], double *BounceTime, double *ElapsedTime);
 
 void MapPrinting();         //Printing of the map
 void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly

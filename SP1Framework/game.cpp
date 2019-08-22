@@ -206,8 +206,8 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
-	ArrowAI();
-	TrapAI();
+	ArrowAI(Map, &g_dArrowBounceTime[1],&g_dElapsedTime);
+	TrapAI(Map,&g_dArrowBounceTime[0],&g_dElapsedTime);
 
 	//MovementSounds(); // sound can be played here too.
 }
@@ -230,71 +230,6 @@ void scanMap(char _Link)
 			}
 		}
 	}
-}
-void TrapAI()
-{
-	if (g_dArrowBounceTime[0] > g_dElapsedTime)
-		return;
-	for (int x = 0; x < sMapWidth; x++)
-	{
-		for (int y = 0; y < sMapHeight; y++)
-		{
-			switch (Map[x][y].Code)
-			{
-			case 6:
-				if (Map[x][y].Active)
-				{
-					Map[x + 1][y].Code = 6;
-					Map[x + 1][y].Active = false;
-				}
-				break;
-			case 7:
-				if (Map[x][y].Active)
-				{
-					Map[x - 1][y].Code = 7;
-					Map[x - 1][y].Active = false;
-				}
-				break;
-			}
-		}
-	}
-	g_dArrowBounceTime[0] = g_dElapsedTime + 1.5;
-}
-void ArrowAI() {
-	if (g_dArrowBounceTime[1] > g_dElapsedTime)
-		return;
-	for (int y = 0; y < sMapHeight; y++)
-	{
-		for (int x = 0; x < sMapWidth; x++)
-		{
-			if (!Map[x][y].Active)
-			{
-				switch (Map[x][y].Code)
-				{
-				case 6:
-					Map[x][y].Code = 0;
-					if (Map[x + 1][y].Code==0)
-					{
-						Map[x + 1][y].Code = 6;
-						Map[x + 1][y].Active = false;
-						x++;
-					}
-					break;
-				case 7:
-					 Map[x][y].Code = 0;
-					if (Map[x - 1][y].Code == 0)
-					{
-						Map[x - 1][y].Code = 7;
-						Map[x - 1][y].Active = false;
-					}
-					break;
-				default:
-					break;
-				}
-			}
-		}
-	}
-	g_dArrowBounceTime[1] = g_dElapsedTime + 0.1;
 }
 void moveCharacter1()
 {
