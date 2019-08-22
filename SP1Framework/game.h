@@ -57,6 +57,7 @@ struct _Object
 	bool Occupied = false;
 	short Code;
 	short LeverType;
+	bool Solid;
 	bool Active=false;
 	char Link;
 };
@@ -88,6 +89,7 @@ void shutdown    ( void );      // do clean up, free memory
 void ArrowAI();
 void TrapAI();
 
+void PPFunc();
 void MapPrinting();         //Printing of the map
 void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
 void setRespawn(PlayerVar *Player);// sets respawn point

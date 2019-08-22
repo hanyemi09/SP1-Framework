@@ -50,10 +50,10 @@ void init(void)
 	g_eGameState = S_SPLASHSCREEN;
 	Player1.C.X = 2; //g_Console.getConsoleSize().X / 2;
 	Player1.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
-	//Player1.m_bActive = true;
+	//Player1.m_bSolid = true;
 	Player2.C.X = 3; //g_Console.getConsoleSize().X / 2;
 	Player2.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
-	//Player2.m_bActive = true;
+	//Player2.m_bSolid = true;
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
 	//sets initial spawnpoint
@@ -222,13 +222,13 @@ void scanMap(char _Link)
 		{
 			if (Map[X][Y].Link == _Link && Map[X][Y].Code == 8)
 			{
-				if (Map[X][Y].Active == false)
+				if (Map[X][Y].Solid == false)
 				{
-					Map[X][Y].Active = true;
+					Map[X][Y].Solid = true;
 				}
-				else if(Map[X][Y].Active == true)
+				else if(Map[X][Y].Solid == true)
 				{
-					Map[X][Y].Active = false;
+					Map[X][Y].Solid = false;
 				}
 			}
 		}
@@ -245,17 +245,17 @@ void TrapAI()
 			switch (Map[x][y].Code)
 			{
 			case 6:
-				if (Map[x][y].Active)
+				if (Map[x][y].Solid)
 				{
 					Map[x + 1][y].Code = 6;
-					Map[x + 1][y].Active = false;
+					Map[x + 1][y].Solid = false;
 				}
 				break;
 			case 7:
-				if (Map[x][y].Active)
+				if (Map[x][y].Solid)
 				{
 					Map[x - 1][y].Code = 7;
-					Map[x - 1][y].Active = false;
+					Map[x - 1][y].Solid = false;
 				}
 				break;
 			}
@@ -270,7 +270,7 @@ void ArrowAI() {
 	{
 		for (int x = 0; x < sMapWidth; x++)
 		{
-			if (!Map[x][y].Active)
+			if (!Map[x][y].Solid)
 			{
 				switch (Map[x][y].Code)
 				{
@@ -279,7 +279,7 @@ void ArrowAI() {
 					if (Map[x + 1][y].Code==0)
 					{
 						Map[x + 1][y].Code = 6;
-						Map[x + 1][y].Active = false;
+						Map[x + 1][y].Solid = false;
 						x++;
 					}
 					break;
@@ -288,7 +288,7 @@ void ArrowAI() {
 					if (Map[x - 1][y].Code == 0)
 					{
 						Map[x - 1][y].Code = 7;
-						Map[x - 1][y].Active = false;
+						Map[x - 1][y].Solid = false;
 					}
 					break;
 				default:
@@ -306,7 +306,7 @@ void moveCharacter1()
 	Player1.bSomethingHappened = false;
 	Player1.bGravity = true;
 	COORD PrevPos1 = Player1.C;
-	//Map[Player1.C.X][Player1.C.Y].Active = false;
+	//Map[Player1.C.X][Player1.C.Y].Solid = false;
 	//Jumping
 	Player1.bIsGrounded = false;
 	//Lever interaction
@@ -319,7 +319,7 @@ void moveCharacter1()
 			if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
 			{
 				Map[Player2.C.X][Player2.C.Y].Occupied = false;
-				Map[Player2.C.X][Player2.C.Y].Active = true;
+				Map[Player2.C.X][Player2.C.Y].Solid = true;
 				Player2Respawn(&Player2);
 			}
 		default:
@@ -327,7 +327,7 @@ void moveCharacter1()
 		}
 		Player1.bSomethingHappened = true;
 	}
-	if (Map[Player1.C.X][Player1.C.Y + 1].Active == true)
+	if (Map[Player1.C.X][Player1.C.Y + 1].Solid == true)
 	{
 		Player1.bIsGrounded = true;
 		Player1.bCanJump = true;
@@ -369,24 +369,24 @@ void moveCharacter1()
 	if (g_abKeyPressed[K_LEFT] && Player1.C.X > 0)
 	{
 		
-		if (!Map[Player1.C.X - 1][Player1.C.Y].Active)
+		if (!Map[Player1.C.X - 1][Player1.C.Y].Solid)
 		{
 			Player1.C.X--;
-			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X-1][Player2.C.Y].Active)
+			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X-1][Player2.C.Y].Solid)
 			{
-				Map[Player2.C.X][Player2.C.Y].Active = false;
+				Map[Player2.C.X][Player2.C.Y].Solid = false;
 				Map[Player2.C.X][Player2.C.Y].Occupied = false;
 				Player2.C.X--;
-				Map[Player2.C.X][Player2.C.Y].Active = true;
+				Map[Player2.C.X][Player2.C.Y].Solid = true;
 				Map[Player2.C.X][Player2.C.Y].Occupied = true;
 			}
 		}
-		else if (Map[Player1.C.X - 1][Player1.C.Y].Active && !Map[Player1.C.X][Player1.C.Y - 1].Active && !Map[Player1.C.X - 1][Player1.C.Y - 1].Active && Player1.bIsGrounded)
+		else if (Map[Player1.C.X - 1][Player1.C.Y].Solid && !Map[Player1.C.X][Player1.C.Y - 1].Solid && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid && Player1.bIsGrounded)
 		{
 			Player1.C.X--;
 			Player1.C.Y--;
 		}
-		else if (Map[Player1.C.X - 1][Player1.C.Y].Active)
+		else if (Map[Player1.C.X - 1][Player1.C.Y].Solid)
 		{
 			Player1.bCanWallJumpL = true;
 			if(g_dElapsedTime> g_dSlideTime[1])
@@ -394,30 +394,30 @@ void moveCharacter1()
 		}
 		Player1.bSomethingHappened = true;
 	}
-	if (!Map[Player1.C.X - 1][Player1.C.Y].Active)
+	if (!Map[Player1.C.X - 1][Player1.C.Y].Solid)
 	{
 		Player1.bCanWallJumpL = false;
 	}
 	if (g_abKeyPressed[K_RIGHT] && Player1.C.X < g_Console.getConsoleSize().X - 1)
 	{
-		if (!Map[Player1.C.X + 1][Player1.C.Y].Active)
+		if (!Map[Player1.C.X + 1][Player1.C.Y].Solid)
 		{
 			Player1.C.X++;
-			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X + 1][Player2.C.Y].Active)
+			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X + 1][Player2.C.Y].Solid)
 			{
-				Map[Player2.C.X][Player2.C.Y].Active = false;
+				Map[Player2.C.X][Player2.C.Y].Solid = false;
 				Map[Player2.C.X][Player2.C.Y].Occupied = false;
 				Player2.C.X++;
-				Map[Player2.C.X][Player2.C.Y].Active = true;
+				Map[Player2.C.X][Player2.C.Y].Solid = true;
 				Map[Player2.C.X][Player2.C.Y].Occupied = true;
 			}
 		}
-		else if (Map[Player1.C.X + 1][Player1.C.Y].Active && !Map[Player1.C.X][Player1.C.Y - 1].Active && !Map[Player1.C.X + 1][Player1.C.Y - 1].Active && Player1.bIsGrounded)
+		else if (Map[Player1.C.X + 1][Player1.C.Y].Solid && !Map[Player1.C.X][Player1.C.Y - 1].Solid && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid && Player1.bIsGrounded)
 		{
 			Player1.C.X++;
 			Player1.C.Y--;
 		}
-		else if (Map[Player1.C.X + 1][Player1.C.Y].Active)
+		else if (Map[Player1.C.X + 1][Player1.C.Y].Solid)
 		{
 			Player1.bCanWallJumpR = true;
 			if (g_dElapsedTime > g_dSlideTime[1])
@@ -425,13 +425,13 @@ void moveCharacter1()
 		}
 		Player1.bSomethingHappened = true;
 	}
-	if (!Map[Player1.C.X + 1][Player1.C.Y].Active)
+	if (!Map[Player1.C.X + 1][Player1.C.Y].Solid)
 	{
 		Player1.bCanWallJumpR = false;
 	}
 	if (g_abKeyPressed[K_UP] && Player1.C.Y > 0)
 	{
-		if ((Map[Player1.C.X][Player1.C.Y - 1].Active && !Map[Player1.C.X][Player1.C.Y - 1].Occupied) || Player1.sJump <= 0 || (Map[Player1.C.X][Player1.C.Y - 1].Occupied && Map[Player1.C.X][Player1.C.Y - 2].Active))
+		if ((Map[Player1.C.X][Player1.C.Y - 1].Solid && !Map[Player1.C.X][Player1.C.Y - 1].Occupied) || Player1.sJump <= 0 || (Map[Player1.C.X][Player1.C.Y - 1].Occupied && Map[Player1.C.X][Player1.C.Y - 2].Solid))
 		{
 
 			Player1.bCanJump = false;
@@ -450,22 +450,22 @@ void moveCharacter1()
 				Player2.C.Y--;
 			}
 			if (Player1.sJump == 2){
-				engine->play2D("jumpmp3.mp3", false, false);
+				engine->play2D("jump2.wav", false, false);
 		}
 			Player1.C.Y -= 1;
 			Player1.sJump--;
 		}
-		else if (Player1.bCanWallJumpL && !Map[Player1.C.X - 1][Player1.C.Y - 1].Active)
+		else if (Player1.bCanWallJumpL && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X--;
 			Player1.C.Y--;
 		}
-		else if (Player1.bCanWallJumpR && !Map[Player1.C.X + 1][Player1.C.Y - 1].Active)
+		else if (Player1.bCanWallJumpR && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X++;
 			Player1.C.Y--;
 		}
-		else if (Player1.bCanWallJumpL && !Map[Player1.C.X + 1][Player1.C.Y - 1].Active)
+		else if (Player1.bCanWallJumpL && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X++;
 			Player1.C.Y--;
@@ -473,7 +473,7 @@ void moveCharacter1()
 			Player1.bWasWallJ = true;
 			Player1.bWasWallJC = true;
 		}
-		else if (Player1.bCanWallJumpR && !Map[Player1.C.X - 1][Player1.C.Y - 1].Active)
+		else if (Player1.bCanWallJumpR && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X--;
 			Player1.C.Y--;
@@ -498,10 +498,10 @@ void moveCharacter1()
 	}
 	/*if (g_abKeyPressed[K_SPACE])
 	{
-		Player1.m_bActive = !Player1.m_bActive;
+		Player1.m_bSolid = !Player1.m_bSolid;
 		Player1.bSomethingHappened = true;
 	}*/
-	if (Map[Player1.C.X][Player1.C.Y + 1].Active)
+	if (Map[Player1.C.X][Player1.C.Y + 1].Solid)
 		Player1.bIsGrounded = true;
 	//Gravity
 	if (!Player1.bIsGrounded && !Player1.bCanJump && !Player1.bCanWallJumpL && !Player1.bCanWallJumpR && !Player1.bWasWallJC && Player1.bGravity)
@@ -522,12 +522,12 @@ void moveCharacter1()
 	if (Map[Player1.C.X][Player1.C.Y].Code == 4) {
 		setRespawn(&Player1);
 	}
-	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Active) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Active)) {
+	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Solid) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Solid)) {
 		Player1.health--;
 		HpUpdate(&Player1);
 		Map[Player1.C.X][Player1.C.Y].Code = 0;
-
 	}
+		PPFunc();
 
 	if (Player1.bSomethingHappened)
 	{
@@ -535,11 +535,62 @@ void moveCharacter1()
 		g_dBounceTime[1] = g_dElapsedTime + 0.125; // 125ms should be enough
 	}
 	Map[PrevPos1.X][PrevPos1.Y].Occupied = false;
-	Map[PrevPos1.X][PrevPos1.Y].Active = false;
-	Map[Player1.C.X][Player1.C.Y].Active = true;
+	Map[PrevPos1.X][PrevPos1.Y].Solid = false;
+	Map[Player1.C.X][Player1.C.Y].Solid = true;
 	Map[Player1.C.X][Player1.C.Y].Occupied = true;
 }
-
+void PPFunc()
+{
+	for (int x = 0; x < sMapWidth;x++)
+	{
+		for (int y = 0; y < sMapHeight; y++)
+		{
+			if (Map[x][y].LeverType == PressurePlate)
+			{
+				if (Map[x][y].Active && !Map[x][y].Occupied)
+				{
+						scanMap(Map[x][y].Link);
+						Map[x][y].Active = false;
+						if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+						{
+							if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+							{
+								Map[Player2.C.X][Player2.C.Y].Occupied = false;
+								Map[Player2.C.X][Player2.C.Y].Solid = true;
+								Player2Respawn(&Player2);
+							}
+							if (Map[Player2.C.X][Player2.C.Y].Link == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
+							{
+								Map[Player1.C.X][Player1.C.Y].Occupied = false;
+								Map[Player1.C.X][Player1.C.Y].Solid = true;
+								Player1Respawn(&Player1);
+							}
+						}
+				}
+				else if (!Map[x][y].Active&&Map[x][y].Occupied)
+				{
+						scanMap(Map[x][y].Link);
+						Map[x][y].Active = true;
+						if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+						{
+							if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+							{
+								Map[Player2.C.X][Player2.C.Y].Occupied = false;
+								Map[Player2.C.X][Player2.C.Y].Solid = true;
+								Player2Respawn(&Player2);
+							}
+							if (Map[Player2.C.X][Player2.C.Y].Link == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
+							{
+								Map[Player1.C.X][Player1.C.Y].Occupied = false;
+								Map[Player1.C.X][Player1.C.Y].Solid = true;
+								Player1Respawn(&Player1);
+							}
+						}
+				}
+			}
+		}
+	}
+}
 
 void moveCharacter2()
 {
@@ -548,7 +599,7 @@ void moveCharacter2()
 	Player2.bSomethingHappened = false;
 	Player2.bGravity = true;
 	COORD PrevPos2 = Player2.C;
-	//Map[Player2.C.X][Player2.C.Y].Active = false;
+	//Map[Player2.C.X][Player2.C.Y].Solid = false;
 	//Jumping
 	Player2.bIsGrounded = false;
 	//Lever interaction
@@ -561,7 +612,7 @@ void moveCharacter2()
 			if (Map[Player2.C.X][Player2.C.Y].Link  == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
 			{
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
-				Map[Player1.C.X][Player1.C.Y].Active = true;
+				Map[Player1.C.X][Player1.C.Y].Solid = true;
 				Player1Respawn(&Player1);
 			}
 		default:
@@ -569,7 +620,7 @@ void moveCharacter2()
 		}
 		Player2.bSomethingHappened = true;
 	}
-	if (Map[Player2.C.X][Player2.C.Y + 1].Active == true)
+	if (Map[Player2.C.X][Player2.C.Y + 1].Solid == true)
 	{
 		Player2.bIsGrounded = true;
 		Player2.bCanJump = true;
@@ -609,24 +660,24 @@ void moveCharacter2()
 	Player2.bWasWallJ = false;
 	if (isKeyPressed(0x41) && Player2.C.X > 0)
 	{
-		if (!Map[Player2.C.X - 1][Player2.C.Y].Active)
+		if (!Map[Player2.C.X - 1][Player2.C.Y].Solid)
 		{
 			Player2.C.X--;
-			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X - 1][Player1.C.Y].Active)
+			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X - 1][Player1.C.Y].Solid)
 			{
-				Map[Player1.C.X][Player1.C.Y].Active = false;
+				Map[Player1.C.X][Player1.C.Y].Solid = false;
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
 				Player1.C.X--;
-				Map[Player1.C.X][Player1.C.Y].Active = true;
+				Map[Player1.C.X][Player1.C.Y].Solid = true;
 				Map[Player1.C.X][Player1.C.Y].Occupied = true;
 			}
 		}
-		else if (Map[Player2.C.X - 1][Player2.C.Y].Active && !Map[Player2.C.X][Player2.C.Y - 1].Active && !Map[Player2.C.X - 1][Player2.C.Y - 1].Active && Player2.bIsGrounded)
+		else if (Map[Player2.C.X - 1][Player2.C.Y].Solid && !Map[Player2.C.X][Player2.C.Y - 1].Solid && !Map[Player2.C.X - 1][Player2.C.Y - 1].Solid && Player2.bIsGrounded)
 		{
 			Player2.C.X--;
 			Player2.C.Y--;
 		}
-		else if (Map[Player2.C.X - 1][Player2.C.Y].Active)
+		else if (Map[Player2.C.X - 1][Player2.C.Y].Solid)
 		{
 			Player2.bCanWallJumpL = true;
 			if (g_dElapsedTime > g_dSlideTime[0])
@@ -634,30 +685,30 @@ void moveCharacter2()
 		}
 		Player2.bSomethingHappened = true;
 	}
-	if (!Map[Player2.C.X - 1][Player2.C.Y].Active)
+	if (!Map[Player2.C.X - 1][Player2.C.Y].Solid)
 	{
 		Player2.bCanWallJumpL = false;
 	}
 	if (isKeyPressed(0x44) && Player2.C.X < g_Console.getConsoleSize().X - 1)
 	{
-		if (!Map[Player2.C.X + 1][Player2.C.Y].Active)
+		if (!Map[Player2.C.X + 1][Player2.C.Y].Solid)
 		{
 			Player2.C.X++;
-			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X + 1][Player1.C.Y].Active)
+			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X + 1][Player1.C.Y].Solid)
 			{
-				Map[Player1.C.X][Player1.C.Y].Active = false;
+				Map[Player1.C.X][Player1.C.Y].Solid = false;
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
 				Player1.C.X++;
-				Map[Player1.C.X][Player1.C.Y].Active = true;
+				Map[Player1.C.X][Player1.C.Y].Solid = true;
 				Map[Player1.C.X][Player1.C.Y].Occupied = true;
 			}
 		}
-		else if (Map[Player2.C.X + 1][Player2.C.Y].Active && !Map[Player2.C.X][Player2.C.Y - 1].Active && !Map[Player2.C.X + 1][Player2.C.Y - 1].Active && Player2.bIsGrounded)
+		else if (Map[Player2.C.X + 1][Player2.C.Y].Solid && !Map[Player2.C.X][Player2.C.Y - 1].Solid && !Map[Player2.C.X + 1][Player2.C.Y - 1].Solid && Player2.bIsGrounded)
 		{
 			Player2.C.X++;
 			Player2.C.Y--;
 		}
-		else if (Map[Player2.C.X + 1][Player2.C.Y].Active)
+		else if (Map[Player2.C.X + 1][Player2.C.Y].Solid)
 		{
 			Player2.bCanWallJumpR = true;
 			if (g_dElapsedTime > g_dSlideTime[0])
@@ -665,13 +716,13 @@ void moveCharacter2()
 		}
 		Player2.bSomethingHappened = true;
 	}
-	if (!Map[Player2.C.X + 1][Player2.C.Y].Active)
+	if (!Map[Player2.C.X + 1][Player2.C.Y].Solid)
 	{
 		Player2.bCanWallJumpR = false;
 	}
 	if (isKeyPressed(0x57) && Player2.C.Y > 0)
 	{
-		if ((Map[Player2.C.X][Player2.C.Y - 1].Active && !Map[Player2.C.X][Player2.C.Y - 1].Occupied) || Player2.sJump <= 0 || (Map[Player2.C.X][Player2.C.Y - 1].Occupied && Map[Player2.C.X][Player2.C.Y - 2].Active))
+		if ((Map[Player2.C.X][Player2.C.Y - 1].Solid && !Map[Player2.C.X][Player2.C.Y - 1].Occupied) || Player2.sJump <= 0 || (Map[Player2.C.X][Player2.C.Y - 1].Occupied && Map[Player2.C.X][Player2.C.Y - 2].Solid))
 		{
 			Player2.bCanJump = false;
 			Player2.sJump = 0;
@@ -694,17 +745,17 @@ void moveCharacter2()
 			Player2.C.Y -= 1;
 			Player2.sJump--;
 		}
-		else if (Player2.bCanWallJumpL && !Map[Player2.C.X - 1][Player2.C.Y - 1].Active)
+		else if (Player2.bCanWallJumpL && !Map[Player2.C.X - 1][Player2.C.Y - 1].Solid)
 		{
 			Player2.C.X--;
 			Player2.C.Y--;
 		}
-		else if (Player2.bCanWallJumpR && !Map[Player2.C.X + 1][Player2.C.Y - 1].Active)
+		else if (Player2.bCanWallJumpR && !Map[Player2.C.X + 1][Player2.C.Y - 1].Solid)
 		{
 			Player2.C.X++;
 			Player2.C.Y--;
 		}
-		else if (Player2.bCanWallJumpL && !Map[Player2.C.X + 1][Player2.C.Y - 1].Active)
+		else if (Player2.bCanWallJumpL && !Map[Player2.C.X + 1][Player2.C.Y - 1].Solid)
 		{
 			Player2.C.X++;
 			Player2.C.Y--;
@@ -712,7 +763,7 @@ void moveCharacter2()
 			Player2.bWasWallJ = true;
 			Player2.bWasWallJC = true;
 		}
-		else if (Player2.bCanWallJumpR && !Map[Player2.C.X - 1][Player2.C.Y - 1].Active)
+		else if (Player2.bCanWallJumpR && !Map[Player2.C.X - 1][Player2.C.Y - 1].Solid)
 		{
 			Player2.C.X--;
 			Player2.C.Y--;
@@ -737,10 +788,10 @@ void moveCharacter2()
 	}
 	/*if (g_abKeyPressed[K_SPACE])
 	{
-		Player2.m_bActive = !Player2.m_bActive;
+		Player2.m_bSolid = !Player2.m_bSolid;
 		Player2.bSomethingHappened = true;
 	}*/
-	if (Map[Player2.C.X][Player2.C.Y + 1].Active)
+	if (Map[Player2.C.X][Player2.C.Y + 1].Solid)
 		Player2.bIsGrounded = true;
 	if (!Player2.bIsGrounded && !Player2.bCanJump && !Player2.bCanWallJumpL && !Player2.bCanWallJumpR && !Player2.bWasWallJC && Player2.bGravity)//Gravity
 	{
@@ -757,12 +808,13 @@ void moveCharacter2()
 		Player2Respawn(&Player2);
 		Player2.health = 3;
 	}
-	if ((Map[Player2.C.X][Player2.C.Y].Code == 6 && !Map[Player2.C.X][Player2.C.Y].Active) || (Map[Player2.C.X][Player2.C.Y].Code == 7 && !Map[Player2.C.X][Player2.C.Y].Active))
+	if ((Map[Player2.C.X][Player2.C.Y].Code == 6 && !Map[Player2.C.X][Player2.C.Y].Solid) || (Map[Player2.C.X][Player2.C.Y].Code == 7 && !Map[Player2.C.X][Player2.C.Y].Solid))
 	{
 		Player2.health--;
 		HpUpdate(&Player2);
 		Map[Player2.C.X][Player2.C.Y].Code = 0;
 	}		
+	PPFunc();
 
 	if (Player2.bSomethingHappened)
 	{
@@ -773,9 +825,9 @@ void moveCharacter2()
 		setRespawn(&Player2);
 	}
 	Map[PrevPos2.X][PrevPos2.Y].Occupied = false;
-	Map[PrevPos2.X][PrevPos2.Y].Active = false;
+	Map[PrevPos2.X][PrevPos2.Y].Solid = false;
 	Map[Player2.C.X][Player2.C.Y].Occupied = true;
-	Map[Player2.C.X][Player2.C.Y].Active = true;
+	Map[Player2.C.X][Player2.C.Y].Solid = true;
 }
 
 void processUserInput()
@@ -799,7 +851,7 @@ void processUserInput()
 				if (Map[x][y].Occupied)
 				{
 					Map[x][y].Occupied = false;
-					Map[x][y].Active = false;
+					Map[x][y].Solid = false;
 				}
 			}
 		}
@@ -871,7 +923,7 @@ void MapSetting(std::string output, int y) {
 			break;
 		case '1':
 			Map[x][y].Code = 1;
-			Map[x][y].Active = true;
+			Map[x][y].Solid = true;
 			break;
 		case '2':
 			Map[x][y].Code = 2;
@@ -887,11 +939,11 @@ void MapSetting(std::string output, int y) {
 			break;
 		case '>':
 			Map[x][y].Code = 6;
-			Map[x][y].Active = true;
+			Map[x][y].Solid = true;
 			break;
 		case '<':
 			Map[x][y].Code = 7;
-			Map[x][y].Active = true;
+			Map[x][y].Solid = true;
 			break;
 		case '7':
 			Map[x][y].Code = 7;
@@ -904,13 +956,13 @@ void MapSetting(std::string output, int y) {
 			{
 				Map[x][y].Code = 8;
 				Map[x][y].Link = output[x];
-				Map[x][y].Active = false;
+				Map[x][y].Solid = false;
 			}
 			else if (output[x] >= 65 && output[x] <= 77)
 			{
 				Map[x][y].Code = 8;
 				Map[x][y].Link = output[x] + 32;
-				Map[x][y].Active = true;
+				Map[x][y].Solid = true;
 			}
 			else {
 				if (output[x] >= 110 && output[x] <= 122)
@@ -1005,7 +1057,7 @@ void renderMap()
 			{
 				continue;
 			}
-			if (Map[x][y].Active)
+			if (Map[x][y].Solid)
 			{
 				c.X = x;
 				c.Y = y;
@@ -1057,7 +1109,7 @@ void renderMap()
 				Map[x][y].Code = 6;
 				c.X = x;
 				c.Y = y;
-				if (Map[x][y].Active)
+				if (Map[x][y].Solid)
 				{
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
 				}
@@ -1070,7 +1122,7 @@ void renderMap()
 				Map[x][y].Code = 7;
 				c.X = x;
 				c.Y = y;
-				if (Map[x][y].Active)
+				if (Map[x][y].Solid)
 				{
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
 				}
@@ -1083,7 +1135,7 @@ void renderMap()
 				Map[x][y].Code = 8;
 				c.X = x;
 				c.Y = y;
-				if (Map[x][y].Active == false) {
+				if (Map[x][y].Solid == false) {
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, ' ', colors[12]);
 				}
 				else {
@@ -1116,13 +1168,13 @@ void renderCharacter()
 {
 	// Draw the location of the character
 	WORD charColor = 0x0C;
-	/*if (Player1.m_bActive)
+	/*if (Player1.m_bSolid)
 	{
 		charColor = 0x0A;
 	}*/
 	g_Console.writeToBuffer(Player1.C.X,Player1.C.Y-sYDisplacement, (char)2, charColor);
 	charColor = 0x0A;
-	/*if (Player2.m_bActive)
+	/*if (Player2.m_bSolid)
 	{
 		charColor = 0x0C;
 	}*/
