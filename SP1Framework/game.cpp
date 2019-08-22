@@ -263,42 +263,6 @@ void TrapAI()
 	}
 	g_dArrowBounceTime[0] = g_dElapsedTime + 1.5;
 }
-void ArrowAI() {
-	if (g_dArrowBounceTime[1] > g_dElapsedTime)
-		return;
-	for (int y = 0; y < sMapHeight; y++)
-	{
-		for (int x = 0; x < sMapWidth; x++)
-		{
-			if (!Map[x][y].Solid)
-			{
-				switch (Map[x][y].Code)
-				{
-				case 6:
-					Map[x][y].Code = 0;
-					if (Map[x + 1][y].Code==0)
-					{
-						Map[x + 1][y].Code = 6;
-						Map[x + 1][y].Solid = false;
-						x++;
-					}
-					break;
-				case 7:
-					 Map[x][y].Code = 0;
-					if (Map[x - 1][y].Code == 0)
-					{
-						Map[x - 1][y].Code = 7;
-						Map[x - 1][y].Solid = false;
-					}
-					break;
-				default:
-					break;
-				}
-			}
-		}
-	}
-	g_dArrowBounceTime[1] = g_dElapsedTime + 0.1;
-}
 void moveCharacter1()
 {
 	if (g_dBounceTime[1] > g_dElapsedTime)
@@ -527,6 +491,7 @@ void moveCharacter1()
 		HpUpdate(&Player1);
 		Map[Player1.C.X][Player1.C.Y].Code = 0;
 	}
+	//if (Map[PrevPos1.X][PrevPos1.Y].LeverType == PressurePlate || Map[Player1.C.X][Player1.C.Y].LeverType == PressurePlate)
 		PPFunc();
 
 	if (Player1.bSomethingHappened)
@@ -813,7 +778,8 @@ void moveCharacter2()
 		Player2.health--;
 		HpUpdate(&Player2);
 		Map[Player2.C.X][Player2.C.Y].Code = 0;
-	}		
+	}
+	//if(Map[PrevPos2.X][PrevPos2.Y].LeverType==PressurePlate || Map[Player2.C.X][Player2.C.Y].LeverType==PressurePlate)
 	PPFunc();
 
 	if (Player2.bSomethingHappened)
@@ -861,7 +827,7 @@ void processUserInput()
 void clearScreen()
 {
 	// Clears the buffer with this colour attribute
-	g_Console.clearBuffer(0x1F);
+	g_Console.clearBuffer(0x00);//0x1F
 }
 
 void renderSplashScreen()  // renders the splash screen
@@ -884,7 +850,7 @@ void renderSplashScreen()  // renders the splash screen
 	c.Y = 1;
 	std::string output;
 	output.clear();
-	std::ifstream map("Main_menu_Splash_Art.txt");
+	std::ifstream map("splash2.txt");//Main_menu_Splash_Art
 	if (map.is_open()) {
 		int y = 1;
 		while (getline(map, output)) {
@@ -896,7 +862,7 @@ void renderSplashScreen()  // renders the splash screen
 				default:
 					c.X += 1;
 					c.Y = y;
-					g_Console.writeToBuffer(c, output[x], 0x09);
+					g_Console.writeToBuffer(c, output[x], 0x06);
 					break;
 				}
 			}

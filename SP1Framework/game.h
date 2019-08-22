@@ -80,6 +80,42 @@ struct PlayerVar
 	//health
 	short health = 3;
 };
+enum Direction
+{
+	A_LEFT,
+	A_RIGHT
+};
+struct ArrowVar
+{
+	COORD C;
+	bool Direction;
+	void MoveArrow()
+	{
+		if (!Map[C.X][C.Y].Solid)
+		{
+			if (Direction == A_RIGHT)
+			{
+				Map[C.X][C.Y].Code = 0;
+				if (Map[C.X + 1][C.Y].Code == 0)
+				{
+					Map[C.X + 1][C.Y].Code = 6;
+					Map[C.X + 1][C.Y].Solid = false;
+					C.X++;
+				}
+			}
+			if (Direction == A_LEFT)
+			{
+				Map[C.X][C.Y].Code = 0;
+				if (Map[C.X - 1][C.Y].Code == 0)
+				{
+					Map[C.Y - 1][C.Y].Code = 7;
+					Map[C.Y - 1][C.Y].Solid = false;
+				}
+			}
+
+		}
+	}
+};
 
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
