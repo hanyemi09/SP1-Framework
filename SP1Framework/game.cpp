@@ -115,7 +115,7 @@ void init(void)
 		MainMenuMusic();
 		break;
 	}
-	//JumpMusic();
+	
 }
 
 //--------------------------------------------------------------
@@ -179,14 +179,14 @@ void update(double dt)
 	}
 	g_dDeltaTime[1] = dt;
 	g_dDeltaTime[0] = dt;
-	for (int i; i < Arrows.size(); i++)
+	/*for (int i; i < Arrows.size(); i++)
 	{
 		Arrows[i].DeltaTime = dt;
 	}
 	for (int i; i < Traps.size(); i++)
 	{
 		Traps[i].DeltaTime = dt;
-	}
+	}*/
 
 	switch (g_eGameState)
 	{
