@@ -149,9 +149,9 @@ void pausegame()
 	COORD c = g_Console.getConsoleSize();
 	c.Y /= 3;
 	c.X = c.X / 2 - 9;
-	g_Console.writeToBuffer(c, "Press R to continue", 0x03);
+	g_Console.writeToBuffer(c, "Press O to continue", 0x03);
 
-	if (isKeyPressed(0x52))
+	if (isKeyPressed(0x4F))
 	{
 		isgamepause = false;
 		g_eGameState = S_GAME;
@@ -789,7 +789,7 @@ void processUserInput()
 		isgamepause = true;
 		g_eGameState = S_PAUSE;
 	}
-	if (isKeyPressed(0x45)) {
+	if (isKeyPressed(0x55)) {
 		Player1Respawn(&Player1);
 		Player2Respawn(&Player2);
 		for (int y = 0; y < sMapHeight; y++)
