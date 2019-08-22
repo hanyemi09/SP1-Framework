@@ -980,12 +980,6 @@ void renderMap()
 			{
 				continue;
 			}
-			if (Map[x][y].Solid)
-			{
-				c.X = x;
-				c.Y = y;
-				g_Console.writeToBuffer(c.X,c.Y-sYDisplacement, '\\', colors[5]);
-			}
 			switch (Map[x][y].Code) {
 			case 0:
 				Map[x][y].Code = 0;
@@ -995,6 +989,7 @@ void renderMap()
 				break;
 			case 1:
 				Map[x][y].Code = 1;
+				Map[x][y].Solid = true;
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[12]);
@@ -1030,6 +1025,7 @@ void renderMap()
 				break;
 			case 6:
 				Map[x][y].Code = 6;
+				Map[x][y].Solid = true;
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
@@ -1038,6 +1034,7 @@ void renderMap()
 				break;
 			case 7:
 				Map[x][y].Code = 7;
+				Map[x][y].Solid = true;
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
