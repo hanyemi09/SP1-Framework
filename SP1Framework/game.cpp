@@ -210,6 +210,8 @@ void gameplay()            // gameplay logic
 	TrapAI();
 	//MovementSounds(); // sound can be played here too.
 }
+bool changed;
+bool* Pchanged = &changed;
 void scanMap(char _Link)
 {
 	for (int Y = 0; Y < sMapHeight; Y++)
@@ -227,9 +229,21 @@ void scanMap(char _Link)
 					Map[X][Y].Active = false;
 				}
 			}
+			else if (Map[X][Y].Link == _Link && Map[X][Y].Code == 8) {
+				if (Map[X][Y].Active == false && *Pchanged == false)
+				{
+					Map[X][Y].Active = true;
+					*Pchanged = true;
+				}
+				else if (Map[X][Y].Active == true && *Pchanged == false)
+				{
+					Map[X][Y].Active = false;
+					*Pchanged = true;
+			}
 		}
 	}
 }
+
 void TrapAI()
 {
 	if (g_dArrowBounceTime[0] > g_dElapsedTime)
@@ -259,6 +273,7 @@ void TrapAI()
 	}
 	g_dArrowBounceTime[0] = g_dElapsedTime + 1.5;
 }
+
 void ArrowAI() {
 	if (g_dArrowBounceTime[1] > g_dElapsedTime)
 		return;
@@ -316,6 +331,12 @@ void moveCharacter1()
 			break;
 		}
 		Player1.bSomethingHappened = true;
+	}
+	if (Map[Player2.C.X][Player2.C.Y].Code != 2 && Map[Player2.C.X][Player2.C.Y].LeverType != PressurePlate) {
+		changed = false;
+	}
+	if (Map[Player1.C.X][Player1.C.Y].Code == 2&& Map[Player1.C.X][Player1.C.Y].LeverType==PressurePlate) {
+		scanMapPP(Map[Player1.C.X][Player1.C.Y].Link);
 	}
 	if (Map[Player1.C.X][Player1.C.Y + 1].Active == true)
 	{
@@ -527,6 +548,14 @@ void moveCharacter2()
 		}
 		Player2.bSomethingHappened = true;
 	}
+	//pressure plates
+	if (Map[Player2.C.X][Player2.C.Y].Code != 2 && Map[Player2.C.X][Player2.C.Y].LeverType != PressurePlate) {
+		changed = false;
+	}
+	if (Map[Player2.C.X][Player2.C.Y].Code == 2 && Map[Player2.C.X][Player2.C.Y].LeverType == PressurePlate) {
+		scanMapPP(Map[Player2.C.X][Player2.C.Y].Link);
+	}
+	//
 	if (Map[Player2.C.X][Player2.C.Y + 1].Active == true)
 	{
 		Player2.bIsGrounded = true;
@@ -709,6 +738,7 @@ void moveCharacter2()
 
 	Map[Player1.C.X][Player1.C.Y].Occupied = true;
 }
+
 void processUserInput()
 {
 	// quits the game if player hits the escape key
@@ -896,10 +926,11 @@ void MapReset() {
 	COORD c;
 	for (int x = 0; x < sMapWidth; ++x) {
 		for (int y = 0; y < sMapHeight; ++y) {
-			Map[x][y] = {' '};
+			Map[x][y] = { "\0" };
 		}
 	}
 }
+
 void renderMap()
 {
 	PlaySound(NULL, NULL, 0);
