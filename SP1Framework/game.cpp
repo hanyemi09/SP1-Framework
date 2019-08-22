@@ -314,8 +314,14 @@ void moveCharacter1()
 	{
 		switch (Map[Player1.C.X][Player1.C.Y].LeverType)
 		{
-		case Lever:
+		case Lever://NEED TO ADD SAME THING FOR PRESSUREPLATE
 			scanMap(Map[Player1.C.X][Player1.C.Y].Link);
+			if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+			{
+				Map[Player2.C.X][Player2.C.Y].Occupied = false;
+				Map[Player2.C.X][Player2.C.Y].Active = true;
+				Player2Respawn(&Player2);
+			}
 		default:
 			break;
 		}
@@ -512,25 +518,21 @@ void moveCharacter1()
 		Player1Respawn(&Player1);
 		Player1.health = 3;
 	}
+	//Player interation with interactable objects
+	if (Map[Player1.C.X][Player1.C.Y].Code == 4) {
+		setRespawn(&Player1);
+	}
 	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Active) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Active)) {
-
 		Player1.health--;
 		HpUpdate(&Player1);
 		Map[Player1.C.X][Player1.C.Y].Code = 0;
 
 	}
-	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Active) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Active)) {
-
-	}
-	//Player interation with interactable objects
 
 	if (Player1.bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers
 		g_dBounceTime[1] = g_dElapsedTime + 0.125; // 125ms should be enough
-	}
-	if (Map[Player1.C.X][Player1.C.Y].Code == 4) {
-		setRespawn(&Player1);
 	}
 	Map[PrevPos1.X][PrevPos1.Y].Occupied = false;
 	Map[PrevPos1.X][PrevPos1.Y].Active = false;
@@ -556,6 +558,12 @@ void moveCharacter2()
 		{
 		case Lever:
 			scanMap(Map[Player2.C.X][Player2.C.Y].Link);
+			if (Map[Player2.C.X][Player2.C.Y].Link  == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
+			{
+				Map[Player1.C.X][Player1.C.Y].Occupied = false;
+				Map[Player1.C.X][Player1.C.Y].Active = true;
+				Player1Respawn(&Player1);
+			}
 		default:
 			break;
 		}
