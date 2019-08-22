@@ -13,6 +13,7 @@ double  g_dInvincibleTime[2];
 double  g_dArrowDeltaTime[2];
 bool    g_abKeyPressed[K_COUNT];
 const short sMapWidth=100, sMapHeight=50;
+short sYDisplacement=0;
 // Game specific variables here
 PlayerVar Player1, Player2;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
@@ -208,7 +209,6 @@ void gameplay()            // gameplay logic
 	moveCharacter2();
 	ArrowAI();
 	TrapAI();
-
 	//MovementSounds(); // sound can be played here too.
 }
 void scanMap(char _Link)
@@ -833,6 +833,11 @@ void renderSplashScreen()  // renders the splash screen
 
 void renderGame()
 {
+	sYDisplacement = ((Player1.C.Y + Player2.C.Y) / 2)-15;
+	if (sYDisplacement < 0)
+	{
+		sYDisplacement = 0;
+	}
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
 }
@@ -974,53 +979,57 @@ void renderMap()
 	//rendering from Map array
 	for (int x = 0; x < sMapWidth; ++x) {
 		for (int y = 1; y <= sMapHeight; ++y) {
+			if (y<=sYDisplacement)
+			{
+				continue;
+			}
 			if (Map[x][y].Active)
 			{
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, '\\', colors[5]);
+				g_Console.writeToBuffer(c.X,c.Y-sYDisplacement, '\\', colors[5]);
 			}
 			switch (Map[x][y].Code) {
 			case 0:
 				Map[x][y].Code = 0;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, ' ', colors[12]);
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, ' ', colors[12]);
 				break;
 			case 1:
 				Map[x][y].Code = 1;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, 'Û', colors[12]);
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[12]);
 				break;
 			case 2:
 				Map[x][y].Code = 2;
 				c.X = x;
 				c.Y = y;
 				if (Map[x][y].LeverType == Lever) {
-					g_Console.writeToBuffer(c, '/', 0x25C9);
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', 0x25C9);
 				}
 				else {
-					g_Console.writeToBuffer(c, ' ', colors[1]);
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, ' ', colors[1]);
 				}
 				break;
 			case 3:
 				Map[x][y].Code = 3;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, 'Û', colors[1]);
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[1]);
 				break;
 			case 4:
 				Map[x][y].Code = 4;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, 'Û', colors[1]);
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[1]);
 				break;
 			case 5:
 				Map[x][y].Code = 5;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, 'Û', colors[2]);
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[2]);
 				break;
 			case 6:
 				Map[x][y].Code = 6;
@@ -1028,11 +1037,11 @@ void renderMap()
 				c.Y = y;
 				if (Map[x][y].Active)
 				{
-				g_Console.writeToBuffer(c, (char)10, colors[12]);
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
 				}
 				else
 				{
-					g_Console.writeToBuffer(c, (char)15, colors[12]);
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
 				}
 				break;
 			case 7:
@@ -1041,11 +1050,11 @@ void renderMap()
 				c.Y = y;
 				if (Map[x][y].Active)
 				{
-					g_Console.writeToBuffer(c, (char)10, colors[12]);
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
 				}
 				else
 				{
-					g_Console.writeToBuffer(c, (char)15, colors[12]);
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
 				}
 				break;
 			case 8:
@@ -1053,24 +1062,24 @@ void renderMap()
 				c.X = x;
 				c.Y = y;
 				if (Map[x][y].Active == false) {
-					g_Console.writeToBuffer(c, ' ', colors[12]);
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, ' ', colors[12]);
 				}
 				else {
-					g_Console.writeToBuffer(c, 'Û', colors[12]);
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[12]);
 				}
 				break;
 			case 9:
 				Map[x][y].Code = 9;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, 'Û', colors[4]);
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[4]);
 				break;
 			}
 			if (Map[x][y].Occupied)
 			{
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c, '/', colors[4]);
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', colors[4]);
 			}
 		}
 	}
@@ -1089,13 +1098,13 @@ void renderCharacter()
 	{
 		charColor = 0x0A;
 	}*/
-	g_Console.writeToBuffer(Player1.C.X,Player1.C.Y, (char)2, charColor);
+	g_Console.writeToBuffer(Player1.C.X,Player1.C.Y-sYDisplacement, (char)2, charColor);
 	charColor = 0x0A;
 	/*if (Player2.m_bActive)
 	{
 		charColor = 0x0C;
 	}*/
-	g_Console.writeToBuffer(Player2.C.X, Player2.C.Y, (char)3, charColor);
+	g_Console.writeToBuffer(Player2.C.X, Player2.C.Y- sYDisplacement, (char)3, charColor);
 
 	/*g_Console.writeToBuffer(g_sChar.m_cLocation.X, g_sChar.m_cLocation.Y - 3, (char)2, charColor);
 	for (int i = -1; i < 2; i++)
