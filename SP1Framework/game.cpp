@@ -9,10 +9,9 @@
 #include <irrKlang.h>
 #pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
+
 double  g_dElapsedTime;
 double  g_dDeltaTime[2];
-double  g_dInvincibleTime[2];
-double  g_dArrowDeltaTime[2];
 bool    g_abKeyPressed[K_COUNT];
 const short sMapWidth=100, sMapHeight=50;
 short sYDisplacement=0;
@@ -20,12 +19,9 @@ short sYDisplacement=0;
 PlayerVar Player1, Player2;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigger keypresses more than once
-double  g_dArrowBounceTime[2]; //to control speed and rate of fire of darts
 double  g_dSlideTime[2]; //To track how long player has been wall climbing 
-//Map objects
-_Object Map[sMapWidth][sMapHeight] = {};
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
-
+_Object Map[100][50];
 // Console object
 Console g_Console(100, 50, "Game");
 //level counter
@@ -44,8 +40,6 @@ void init(void)
 	g_dElapsedTime = 0.0;
 	g_dBounceTime[1] = 0.0;
 	g_dBounceTime[0] = 0.0;
-	g_dArrowBounceTime[0] = 0.0;
-	g_dArrowBounceTime[1] = 0.0;
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
 	Player1.C.X = 2; //g_Console.getConsoleSize().X / 2;
@@ -128,7 +122,10 @@ void update(double dt)
 	}
 	g_dDeltaTime[1] = dt;
 	g_dDeltaTime[0] = dt;
-	g_dArrowDeltaTime[0] = dt;
+	for (int i; i < Arrows.size(); i++)
+	{
+		Arrows[i].DeltaTime = dt;
+	}
 	g_dArrowDeltaTime[1] = dt;
 
 	switch (g_eGameState)
@@ -163,8 +160,6 @@ void pausegame()
 	{
 		g_bQuitGame = true;
 	}
-
-
 }
 
 
@@ -210,7 +205,6 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
-	ArrowAI();
 	TrapAI();
 	//MovementSounds(); // sound can be played here too.
 }
@@ -234,35 +228,61 @@ void scanMap(char _Link)
 		}
 	}
 }
-void TrapAI()
+struct Arrow
 {
-	if (g_dArrowBounceTime[0] > g_dElapsedTime)
-		return;
-	for (int x = 0; x < sMapWidth; x++)
+	COORD C;
+	bool Direction;
+	double BounceTime=0.0;
+	double DeltaTime= 0.0;
+	void MoveArrow()
 	{
-		for (int y = 0; y < sMapHeight; y++)
+		if (!Map[C.X][C.Y].Solid)
 		{
-			switch (Map[x][y].Code)
+			if (Direction == A_RIGHT)
 			{
-			case 6:
-				if (Map[x][y].Solid)
+				Map[C.X][C.Y].Code = 0;
+				if (Map[C.X + 1][C.Y].Code == 0)
 				{
-					Map[x + 1][y].Code = 6;
-					Map[x + 1][y].Solid = false;
+					Map[C.X + 1][C.Y].Code = 6;
+					Map[C.X + 1][C.Y].Solid = false;
+					C.X++;
 				}
-				break;
-			case 7:
-				if (Map[x][y].Solid)
-				{
-					Map[x - 1][y].Code = 7;
-					Map[x - 1][y].Solid = false;
-				}
-				break;
 			}
+			if (Direction == A_LEFT)
+			{
+				Map[C.X][C.Y].Code = 0;
+				if (Map[C.X - 1][C.Y].Code == 0)
+				{
+					Map[C.Y - 1][C.Y].Code = 7;
+					Map[C.Y - 1][C.Y].Solid = false;
+				}
+			}
+
 		}
 	}
-	g_dArrowBounceTime[0] = g_dElapsedTime + 1.5;
+};
+std::vector<Arrow> Arrows;
+struct Trap
+{
+	COORD C;
+	bool Direction;
+	double BounceTime = 0.0;
+	double DeltaTime = 0.0;
+void TrapAI(double ElapsedTime)
+{
+	if (BounceTime > ElapsedTime)
+		return;
+	if (Direction == A_RIGHT)
+	{
+
+	}
+	if (Direction == A_LEFT)
+	{
+
+	}
+	BounceTime = ElapsedTime + 1.5;
 }
+};
 void moveCharacter1()
 {
 	if (g_dBounceTime[1] > g_dElapsedTime)
