@@ -118,7 +118,7 @@ void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps) {
 
 }
 
-void MapReset(short sMapWidth,short sMapHeight,_Object Map[100][50]) {
+void MapReset(short sMapWidth,short sMapHeight,_Object Map[100][50],std::vector<Arrow> *Arrows, std::vector<Trap> *Traps) {
 	COORD c;
 	for (short x = 0; x < sMapWidth; ++x) {
 		for (short y = 0; y < sMapHeight; ++y) {
@@ -126,4 +126,6 @@ void MapReset(short sMapWidth,short sMapHeight,_Object Map[100][50]) {
 			Map[x][y].Occupied = false;
 		}
 	}
+	Arrows->clear();
+	Traps->clear();
 }

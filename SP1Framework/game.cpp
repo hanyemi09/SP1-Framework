@@ -906,10 +906,6 @@ void renderGame()
 	}
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
-	for (int i = 0; i < Traps.size(); i++)
-	{
-		Traps[i].CreateArrow(g_dElapsedTime, Arrows);
-	}
 }
 //void MapSetting(std::string output, short y) {
 //	Trap temp;
@@ -1151,7 +1147,7 @@ void renderMap()
 	}
 	if (Map[Player1.C.X][Player1.C.Y].Code == 9&& Map[Player2.C.X][Player2.C.Y].Code == 9) {
 		++level;
-		MapReset(sMapWidth,sMapHeight,Map);
+		MapReset(sMapWidth,sMapHeight,Map, &Arrows, &Traps);
 		init();
 	}
 }

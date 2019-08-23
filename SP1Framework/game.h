@@ -178,7 +178,7 @@ void MainMenuMusic();
 //void MovementSounds();
 void MapSetting(std::string output, short y, _Object Map[100][50], std::vector<Trap> *Traps);
 void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps);
-void MapReset(short sMapWidth, short sMapHeight, _Object Map[100][50]);
+void MapReset(short sMapWidth, short sMapHeight, _Object Map[100][50], std::vector<Arrow> *Arrows, std::vector<Trap> *Traps);
 
 void HpUpdate(PlayerVar *Player);
 void Player1Respawn(PlayerVar *Player);
