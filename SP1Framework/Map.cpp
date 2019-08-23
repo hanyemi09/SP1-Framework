@@ -46,13 +46,13 @@ void MapSetting(std::string output, short y, _Object Map[100][50], std::vector<T
 			{
 				Map[x][y].Code = 8;
 				Map[x][y].Link = output[x];
-				Map[x][y].Active = false;
+				Map[x][y].Solid = false;
 			}
 			else if (output[x] >= 65 && output[x] <= 77)
 			{
 				Map[x][y].Code = 8;
 				Map[x][y].Link = output[x] + 32;
-				Map[x][y].Active = true;
+				Map[x][y].Solid = true;
 			}
 			else {
 				if (output[x] >= 110 && output[x] <= 122)
@@ -78,7 +78,7 @@ void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps) {
 	switch (level) {
 	case 0: {
 		std::string output;
-		std::ifstream map("map.txt");
+		std::ifstream map("basics.txt");
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {
@@ -91,7 +91,7 @@ void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps) {
 	case 1: {
 		std::string output;
 		output.clear();
-		std::ifstream map("map1.txt");
+		std::ifstream map("b2.txt");
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {

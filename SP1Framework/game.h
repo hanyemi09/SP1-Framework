@@ -158,7 +158,6 @@ void shutdown    ( void );      // do clean up, free memory
         //Printing of the map
 
 void PPFunc();
-void MapPrinting();         //Printing of the map
 void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
 void setRespawn(PlayerVar *Player);// sets respawn point
 void pausegame();			// pauses game

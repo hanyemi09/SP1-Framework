@@ -518,11 +518,13 @@ void moveCharacter1()
 		{
 			Player1.C.X--;
 			Player1.C.Y--;
+			g_dSlideTime[1] +=1;
 		}
 		else if (Player1.bCanWallJumpR && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X++;
 			Player1.C.Y--;
+			g_dSlideTime[1] +=1;
 		}
 		else if (Player1.bCanWallJumpL && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
@@ -1100,50 +1102,6 @@ void renderGame()
 //}
 
 
-void MapPrinting() {
-	//initialise things in map array
-	switch (level) {
-	case 0:{
-		std::string output;
-		std::ifstream map("basics.txt");
-		if (map.is_open()) {
-			int y = 1;
-			while (getline(map, output)) {
-				MapSetting(output, y, Map, &Traps);
-				++y;
-			}
-		}
-		break;
-	}
-	case 1: {
-		std::string output;
-		output.clear();
-		std::ifstream map("b2.txt");
-		if (map.is_open()) {
-			int y = 1;
-			while (getline(map, output)) {
-				MapSetting(output, y, Map, &Traps);
-				++y;
-			}
-		}
-		break;
-	}
-	case 2: {
-		std::string output;
-		output.clear();
-		std::ifstream map(".txt");
-		if (map.is_open()) {
-			int y = 1;
-			while (getline(map, output)) {
-				MapSetting(output, y, Map, &Traps);
-				++y;
-			}
-		}
-		break;
-	}
-	}
-	
-}
 void renderMap()
 {
 	PlaySound(NULL, NULL, 0);
