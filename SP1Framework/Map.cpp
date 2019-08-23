@@ -123,6 +123,7 @@ void MapReset(short sMapWidth,short sMapHeight,_Object Map[100][50]) {
 	for (short x = 0; x < sMapWidth; ++x) {
 		for (short y = 0; y < sMapHeight; ++y) {
 			Map[x][y] = { " " };
+			Map[x][y].Occupied = false;
 		}
 	}
 }

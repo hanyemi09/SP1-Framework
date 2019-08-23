@@ -44,11 +44,22 @@ void init(void)
 	g_dBounceTime[0] = 0.0;
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
-	Player1.C.X = 2; //g_Console.getConsoleSize().X / 2;
-	Player1.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
-	//Player1.m_bSolid = true;
-	Player2.C.X = 3; //g_Console.getConsoleSize().X / 2;
-	Player2.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
+	//players spawnpoints
+	switch (level) {
+	case 0: {
+		Player1.C.X = 2;
+		Player1.C.Y = 14;
+		Player2.C.X = 3;
+		Player2.C.Y = 14;
+		break;
+	}
+	case 1: {
+		break;
+	}
+	case 2: {
+		break;
+	}
+	}
 	//Player2.m_bSolid = true;
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
@@ -815,25 +826,75 @@ void renderSplashScreen()  // renders the splash screen
 	c.Y = 1;
 	std::string output;
 	output.clear();
-	std::ifstream map("splash.txt");//Main_menu_Splash_Art
-	if (map.is_open()) {
-		int y = 1;
-		while (getline(map, output)) {
-			int start;
-			start = (sMapWidth / 2) - (output.length() / 2);
-			c.X = start;
-			for (int x = 0; x < output.length(); ++x) {
-				switch (output[x]) {
-				default:
-					c.X += 1;
-					c.Y = y;
-					g_Console.writeToBuffer(c, output[x], 0x06);
-					break;
+	switch (level) {
+	case 0: {
+		std::ifstream map("splash.txt");//Main_menu_Splash_Art
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
 				}
+				++y;
 			}
-			++y;
 		}
-	}	
+		break;
+	}
+	case 1: {
+		std::ifstream map("level2splash.txt");
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
+				}
+				++y;
+			}
+		}
+		break;
+	}
+	case 2: {
+		std::ifstream map("level3splash.txt");//Main_menu_Splash_Art
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
+				}
+				++y;
+			}
+		}
+		break;
+	}
+	}
+	
 }
 
 void renderGame()
@@ -845,6 +906,10 @@ void renderGame()
 	}
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
+	for (int i = 0; i < Traps.size(); i++)
+	{
+		Traps[i].CreateArrow(g_dElapsedTime, Arrows);
+	}
 }
 //void MapSetting(std::string output, short y) {
 //	Trap temp;
@@ -1074,12 +1139,14 @@ void renderMap()
 			default:
 				break;
 			}
+			/*
 			if (Map[x][y].Occupied)
 			{
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', colors[4]);
 			}
+			*/
 		}
 	}
 	if (Map[Player1.C.X][Player1.C.Y].Code == 9&& Map[Player2.C.X][Player2.C.Y].Code == 9) {
