@@ -828,25 +828,75 @@ void renderSplashScreen()  // renders the splash screen
 	c.Y = 1;
 	std::string output;
 	output.clear();
-	std::ifstream map("splash2.txt");//Main_menu_Splash_Art
-	if (map.is_open()) {
-		int y = 1;
-		while (getline(map, output)) {
-			int start;
-			start = (sMapWidth / 2) - (output.length() / 2);
-			c.X = start;
-			for (int x = 0; x < output.length(); ++x) {
-				switch (output[x]) {
-				default:
-					c.X += 1;
-					c.Y = y;
-					g_Console.writeToBuffer(c, output[x], 0x06);
-					break;
+	switch (level) {
+	case 0: {
+		std::ifstream map("splash2.txt");//Main_menu_Splash_Art
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
 				}
+				++y;
 			}
-			++y;
 		}
-	}	
+		break;
+	}
+	case 1: {
+		std::ifstream map("level2splash.txt");
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
+				}
+				++y;
+			}
+		}
+		break;
+	}
+	case 2: {
+		std::ifstream map("level3splash.txt");//Main_menu_Splash_Art
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
+				}
+				++y;
+			}
+		}
+		break;
+	}
+	}
+	
 }
 
 void renderGame()
@@ -1075,12 +1125,14 @@ void renderMap()
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[4]);
 				break;
 			}
+			/*
 			if (Map[x][y].Occupied)
 			{
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', colors[4]);
 			}
+			*/
 		}
 	}
 	if (Map[Player1.C.X][Player1.C.Y].Code == 9&& Map[Player2.C.X][Player2.C.Y].Code == 9) {
