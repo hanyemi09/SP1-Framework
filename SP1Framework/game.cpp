@@ -582,6 +582,7 @@ void moveCharacter1()
 		setRespawn(&Player1);
 	}
 	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Solid) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Solid)) {
+		engine->play2D("hitsound.mp3", false, false);
 		Player1.health--;
 		HpUpdate(&Player1);
 		Map[Player1.C.X][Player1.C.Y].Code = 0;
@@ -870,6 +871,7 @@ void moveCharacter2()
 	}
 	if ((Map[Player2.C.X][Player2.C.Y].Code == 6 && !Map[Player2.C.X][Player2.C.Y].Solid) || (Map[Player2.C.X][Player2.C.Y].Code == 7 && !Map[Player2.C.X][Player2.C.Y].Solid))
 	{
+		engine->play2D("hitsound.mp3", false, false);
 		Player2.health--;
 		HpUpdate(&Player2);
 		Map[Player2.C.X][Player2.C.Y].Code = 0;
