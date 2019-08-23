@@ -20,6 +20,7 @@ PlayerVar Player1, Player2;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 double  g_dSlideTime[2]; //To track how long player has been wall climbing 
+double FrameBouncetime = 0.0;
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
 _Object Map[sMapWidth][sMapHeight];
 std::vector<Arrow> Arrows;
@@ -43,7 +44,7 @@ void init(void)
 	g_dBounceTime[1] = 0.0;
 	g_dBounceTime[0] = 0.0;
 	// sets the initial state for the game
-	g_eGameState = S_INTRO;
+	g_eGameState = S_SPLASHSCREEN;
 	//players spawnpoints
 	switch (level) {
 	case 0: {
@@ -73,8 +74,6 @@ void init(void)
 	}
 	
 }
-
-
 //--------------------------------------------------------------
 // Purpose  : Reset before exiting the program
 //            Do your clean up of memory here
@@ -144,75 +143,126 @@ void update(double dt)
 		break;
 	case S_PAUSE: pausegame();
 		break;
-	case S_INTRO: intro();
-		break;
+	//case S_INTRO: 
+	//	break;
 	}
 
 }
 
 int Counter = 0;
+void ReadTXT(std::string filename,COORD Coord)
+{
+	std::string output;
+	std::ifstream file(filename);
+	if (file.is_open()) {
 
+		while (getline(file, output)) {
+			for (int x = 0; x < output.size(); x++)
+			{
+			g_Console.writeToBuffer(Coord, output[x], 0x1f);
+			}
+		}
+	}
+}
 void intro()
 {
 	COORD c;
-	c.Y = 1;
+	c.X = 1; //(g_Console.getConsoleSize.X - 101);
+	c.Y = 1; // (g_Console.getConsoleSize.Y - 3);
 	std::string output;
 	output.clear();
-	std::ifstream map("SplashScreenAnimation1.txt");//Main_menu_Splash_Art
-
-	switch (Counter){
-	case 0:
-		if (map.is_open()) {
-			int y = 10;
-			while (getline(map, output)) {
-				int start;
-				start = (sMapWidth / 2) - (output.length() / 2);
-				c.X = start;
-				for (int x = 0; x < output.length(); ++x) {
-					switch (output[x]) {
-					default:
-						c.X += 1;
-						c.Y = y;
-						g_Console.writeToBuffer(c, output[x], 0x06);
-						break;
-					}
-				}
-				++y;
-			}
-		
-		}
-		Sleep(500);
-		++Counter;
-		break;
-	case 1:
-		std::string output;
-		output.clear();
-		std::ifstream map("SplashScreenAnimation2.txt");//Main_menu_Splash_Art
-		if (map.is_open()) {
-			int y = 10;
-			while (getline(map, output)) {
-				int start;
-				start = (sMapWidth / 2) - (output.length() / 2);
-				c.X = start;
-				for (int x = 0; x < output.length(); ++x) {
-					switch (output[x]) {
-					default:
-						c.X += 1;
-						c.Y = y;
-						g_Console.writeToBuffer(c, output[x], 0x06);
-						break;
-					}
-				}
-				++y;
+	std::ifstream logo("LogoAnimation.txt");
+	short framecount = g_dElapsedTime/0.5;
+		switch (framecount)
+		{
+		case 0:
+			ReadTXT("SplashScreenAnimation1.txt", c);
+			break;
+		case 1:
+			ReadTXT("SplashScreenAnimation2.txt", c);
+			break;
+		case 2:
+			ReadTXT("SplashScreenAnimation3.txt", c);
+			break;
+		case 3:ReadTXT("SplashScreenAnimation4.txt", c);
+			break;
+		case 4:ReadTXT("SplashScreenAnimation5.txt", c);
+			break;
+		case 5:ReadTXT("SplashScreenAnimation6.txt", c);
+			break;
+		case 6:ReadTXT("SplashScreenAnimation7.txt", c);
+			break;
+		case 7:ReadTXT("SplashScreenAnimation8.txt", c);
+			break;
+		case 8:ReadTXT("SplashScreenAnimation9.txt", c);
+			break;
+		case 9:ReadTXT("SplashScreenAnimation10.txt", c);
+			break;
+		}/*
+	if (FrameBouncetime > g_dElapsedTime) 
+	return;
+		for (int line = 0; line < 5; line++)
+		{
+			getline(logo, output);
+			for (int x = 0; x < 102; x++)
+			{
+				c.X = x;
+				c.Y = line;
+				g_Console.writeToBuffer(c, output[x], 0x1f);
 			}
 		}
-		break;
-
-	}
+		FrameBouncetime = g_dElapsedTime + 0.5;*/
 	
-	
-
 }
+	//switch (Counter){
+	//case 0:
+	//	if (map.is_open()) {
+	//		int y = g_Console.getConsoleSize().Y-3;
+	//		while (getline(map, output)) {
+	//			int start;
+	//			start = g_Console.getConsoleSize().X - (output.size() / 2);
+	//			c.X = start;
+	//			for (int x = 0; x < output.length(); ++x) {
+	//				switch (output[x]) {
+	//				default:
+	//					c.X += 1;
+	//					c.Y = y;
+	//					g_Console.writeToBuffer(c, output[x], 0x06);
+	//					break;
+	//				}
+	//			}
+	//			++y;
+	//		}
+	//	
+	//	}
+	//	Sleep(500);
+	//	++Counter;
+	//	break;
+	//case 1:
+	//	std::string output;
+	//	output.clear();
+	//	std::ifstream map("SplashScreenAnimation2.txt");//Main_menu_Splash_Art
+	//	if (map.is_open()) {
+	//		int y = 10;
+	//		while (getline(map, output)) {
+	//			int start;
+	//			start = (sMapWidth / 2) - (output.length() / 2);
+	//			c.X = start;
+	//			for (int x = 0; x < output.length(); ++x) {
+	//				switch (output[x]) {
+	//				default:
+	//					c.X += 1;
+	//					c.Y = y;
+	//					g_Console.writeToBuffer(c, output[x], 0x06);
+	//					break;
+	//				}
+	//			}
+	//			++y;
+	//		}
+	//	}
+	//	break;
+
+	//}
 	
 
 void pausegame()
@@ -260,7 +310,7 @@ void render()
 	renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
 }
 
-void splashScreenWait()    // waits for time to pass in splash screen
+void splashScreenWait()    
 {
 	if (g_abKeyPressed[K_ENTER] == true) // Press ENTER to start
 	{
@@ -271,6 +321,7 @@ void splashScreenWait()    // waits for time to pass in splash screen
 	{
 		g_bQuitGame = true;
 	}
+	
 }
 
 void gameplay()            // gameplay logic
@@ -442,7 +493,6 @@ void moveCharacter1()
 	{
 		if ((Map[Player1.C.X][Player1.C.Y - 1].Solid && !Map[Player1.C.X][Player1.C.Y - 1].Occupied) || Player1.sJump <= 0 || (Map[Player1.C.X][Player1.C.Y - 1].Occupied && Map[Player1.C.X][Player1.C.Y - 2].Solid))
 		{
-
 			Player1.bCanJump = false;
 			Player1.sJump = 0;
 		}
@@ -877,6 +927,7 @@ void clearScreen()
 
 void renderSplashScreen()  // renders the splash screen
 {
+	/*intro();*/
 	/*COORD c = g_Console.getConsoleSize();
 	c.Y /= 3;
 	c.X = c.X / 2 - 9;
@@ -963,7 +1014,6 @@ void renderSplashScreen()  // renders the splash screen
 		break;
 	}
 	}
-	
 }
 
 void renderGame()
