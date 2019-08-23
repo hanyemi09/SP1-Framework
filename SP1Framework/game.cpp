@@ -43,7 +43,7 @@ void init(void)
 	g_dBounceTime[1] = 0.0;
 	g_dBounceTime[0] = 0.0;
 	// sets the initial state for the game
-	g_eGameState = S_SPLASHSCREEN;
+	g_eGameState = S_INTRO;
 	//players spawnpoints
 	switch (level) {
 	case 0: {
@@ -73,6 +73,7 @@ void init(void)
 	}
 	
 }
+
 
 //--------------------------------------------------------------
 // Purpose  : Reset before exiting the program
@@ -143,10 +144,76 @@ void update(double dt)
 		break;
 	case S_PAUSE: pausegame();
 		break;
+	case S_INTRO: intro();
+		break;
 	}
 
 }
 
+int Counter = 0;
+
+void intro()
+{
+	COORD c;
+	c.Y = 1;
+	std::string output;
+	output.clear();
+	std::ifstream map("SplashScreenAnimation1.txt");//Main_menu_Splash_Art
+
+	switch (Counter){
+	case 0:
+		if (map.is_open()) {
+			int y = 10;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
+				}
+				++y;
+			}
+		
+		}
+		Sleep(500);
+		++Counter;
+		break;
+	case 1:
+		std::string output;
+		output.clear();
+		std::ifstream map("SplashScreenAnimation2.txt");//Main_menu_Splash_Art
+		if (map.is_open()) {
+			int y = 10;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
+				}
+				++y;
+			}
+		}
+		break;
+
+	}
+	
+	
+
+}
+	
 
 void pausegame()
 {
@@ -185,6 +252,8 @@ void render()
 	case S_GAME: renderGame();
 		break;
 	case S_PAUSE: pausegame();
+		break;
+	case S_INTRO: intro();
 		break;
 	}
 	renderFramerate();  // renders debug information, frame rate, elapsed time, etc
