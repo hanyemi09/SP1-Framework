@@ -90,9 +90,10 @@ struct Arrow
 	COORD C;
 	bool Direction;
 	double BounceTime = 0.0;
-	double DeltaTime = 0.0;
 	void MoveArrow(double ElapsedTime, _Object Map[][50])
 	{
+		if (BounceTime > ElapsedTime)
+			return;
 		if (!Map[C.X][C.Y].Solid)
 		{
 			if (Direction == A_RIGHT)
@@ -116,7 +117,7 @@ struct Arrow
 					C.X--;
 				}
 			}
-			BounceTime = ElapsedTime + 10.0;
+			BounceTime = ElapsedTime + 0.1;
 		}
 	}
 };
@@ -126,7 +127,6 @@ struct Trap
 	COORD C;
 	bool Direction;
 	double BounceTime = 0.0;
-	double DeltaTime = 0.0;
 	void CreateArrow(double ElapsedTime, std::vector<Arrow> *Arrows,_Object Map[][50])
 	{
 		if (BounceTime > ElapsedTime)

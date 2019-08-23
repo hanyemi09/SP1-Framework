@@ -11,7 +11,7 @@
 
 
 double  g_dElapsedTime;
-double  g_dDeltaTime[2];
+double  g_dDeltaTime;
 bool    g_abKeyPressed[K_COUNT];
 const short sMapWidth=100, sMapHeight=50;
 short sYDisplacement=0;
@@ -122,16 +122,7 @@ void update(double dt)
 	{
 		g_dElapsedTime += dt;
 	}
-	g_dDeltaTime[1] = dt;
-	g_dDeltaTime[0] = dt;
-	for (int i=0; i < Arrows.size(); i++)
-	{
-		Arrows[i].DeltaTime = dt;
-	}
-	for (int i=0; i < Traps.size(); i++)
-	{
-		Traps[i].DeltaTime = dt;
-	}
+	g_dDeltaTime = dt;
 
 	switch (g_eGameState)
 	{
@@ -304,7 +295,7 @@ void moveCharacter1()
 		
 	}
 	Player1.bWasWallJ = false;
-	if (g_abKeyPressed[K_LEFT] && Player1.C.X > 0)
+	if (g_abKeyPressed[K_LEFT] && Player1.C.X > 0 && !g_abKeyPressed[K_RIGHT])
 	{
 		
 		if (!Map[Player1.C.X - 1][Player1.C.Y].Solid)
@@ -336,7 +327,7 @@ void moveCharacter1()
 	{
 		Player1.bCanWallJumpL = false;
 	}
-	if (g_abKeyPressed[K_RIGHT] && Player1.C.X < g_Console.getConsoleSize().X - 1)
+	if (g_abKeyPressed[K_RIGHT] && Player1.C.X < g_Console.getConsoleSize().X - 1 && !g_abKeyPressed[K_LEFT])
 	{
 		if (!Map[Player1.C.X + 1][Player1.C.Y].Solid)
 		{
@@ -597,7 +588,7 @@ void moveCharacter2()
 		Player2.bWasWallJC = true;
 	}
 	Player2.bWasWallJ = false;
-	if (isKeyPressed(0x41) && Player2.C.X > 0)
+	if (isKeyPressed(0x41) && Player2.C.X > 0 && !isKeyPressed(0x44))
 	{
 		if (!Map[Player2.C.X - 1][Player2.C.Y].Solid)
 		{
@@ -628,7 +619,7 @@ void moveCharacter2()
 	{
 		Player2.bCanWallJumpL = false;
 	}
-	if (isKeyPressed(0x44) && Player2.C.X < g_Console.getConsoleSize().X - 1)
+	if (isKeyPressed(0x44) && Player2.C.X < g_Console.getConsoleSize().X - 1 && !isKeyPressed(0x41))
 	{
 		if (!Map[Player2.C.X + 1][Player2.C.Y].Solid)
 		{
@@ -801,7 +792,7 @@ void processUserInput()
 void clearScreen()
 {
 	// Clears the buffer with this colour attribute
-	g_Console.clearBuffer(0x00);//0x1F
+	g_Console.clearBuffer(0x03);//0x1F
 }
 
 void renderSplashScreen()  // renders the splash screen
@@ -824,7 +815,7 @@ void renderSplashScreen()  // renders the splash screen
 	c.Y = 1;
 	std::string output;
 	output.clear();
-	std::ifstream map("splash2.txt");//Main_menu_Splash_Art
+	std::ifstream map("splash.txt");//Main_menu_Splash_Art
 	if (map.is_open()) {
 		int y = 1;
 		while (getline(map, output)) {
@@ -1148,7 +1139,7 @@ void renderFramerate()
 	// displays the framerate
 	std::ostringstream ss;
 	ss << std::fixed << std::setprecision(3);
-	ss << 1.0 / g_dDeltaTime[0] << "fps";
+	ss << 1.0 / g_dDeltaTime << "fps";
 	c.X = g_Console.getConsoleSize().X - 9;
 	c.Y = 0;
 	g_Console.writeToBuffer(c, ss.str());
