@@ -1,6 +1,6 @@
 #include "game.h"
 
-void MapSetting(std::string output, short y, _Object Map[100][50]) {
+void MapSetting(std::string output, short y, _Object Map[100][50], std::vector<Trap> *Traps) {
 	Trap temp;
 	for (short x = 0; x < output.size(); ++x) {
 		switch (output[x]) {
@@ -9,7 +9,7 @@ void MapSetting(std::string output, short y, _Object Map[100][50]) {
 			break;
 		case '1':
 			Map[x][y].Code = 1;
-			Map[x][y].Active = true;
+			Map[x][y].Solid = true;
 			break;
 		case '2':
 			Map[x][y].Code = 2;
@@ -25,15 +25,15 @@ void MapSetting(std::string output, short y, _Object Map[100][50]) {
 			break;
 		case '>':
 			Map[x][y].Code = 6;
-			Map[x][y].Active = true;
+			Map[x][y].Solid = true;
 			temp = { x, y, A_RIGHT };
-			Traps.push_back(temp);
+			Traps->push_back(temp);
 			break;
 		case '<':
 			Map[x][y].Code = 7;
-			Map[x][y].Active = true;
+			Map[x][y].Solid = true;
 			temp = { x, y, A_LEFT };
-			Traps.push_back(temp);
+			Traps->push_back(temp);
 			break;
 		case '7':
 			Map[x][y].Code = 7;
@@ -73,7 +73,7 @@ void MapSetting(std::string output, short y, _Object Map[100][50]) {
 	}
 }
 
-void MapInitialise(int level, _Object Map[100][50]) {
+void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps) {
 	//initialise things in map array
 	switch (level) {
 	case 0: {
@@ -82,7 +82,7 @@ void MapInitialise(int level, _Object Map[100][50]) {
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y, Map);
+				MapSetting(output, y, Map, Traps);
 				++y;
 			}
 		}
@@ -95,7 +95,7 @@ void MapInitialise(int level, _Object Map[100][50]) {
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y, Map);
+				MapSetting(output, y, Map, Traps);
 				++y;
 			}
 		}
@@ -108,7 +108,7 @@ void MapInitialise(int level, _Object Map[100][50]) {
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y, Map);
+				MapSetting(output, y, Map, Traps);
 				++y;
 			}
 		}
@@ -118,7 +118,7 @@ void MapInitialise(int level, _Object Map[100][50]) {
 
 }
 
-void MapReset(int sMapWidth,int sMapHeight,_Object Map[100][50]) {
+void MapReset(short sMapWidth,short sMapHeight,_Object Map[100][50]) {
 	COORD c;
 	for (short x = 0; x < sMapWidth; ++x) {
 		for (short y = 0; y < sMapHeight; ++y) {

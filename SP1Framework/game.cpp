@@ -22,7 +22,8 @@ double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigge
 double  g_dSlideTime[2]; //To track how long player has been wall climbing 
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
 _Object Map[sMapWidth][sMapHeight];
-
+std::vector<Arrow> Arrows;
+std::vector<Trap> Traps;
 // Console object
 Console g_Console(100, 50, "Game");
 //level counter
@@ -53,7 +54,7 @@ void init(void)
 	g_Console.setConsoleFont(8, 16, L"Consolas");
 	//sets initial spawnpoint
 	setRespawn(&Player1);
-	MapInitialise(level,Map);
+	MapInitialise(level,Map, &Traps);
 	switch (level) {
 	case 0:
 		MainMenuMusic();
@@ -123,11 +124,11 @@ void update(double dt)
 	}
 	g_dDeltaTime[1] = dt;
 	g_dDeltaTime[0] = dt;
-	for (int i; i < Arrows.size(); i++)
+	for (int i=0; i < Arrows.size(); i++)
 	{
 		Arrows[i].DeltaTime = dt;
 	}
-	for (int i; i < Traps.size(); i++)
+	for (int i=0; i < Traps.size(); i++)
 	{
 		Traps[i].DeltaTime = dt;
 	}
@@ -206,17 +207,14 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
-<<<<<<< Updated upstream
-=======
 	for (int i = 0; i < Traps.size(); i++)
 	{
 		Traps[i].CreateArrow(g_dElapsedTime, Arrows, Map);
 	}
 	for (int i = 0; i < Arrows.size(); i++)
 	{
-		Arrows[i].MoveArrow(g_dElapsedTime,Map);
+		Arrows[i].MoveArrow(g_dElapsedTime, Map);
 	}
->>>>>>> Stashed changes
 	//MovementSounds(); // sound can be played here too.
 }
 void scanMap(char _Link)
@@ -857,78 +855,78 @@ void renderGame()
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
 }
-void MapSetting(std::string output, short y) {
-	Trap temp;
-	for (short x = 0; x < output.size(); ++x) {
-		switch (output[x]) {
-		case ' ':
-			Map[x][y].Code = 0;
-			break;
-		case '1':
-			Map[x][y].Code = 1;
-			Map[x][y].Solid = true;
-			break;
-		case '2':
-			Map[x][y].Code = 2;
-			break;
-		case '3':
-			Map[x][y].Code = 3;
-			break;
-		case '4':
-			Map[x][y].Code = 4;
-			break;
-		case '5':
-			Map[x][y].Code = 5;
-			break;
-		case '>':
-			Map[x][y].Code = 6;
-			Map[x][y].Solid = true;
-			temp = { x, y, A_RIGHT };
-			Traps.push_back(temp);
-			break;
-		case '<':
-			Map[x][y].Code = 7;
-			Map[x][y].Solid = true;
-			temp = { x, y, A_LEFT };
-			Traps.push_back(temp);
-			break;
-		case '7':
-			Map[x][y].Code = 7;
-			break;
-		case '9':
-			Map[x][y].Code = 9;
-			break;
-		default:
-			if (output[x] >= 97 && output[x] <= 109)
-			{
-				Map[x][y].Code = 8;
-				Map[x][y].Link = output[x];
-				Map[x][y].Solid = false;
-			}
-			else if (output[x] >= 65 && output[x] <= 77)
-			{
-				Map[x][y].Code = 8;
-				Map[x][y].Link = output[x] + 32;
-				Map[x][y].Solid = true;
-			}
-			else {
-				if (output[x] >= 110 && output[x] <= 122)
-				{
-					Map[x][y].Code = 2;
-					Map[x][y].Link = output[x] - 13;
-					Map[x][y].LeverType = PressurePlate;
-				}
-				else
-					if (output[x] >= 78 && output[x] <= 90)
-					{
-						Map[x][y].Code = 2;
-						Map[x][y].Link = output[x] + 19;
-						Map[x][y].LeverType = Lever;
-					}
-			}
-		}
-	}
-}
+//void MapSetting(std::string output, short y) {
+//	Trap temp;
+//	for (short x = 0; x < output.size(); ++x) {
+//		switch (output[x]) {
+//		case ' ':
+//			Map[x][y].Code = 0;
+//			break;
+//		case '1':
+//			Map[x][y].Code = 1;
+//			Map[x][y].Solid = true;
+//			break;
+//		case '2':
+//			Map[x][y].Code = 2;
+//			break;
+//		case '3':
+//			Map[x][y].Code = 3;
+//			break;
+//		case '4':
+//			Map[x][y].Code = 4;
+//			break;
+//		case '5':
+//			Map[x][y].Code = 5;
+//			break;
+//		case '>':
+//			Map[x][y].Code = 6;
+//			Map[x][y].Solid = true;
+//			temp = { x, y, A_RIGHT };
+//			Traps.push_back(temp);
+//			break;
+//		case '<':
+//			Map[x][y].Code = 7;
+//			Map[x][y].Solid = true;
+//			temp = { x, y, A_LEFT };
+//			Traps.push_back(temp);
+//			break;
+//		case '7':
+//			Map[x][y].Code = 7;
+//			break;
+//		case '9':
+//			Map[x][y].Code = 9;
+//			break;
+//		default:
+//			if (output[x] >= 97 && output[x] <= 109)
+//			{
+//				Map[x][y].Code = 8;
+//				Map[x][y].Link = output[x];
+//				Map[x][y].Solid = false;
+//			}
+//			else if (output[x] >= 65 && output[x] <= 77)
+//			{
+//				Map[x][y].Code = 8;
+//				Map[x][y].Link = output[x] + 32;
+//				Map[x][y].Solid = true;
+//			}
+//			else {
+//				if (output[x] >= 110 && output[x] <= 122)
+//				{
+//					Map[x][y].Code = 2;
+//					Map[x][y].Link = output[x] - 13;
+//					Map[x][y].LeverType = PressurePlate;
+//				}
+//				else
+//					if (output[x] >= 78 && output[x] <= 90)
+//					{
+//						Map[x][y].Code = 2;
+//						Map[x][y].Link = output[x] + 19;
+//						Map[x][y].LeverType = Lever;
+//					}
+//			}
+//		}
+//	}
+//}
 
 
 void MapPrinting() {
@@ -940,7 +938,7 @@ void MapPrinting() {
 		if (map.is_open()) {
 			int y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y);
+				MapSetting(output, y, Map, &Traps);
 				++y;
 			}
 		}
@@ -953,7 +951,7 @@ void MapPrinting() {
 		if (map.is_open()) {
 			int y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y);
+				MapSetting(output, y, Map, &Traps);
 				++y;
 			}
 		}
@@ -966,7 +964,7 @@ void MapPrinting() {
 		if (map.is_open()) {
 			int y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y);
+				MapSetting(output, y, Map, &Traps);
 				++y;
 			}
 		}

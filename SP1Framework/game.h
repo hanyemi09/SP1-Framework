@@ -118,7 +118,7 @@ struct Arrow
 		}
 	}
 };
-std::vector<Arrow> Arrows;
+
 struct Trap
 {
 	COORD C;
@@ -146,7 +146,7 @@ struct Trap
 		BounceTime = ElapsedTime + 1.5;
 	}
 };
-std::vector<Trap> Traps;
+
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
@@ -174,9 +174,9 @@ void renderToScreen();      // dump the contents of the buffer to the screen, on
 void MainMenuMusic();
 //void JumpMusic();
 //void MovementSounds();
-
-void MapInitialise(int level,_Object Map[100][50]);
-void MapReset(int sMapWidth, int sMapHeight, _Object Map[100][50]);
+void MapSetting(std::string output, short y, _Object Map[100][50], std::vector<Trap> *Traps);
+void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps);
+void MapReset(short sMapWidth, short sMapHeight, _Object Map[100][50]);
 
 void HpUpdate(PlayerVar *Player);
 void Player1Respawn(PlayerVar *Player);
