@@ -1105,7 +1105,7 @@ void MapPrinting() {
 	switch (level) {
 	case 0:{
 		std::string output;
-		std::ifstream map("map.txt");
+		std::ifstream map("basics.txt");
 		if (map.is_open()) {
 			int y = 1;
 			while (getline(map, output)) {
@@ -1118,7 +1118,7 @@ void MapPrinting() {
 	case 1: {
 		std::string output;
 		output.clear();
-		std::ifstream map("map1.txt");
+		std::ifstream map("b2.txt");
 		if (map.is_open()) {
 			int y = 1;
 			while (getline(map, output)) {
