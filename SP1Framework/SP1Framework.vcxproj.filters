@@ -36,9 +36,6 @@
     <ClCompile Include="PlayerHP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="trap_ai.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

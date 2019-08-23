@@ -105,16 +105,18 @@ struct Arrow
 					C.X++;
 				}
 			}
+
 			if (Direction == A_LEFT)
 			{
 				Map[C.X][C.Y].Code = 0;
 				if (Map[C.X - 1][C.Y].Code == 0)
 				{
-					Map[C.Y - 1][C.Y].Code = 7;
-					Map[C.Y - 1][C.Y].Solid = false;
+					Map[C.X - 1][C.Y].Code = 7;
+					Map[C.X - 1][C.Y].Solid = false;
+					C.X--;
 				}
 			}
-			BounceTime = ElapsedTime + 0.1;
+			BounceTime = ElapsedTime + 10.0;
 		}
 	}
 };
@@ -125,21 +127,21 @@ struct Trap
 	bool Direction;
 	double BounceTime = 0.0;
 	double DeltaTime = 0.0;
-	void CreateArrow(double ElapsedTime, std::vector<Arrow> Arrows,_Object Map[][50])
+	void CreateArrow(double ElapsedTime, std::vector<Arrow> *Arrows,_Object Map[][50])
 	{
 		if (BounceTime > ElapsedTime)
 			return;
 		if (Direction == A_RIGHT)
 		{
 			Arrow temp = { C.X + 1,C.Y,A_RIGHT };
-			Arrows.push_back(temp);
+			Arrows->push_back(temp);
 			Map[C.X + 1][C.Y].Code = 6;
 			Map[C.X + 1][C.Y].Solid = false;
 		}
 		if (Direction == A_LEFT)
 		{
 			Arrow temp = { C.X - 1,C.Y,A_LEFT };
-			Arrows.push_back(temp);
+			Arrows->push_back(temp);
 			Map[C.X - 1][C.Y].Code = 7;
 			Map[C.X - 1][C.Y].Solid = false;
 		}

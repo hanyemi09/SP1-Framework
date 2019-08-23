@@ -209,7 +209,7 @@ void gameplay()            // gameplay logic
 	moveCharacter2();
 	for (int i = 0; i < Traps.size(); i++)
 	{
-		Traps[i].CreateArrow(g_dElapsedTime, Arrows, Map);
+		Traps[i].CreateArrow(g_dElapsedTime, &Arrows, Map);
 	}
 	for (int i = 0; i < Arrows.size(); i++)
 	{
@@ -1014,8 +1014,9 @@ void renderMap()
 				if (Map[x][y].LeverType == Lever) {
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', 0x25C9);
 				}
-				else {
-					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, ' ', colors[1]);
+				else if(Map[x][y].LeverType == PressurePlate)
+				{
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)254, colors[1]);
 				}
 				break;
 			case 3:
@@ -1040,10 +1041,11 @@ void renderMap()
 				c.X = x;
 				c.Y = y;
 				Map[x][y].Code = 6;
-				if (Map[x][y].Solid) {
+				if (Map[x][y].Solid) 
+				{
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
 				}
-				else
+				else if(!Map[x][y].Solid)
 				{
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
 				}
@@ -1056,7 +1058,7 @@ void renderMap()
 				{
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
 				}
-				else
+				else if (!Map[x][y].Solid)
 				{
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
 				}
@@ -1077,6 +1079,8 @@ void renderMap()
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[4]);
+				break;
+			default:
 				break;
 			}
 			if (Map[x][y].Occupied)
