@@ -55,6 +55,10 @@ void init(void)
 		break;
 	}
 	case 1: {
+		Player1.C.X = 2;
+		Player1.C.Y = 40;
+		Player2.C.X = 1;
+		Player2.C.Y = 40;
 		break;
 	}
 	case 2: {
@@ -432,7 +436,7 @@ void moveCharacter1()
 		if (!Map[Player1.C.X - 1][Player1.C.Y].Solid)
 		{
 			Player1.C.X--;
-			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X-1][Player2.C.Y].Solid)
+			if (Map[Player1.C.X+1][Player1.C.Y - 1].Occupied && !Map[Player2.C.X-1][Player2.C.Y].Solid)
 			{
 				Map[Player2.C.X][Player2.C.Y].Solid = false;
 				Map[Player2.C.X][Player2.C.Y].Occupied = false;
@@ -463,7 +467,7 @@ void moveCharacter1()
 		if (!Map[Player1.C.X + 1][Player1.C.Y].Solid)
 		{
 			Player1.C.X++;
-			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X + 1][Player2.C.Y].Solid)
+			if (Map[Player1.C.X - 1][Player1.C.Y - 1].Occupied && !Map[Player2.C.X + 1][Player2.C.Y].Solid)
 			{
 				Map[Player2.C.X][Player2.C.Y].Solid = false;
 				Map[Player2.C.X][Player2.C.Y].Occupied = false;
@@ -725,7 +729,7 @@ void moveCharacter2()
 		if (!Map[Player2.C.X - 1][Player2.C.Y].Solid)
 		{
 			Player2.C.X--;
-			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X - 1][Player1.C.Y].Solid)
+			if (Map[Player2.C.X + 1][Player2.C.Y - 1].Occupied && !Map[Player1.C.X - 1][Player1.C.Y].Solid)
 			{
 				Map[Player1.C.X][Player1.C.Y].Solid = false;
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
@@ -756,7 +760,7 @@ void moveCharacter2()
 		if (!Map[Player2.C.X + 1][Player2.C.Y].Solid)
 		{
 			Player2.C.X++;
-			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X + 1][Player1.C.Y].Solid)
+			if (Map[Player2.C.X - 1][Player2.C.Y - 1].Occupied && !Map[Player1.C.X + 1][Player1.C.Y].Solid)
 			{
 				Map[Player1.C.X][Player1.C.Y].Solid = false;
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
