@@ -1,7 +1,8 @@
 #include "game.h"
 
-void MapSetting(std::string output, int y, _Object Map[100][50]) {
-	for (int x = 0; x < output.size(); ++x) {
+void MapSetting(std::string output, short y, _Object Map[100][50]) {
+	Trap temp;
+	for (short x = 0; x < output.size(); ++x) {
 		switch (output[x]) {
 		case ' ':
 			Map[x][y].Code = 0;
@@ -25,10 +26,14 @@ void MapSetting(std::string output, int y, _Object Map[100][50]) {
 		case '>':
 			Map[x][y].Code = 6;
 			Map[x][y].Active = true;
+			temp = { x, y, A_RIGHT };
+			Traps.push_back(temp);
 			break;
 		case '<':
 			Map[x][y].Code = 7;
 			Map[x][y].Active = true;
+			temp = { x, y, A_LEFT };
+			Traps.push_back(temp);
 			break;
 		case '7':
 			Map[x][y].Code = 7;
@@ -68,14 +73,14 @@ void MapSetting(std::string output, int y, _Object Map[100][50]) {
 	}
 }
 
-void MapInitialise(int level,_Object Map[100][50]) {
+void MapInitialise(int level, _Object Map[100][50]) {
 	//initialise things in map array
 	switch (level) {
 	case 0: {
 		std::string output;
 		std::ifstream map("map.txt");
 		if (map.is_open()) {
-			int y = 1;
+			short y = 1;
 			while (getline(map, output)) {
 				MapSetting(output, y, Map);
 				++y;
@@ -88,9 +93,9 @@ void MapInitialise(int level,_Object Map[100][50]) {
 		output.clear();
 		std::ifstream map("map1.txt");
 		if (map.is_open()) {
-			int y = 1;
+			short y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y,Map);
+				MapSetting(output, y, Map);
 				++y;
 			}
 		}
@@ -101,9 +106,9 @@ void MapInitialise(int level,_Object Map[100][50]) {
 		output.clear();
 		std::ifstream map(".txt");
 		if (map.is_open()) {
-			int y = 1;
+			short y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y,Map);
+				MapSetting(output, y, Map);
 				++y;
 			}
 		}
@@ -115,8 +120,8 @@ void MapInitialise(int level,_Object Map[100][50]) {
 
 void MapReset(int sMapWidth,int sMapHeight,_Object Map[100][50]) {
 	COORD c;
-	for (int x = 0; x < sMapWidth; ++x) {
-		for (int y = 0; y < sMapHeight; ++y) {
+	for (short x = 0; x < sMapWidth; ++x) {
+		for (short y = 0; y < sMapHeight; ++y) {
 			Map[x][y] = { " " };
 		}
 	}

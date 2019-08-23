@@ -118,14 +118,14 @@ struct Arrow
 		}
 	}
 };
-
+std::vector<Arrow> Arrows;
 struct Trap
 {
 	COORD C;
 	bool Direction;
 	double BounceTime = 0.0;
 	double DeltaTime = 0.0;
-	void CreateArrow(double ElapsedTime, std::vector<Arrow> Arrows)
+	void CreateArrow(double ElapsedTime, std::vector<Arrow> Arrows,_Object Map[][50])
 	{
 		if (BounceTime > ElapsedTime)
 			return;
@@ -133,16 +133,20 @@ struct Trap
 		{
 			Arrow temp = { C.X + 1,C.Y,A_RIGHT };
 			Arrows.push_back(temp);
+			Map[C.X + 1][C.Y].Code = 6;
+			Map[C.X + 1][C.Y].Solid = false;
 		}
 		if (Direction == A_LEFT)
 		{
 			Arrow temp = { C.X - 1,C.Y,A_LEFT };
 			Arrows.push_back(temp);
+			Map[C.X - 1][C.Y].Code = 7;
+			Map[C.X - 1][C.Y].Solid = false;
 		}
 		BounceTime = ElapsedTime + 1.5;
 	}
 };
-
+std::vector<Trap> Traps;
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game

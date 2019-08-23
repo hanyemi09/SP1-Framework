@@ -21,9 +21,8 @@ EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 double  g_dSlideTime[2]; //To track how long player has been wall climbing 
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
-_Object Map[100][50];
-std::vector<Arrow> Arrows;
-std::vector<Trap> Traps;
+_Object Map[sMapWidth][sMapHeight];
+
 // Console object
 Console g_Console(100, 50, "Game");
 //level counter
@@ -124,14 +123,14 @@ void update(double dt)
 	}
 	g_dDeltaTime[1] = dt;
 	g_dDeltaTime[0] = dt;
-	/*for (int i; i < Arrows.size(); i++)
+	for (int i; i < Arrows.size(); i++)
 	{
 		Arrows[i].DeltaTime = dt;
 	}
 	for (int i; i < Traps.size(); i++)
 	{
 		Traps[i].DeltaTime = dt;
-	}*/
+	}
 
 	switch (g_eGameState)
 	{
@@ -207,6 +206,17 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
+<<<<<<< Updated upstream
+=======
+	for (int i = 0; i < Traps.size(); i++)
+	{
+		Traps[i].CreateArrow(g_dElapsedTime, Arrows, Map);
+	}
+	for (int i = 0; i < Arrows.size(); i++)
+	{
+		Arrows[i].MoveArrow(g_dElapsedTime,Map);
+	}
+>>>>>>> Stashed changes
 	//MovementSounds(); // sound can be played here too.
 }
 void scanMap(char _Link)
@@ -847,8 +857,9 @@ void renderGame()
 	renderMap();        // renders the map to the buffer first
 	renderCharacter();  // renders the character into the buffer
 }
-void MapSetting(std::string output, int y) {
-	for (int x = 0; x < output.size(); ++x) {
+void MapSetting(std::string output, short y) {
+	Trap temp;
+	for (short x = 0; x < output.size(); ++x) {
 		switch (output[x]) {
 		case ' ':
 			Map[x][y].Code = 0;
@@ -872,10 +883,14 @@ void MapSetting(std::string output, int y) {
 		case '>':
 			Map[x][y].Code = 6;
 			Map[x][y].Solid = true;
+			temp = { x, y, A_RIGHT };
+			Traps.push_back(temp);
 			break;
 		case '<':
 			Map[x][y].Code = 7;
 			Map[x][y].Solid = true;
+			temp = { x, y, A_LEFT };
+			Traps.push_back(temp);
 			break;
 		case '7':
 			Map[x][y].Code = 7;
@@ -972,7 +987,7 @@ void renderMap()
 	COORD c;
 	c.X = 0;
 	c.Y = 2;
-	Trap temp;
+	
 	//rendering from Map array
 	for (short x = 0; x < sMapWidth; ++x) {
 		for (short y = 1; y <= sMapHeight; ++y) {
@@ -1024,22 +1039,29 @@ void renderMap()
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[2]);
 				break;
 			case 6:
-				Map[x][y].Code = 6;
-				Map[x][y].Solid = true;
 				c.X = x;
 				c.Y = y;
+				Map[x][y].Code = 6;
+				if (Map[x][y].Solid) {
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
-				temp = { x, y, A_RIGHT };
-				Traps.push_back(temp);
+				}
+				else
+				{
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
+				}
 				break;
 			case 7:
 				Map[x][y].Code = 7;
-				Map[x][y].Solid = true;
 				c.X = x;
 				c.Y = y;
+				if (Map[x][y].Solid)
+				{
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)10, colors[12]);
-				temp = { x, y, A_LEFT };
-				Traps.push_back(temp);
+				}
+				else
+				{
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
+				}
 				break;
 			case 8:
 				Map[x][y].Code = 8;
