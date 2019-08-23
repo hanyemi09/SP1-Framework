@@ -44,10 +44,22 @@ void init(void)
 	g_dBounceTime[0] = 0.0;
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
-	Player1.C.X = 2; //g_Console.getConsoleSize().X / 2;
-	Player1.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
-	Player2.C.X = 3; //g_Console.getConsoleSize().X / 2;
-	Player2.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
+	//players spawnpoints
+	switch (level) {
+	case 0: {
+		Player1.C.X = 2;
+		Player1.C.Y = 14;
+		Player2.C.X = 3;
+		Player2.C.Y = 14;
+		break;
+	}
+	case 1: {
+		break;
+	}
+	case 2: {
+		break;
+	}
+	}
 	//Player2.m_bSolid = true;
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
