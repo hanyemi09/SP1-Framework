@@ -36,7 +36,8 @@ enum EGAMESTATES
     S_SPLASHSCREEN,
     S_GAME,
     S_COUNT,
-	S_PAUSE
+	S_PAUSE,
+	S_INTRO
 };
 
 // struct for the game character
@@ -157,10 +158,11 @@ void shutdown    ( void );      // do clean up, free memory
         //Printing of the map
 
 void PPFunc();
-void MapPrinting();         //Printing of the map
 void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
 void setRespawn(PlayerVar *Player);// sets respawn point
 void pausegame();			// pauses game
+
+void intro();
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
 void moveCharacter1();      // moves the character, collision detection, physics, etc
@@ -174,11 +176,12 @@ void renderCharacter();     // renders the character into the buffer
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void MainMenuMusic();
+
 //void JumpMusic();
 //void MovementSounds();
 void MapSetting(std::string output, short y, _Object Map[100][50], std::vector<Trap> *Traps);
 void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps);
-void MapReset(short sMapWidth, short sMapHeight, _Object Map[100][50]);
+void MapReset(short sMapWidth, short sMapHeight, _Object Map[100][50], std::vector<Arrow> *Arrows, std::vector<Trap> *Traps);
 
 void HpUpdate(PlayerVar *Player);
 void Player1Respawn(PlayerVar *Player);

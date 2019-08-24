@@ -20,6 +20,7 @@ PlayerVar Player1, Player2;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigger keypresses more than once
 double  g_dSlideTime[2]; //To track how long player has been wall climbing 
+double FrameBouncetime = 0.0;
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
 _Object Map[sMapWidth][sMapHeight];
 std::vector<Arrow> Arrows;
@@ -44,11 +45,26 @@ void init(void)
 	g_dBounceTime[0] = 0.0;
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
-	Player1.C.X = 2; //g_Console.getConsoleSize().X / 2;
-	Player1.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
-	//Player1.m_bSolid = true;
-	Player2.C.X = 3; //g_Console.getConsoleSize().X / 2;
-	Player2.C.Y = 14; //g_Console.getConsoleSize().Y / 2;
+	//players spawnpoints
+	switch (level) {
+	case 0: {
+		Player1.C.X = 2;
+		Player1.C.Y = 14;
+		Player2.C.X = 3;
+		Player2.C.Y = 14;
+		break;
+	}
+	case 1: {
+		Player1.C.X = 2;
+		Player1.C.Y = 40;
+		Player2.C.X = 1;
+		Player2.C.Y = 40;
+		break;
+	}
+	case 2: {
+		break;
+	}
+	}
 	//Player2.m_bSolid = true;
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(8, 16, L"Consolas");
@@ -62,7 +78,6 @@ void init(void)
 	}
 	
 }
-
 //--------------------------------------------------------------
 // Purpose  : Reset before exiting the program
 //            Do your clean up of memory here
@@ -132,10 +147,127 @@ void update(double dt)
 		break;
 	case S_PAUSE: pausegame();
 		break;
+	//case S_INTRO: 
+	//	break;
 	}
 
 }
 
+int Counter = 0;
+void ReadTXT(std::string filename,COORD Coord)
+{
+	std::string output;
+	std::ifstream file(filename);
+	if (file.is_open()) {
+
+		while (getline(file, output)) {
+			for (int x = 0; x < output.size(); x++)
+			{
+			g_Console.writeToBuffer(Coord, output[x], 0x1f);
+			}
+		}
+	}
+}
+void intro()
+{
+	COORD c;
+	c.X = 1; //(g_Console.getConsoleSize.X - 101);
+	c.Y = 1; // (g_Console.getConsoleSize.Y - 3);
+	std::string output;
+	output.clear();
+	std::ifstream logo("LogoAnimation.txt");
+	short framecount = g_dElapsedTime/0.5;
+		switch (framecount)
+		{
+		case 0:
+			ReadTXT("SplashScreenAnimation1.txt", c);
+			break;
+		case 1:
+			ReadTXT("SplashScreenAnimation2.txt", c);
+			break;
+		case 2:
+			ReadTXT("SplashScreenAnimation3.txt", c);
+			break;
+		case 3:ReadTXT("SplashScreenAnimation4.txt", c);
+			break;
+		case 4:ReadTXT("SplashScreenAnimation5.txt", c);
+			break;
+		case 5:ReadTXT("SplashScreenAnimation6.txt", c);
+			break;
+		case 6:ReadTXT("SplashScreenAnimation7.txt", c);
+			break;
+		case 7:ReadTXT("SplashScreenAnimation8.txt", c);
+			break;
+		case 8:ReadTXT("SplashScreenAnimation9.txt", c);
+			break;
+		case 9:ReadTXT("SplashScreenAnimation10.txt", c);
+			break;
+		}/*
+	if (FrameBouncetime > g_dElapsedTime) 
+	return;
+		for (int line = 0; line < 5; line++)
+		{
+			getline(logo, output);
+			for (int x = 0; x < 102; x++)
+			{
+				c.X = x;
+				c.Y = line;
+				g_Console.writeToBuffer(c, output[x], 0x1f);
+			}
+		}
+		FrameBouncetime = g_dElapsedTime + 0.5;*/
+	
+}
+	//switch (Counter){
+	//case 0:
+	//	if (map.is_open()) {
+	//		int y = g_Console.getConsoleSize().Y-3;
+	//		while (getline(map, output)) {
+	//			int start;
+	//			start = g_Console.getConsoleSize().X - (output.size() / 2);
+	//			c.X = start;
+	//			for (int x = 0; x < output.length(); ++x) {
+	//				switch (output[x]) {
+	//				default:
+	//					c.X += 1;
+	//					c.Y = y;
+	//					g_Console.writeToBuffer(c, output[x], 0x06);
+	//					break;
+	//				}
+	//			}
+	//			++y;
+	//		}
+	//	
+	//	}
+	//	Sleep(500);
+	//	++Counter;
+	//	break;
+	//case 1:
+	//	std::string output;
+	//	output.clear();
+	//	std::ifstream map("SplashScreenAnimation2.txt");//Main_menu_Splash_Art
+	//	if (map.is_open()) {
+	//		int y = 10;
+	//		while (getline(map, output)) {
+	//			int start;
+	//			start = (sMapWidth / 2) - (output.length() / 2);
+	//			c.X = start;
+	//			for (int x = 0; x < output.length(); ++x) {
+	//				switch (output[x]) {
+	//				default:
+	//					c.X += 1;
+	//					c.Y = y;
+	//					g_Console.writeToBuffer(c, output[x], 0x06);
+	//					break;
+	//				}
+	//			}
+	//			++y;
+	//		}
+	//	}
+	//	break;
+
+	//}
+	
 
 void pausegame()
 {
@@ -175,12 +307,14 @@ void render()
 		break;
 	case S_PAUSE: pausegame();
 		break;
+	case S_INTRO: intro();
+		break;
 	}
 	renderFramerate();  // renders debug information, frame rate, elapsed time, etc
 	renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
 }
 
-void splashScreenWait()    // waits for time to pass in splash screen
+void splashScreenWait()    
 {
 	if (g_abKeyPressed[K_ENTER] == true) // Press ENTER to start
 	{
@@ -191,6 +325,7 @@ void splashScreenWait()    // waits for time to pass in splash screen
 	{
 		g_bQuitGame = true;
 	}
+	
 }
 
 void gameplay()            // gameplay logic
@@ -301,7 +436,7 @@ void moveCharacter1()
 		if (!Map[Player1.C.X - 1][Player1.C.Y].Solid)
 		{
 			Player1.C.X--;
-			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X-1][Player2.C.Y].Solid)
+			if (Map[Player1.C.X+1][Player1.C.Y - 1].Occupied && !Map[Player2.C.X-1][Player2.C.Y].Solid)
 			{
 				Map[Player2.C.X][Player2.C.Y].Solid = false;
 				Map[Player2.C.X][Player2.C.Y].Occupied = false;
@@ -332,7 +467,7 @@ void moveCharacter1()
 		if (!Map[Player1.C.X + 1][Player1.C.Y].Solid)
 		{
 			Player1.C.X++;
-			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied && !Map[Player2.C.X + 1][Player2.C.Y].Solid)
+			if (Map[Player1.C.X - 1][Player1.C.Y - 1].Occupied && !Map[Player2.C.X + 1][Player2.C.Y].Solid)
 			{
 				Map[Player2.C.X][Player2.C.Y].Solid = false;
 				Map[Player2.C.X][Player2.C.Y].Occupied = false;
@@ -362,7 +497,6 @@ void moveCharacter1()
 	{
 		if ((Map[Player1.C.X][Player1.C.Y - 1].Solid && !Map[Player1.C.X][Player1.C.Y - 1].Occupied) || Player1.sJump <= 0 || (Map[Player1.C.X][Player1.C.Y - 1].Occupied && Map[Player1.C.X][Player1.C.Y - 2].Solid))
 		{
-
 			Player1.bCanJump = false;
 			Player1.sJump = 0;
 		}
@@ -388,11 +522,13 @@ void moveCharacter1()
 		{
 			Player1.C.X--;
 			Player1.C.Y--;
+			g_dSlideTime[1] +=1;
 		}
 		else if (Player1.bCanWallJumpR && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X++;
 			Player1.C.Y--;
+			g_dSlideTime[1] +=1;
 		}
 		else if (Player1.bCanWallJumpL && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
@@ -593,7 +729,7 @@ void moveCharacter2()
 		if (!Map[Player2.C.X - 1][Player2.C.Y].Solid)
 		{
 			Player2.C.X--;
-			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X - 1][Player1.C.Y].Solid)
+			if (Map[Player2.C.X + 1][Player2.C.Y - 1].Occupied && !Map[Player1.C.X - 1][Player1.C.Y].Solid)
 			{
 				Map[Player1.C.X][Player1.C.Y].Solid = false;
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
@@ -624,7 +760,7 @@ void moveCharacter2()
 		if (!Map[Player2.C.X + 1][Player2.C.Y].Solid)
 		{
 			Player2.C.X++;
-			if (Map[Player2.C.X][Player2.C.Y - 1].Occupied && !Map[Player1.C.X + 1][Player1.C.Y].Solid)
+			if (Map[Player2.C.X - 1][Player2.C.Y - 1].Occupied && !Map[Player1.C.X + 1][Player1.C.Y].Solid)
 			{
 				Map[Player1.C.X][Player1.C.Y].Solid = false;
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
@@ -797,6 +933,7 @@ void clearScreen()
 
 void renderSplashScreen()  // renders the splash screen
 {
+	/*intro();*/
 	/*COORD c = g_Console.getConsoleSize();
 	c.Y /= 3;
 	c.X = c.X / 2 - 9;
@@ -815,25 +952,74 @@ void renderSplashScreen()  // renders the splash screen
 	c.Y = 1;
 	std::string output;
 	output.clear();
-	std::ifstream map("splash.txt");//Main_menu_Splash_Art
-	if (map.is_open()) {
-		int y = 1;
-		while (getline(map, output)) {
-			int start;
-			start = (sMapWidth / 2) - (output.length() / 2);
-			c.X = start;
-			for (int x = 0; x < output.length(); ++x) {
-				switch (output[x]) {
-				default:
-					c.X += 1;
-					c.Y = y;
-					g_Console.writeToBuffer(c, output[x], 0x06);
-					break;
+	switch (level) {
+	case 0: {
+		std::ifstream map("splash.txt");//Main_menu_Splash_Art
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
 				}
+				++y;
 			}
-			++y;
 		}
-	}	
+		break;
+	}
+	case 1: {
+		std::ifstream map("level2splash.txt");
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
+				}
+				++y;
+			}
+		}
+		break;
+	}
+	case 2: {
+		std::ifstream map("level3splash.txt");//Main_menu_Splash_Art
+		if (map.is_open()) {
+			int y = 1;
+			while (getline(map, output)) {
+				int start;
+				start = (sMapWidth / 2) - (output.length() / 2);
+				c.X = start;
+				for (int x = 0; x < output.length(); ++x) {
+					switch (output[x]) {
+					default:
+						c.X += 1;
+						c.Y = y;
+						g_Console.writeToBuffer(c, output[x], 0x06);
+						break;
+					}
+				}
+				++y;
+			}
+		}
+		break;
+	}
+	}
 }
 
 void renderGame()
@@ -920,50 +1106,6 @@ void renderGame()
 //}
 
 
-void MapPrinting() {
-	//initialise things in map array
-	switch (level) {
-	case 0:{
-		std::string output;
-		std::ifstream map("map.txt");
-		if (map.is_open()) {
-			int y = 1;
-			while (getline(map, output)) {
-				MapSetting(output, y, Map, &Traps);
-				++y;
-			}
-		}
-		break;
-	}
-	case 1: {
-		std::string output;
-		output.clear();
-		std::ifstream map("map1.txt");
-		if (map.is_open()) {
-			int y = 1;
-			while (getline(map, output)) {
-				MapSetting(output, y, Map, &Traps);
-				++y;
-			}
-		}
-		break;
-	}
-	case 2: {
-		std::string output;
-		output.clear();
-		std::ifstream map(".txt");
-		if (map.is_open()) {
-			int y = 1;
-			while (getline(map, output)) {
-				MapSetting(output, y, Map, &Traps);
-				++y;
-			}
-		}
-		break;
-	}
-	}
-	
-}
 void renderMap()
 {
 	PlaySound(NULL, NULL, 0);
@@ -1074,17 +1216,19 @@ void renderMap()
 			default:
 				break;
 			}
+			/*
 			if (Map[x][y].Occupied)
 			{
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', colors[4]);
 			}
+			*/
 		}
 	}
 	if (Map[Player1.C.X][Player1.C.Y].Code == 9&& Map[Player2.C.X][Player2.C.Y].Code == 9) {
 		++level;
-		MapReset(sMapWidth,sMapHeight,Map);
+		MapReset(sMapWidth,sMapHeight,Map, &Arrows, &Traps);
 		init();
 	}
 }
