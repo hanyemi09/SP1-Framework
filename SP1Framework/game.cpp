@@ -378,7 +378,7 @@ void moveCharacter1()
 	{
 		switch (Map[Player1.C.X][Player1.C.Y].LeverType)
 		{
-		case Lever://NEED TO ADD SAME THING FOR PRESSUREPLATE
+		case LEVER://NEED TO ADD SAME THING FOR PRESSUREPLATE
 			scanMap(Map[Player1.C.X][Player1.C.Y].Link);
 			if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
 			{
@@ -592,7 +592,7 @@ void moveCharacter1()
 		HpUpdate(&Player1);
 		Map[Player1.C.X][Player1.C.Y].Code = 0;
 	}
-	//if (Map[PrevPos1.X][PrevPos1.Y].LeverType == PressurePlate || Map[Player1.C.X][Player1.C.Y].LeverType == PressurePlate)
+	//if (Map[PrevPos1.X][PrevPos1.Y].LeverType == PRESSUREPLATE || Map[Player1.C.X][Player1.C.Y].LeverType == PRESSUREPLATE)
 		PPFunc();
 
 	if (Player1.bSomethingHappened)
@@ -611,7 +611,7 @@ void PPFunc()
 	{
 		for (int y = 0; y < sMapHeight; y++)
 		{
-			if (Map[x][y].LeverType == PressurePlate)
+			if (Map[x][y].LeverType == PRESSUREPLATE)
 			{
 				if (Map[x][y].Active && !Map[x][y].Occupied)
 				{
@@ -673,7 +673,7 @@ void moveCharacter2()
 	{
 		switch (Map[Player2.C.X][Player2.C.Y].LeverType)
 		{
-		case Lever:
+		case LEVER:
 			scanMap(Map[Player2.C.X][Player2.C.Y].Link);
 			if (Map[Player2.C.X][Player2.C.Y].Link  == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
 			{
@@ -880,7 +880,7 @@ void moveCharacter2()
 		HpUpdate(&Player2);
 		Map[Player2.C.X][Player2.C.Y].Code = 0;
 	}
-	//if(Map[PrevPos2.X][PrevPos2.Y].LeverType==PressurePlate || Map[Player2.C.X][Player2.C.Y].LeverType==PressurePlate)
+	//if(Map[PrevPos2.X][PrevPos2.Y].LeverType==PRESSUREPLATE || Map[Player2.C.X][Player2.C.Y].LeverType==PRESSUREPLATE)
 	PPFunc();
 
 	if (Player2.bSomethingHappened)
@@ -1091,7 +1091,7 @@ void renderGame()
 //				{
 //					Map[x][y].Code = 2;
 //					Map[x][y].Link = output[x] - 13;
-//					Map[x][y].LeverType = PressurePlate;
+//					Map[x][y].LeverType = PRESSUREPLATE;
 //				}
 //				else
 //					if (output[x] >= 78 && output[x] <= 90)
@@ -1144,10 +1144,10 @@ void renderMap()
 				Map[x][y].Code = 2;
 				c.X = x;
 				c.Y = y;
-				if (Map[x][y].LeverType == Lever) {
+				if (Map[x][y].LeverType == LEVER) {
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', 0x25C9);
 				}
-				else if(Map[x][y].LeverType == PressurePlate)
+				else if(Map[x][y].LeverType == PRESSUREPLATE)
 				{
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)254, colors[1]);
 				}

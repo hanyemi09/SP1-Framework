@@ -50,17 +50,29 @@ struct SGameChar
 //variables for for map objects
 enum LeverTypes
 {
-	Lever,
-	PressurePlate
+	LEVER,
+	PRESSUREPLATE
+};
+//stores maps variables
+struct Lever
+{
+	COORD C;
+	bool Active = false;
+	char Link;
+	short LeverType;
+};
+struct ActivatableBlock
+{
+	COORD C;
+	char Link;
 };
 struct _Object
 {
 	bool Occupied = false;
 	short Code;
-	short LeverType;
 	bool Solid;
-	bool Active=false;
-	char Link;
+	std::vector<Lever> Levers;
+	std::vector<ActivatableBlock> Blocks;
 };
 struct PlayerVar 
 {
