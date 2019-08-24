@@ -39,71 +39,40 @@ enum EGAMESTATES
 	S_PAUSE,
 	S_INTRO
 };
-
+enum Direction
+{
+	A_LEFT,
+	A_RIGHT
+};
 // struct for the game character
 struct SGameChar
 {
     COORD m_cLocation;
     bool  m_bActive;
 };
-
-//variables for for map objects
 enum LeverTypes
 {
 	LEVER,
 	PRESSUREPLATE
 };
-//stores maps variables
-struct Lever
+enum TILECODE
 {
-	COORD C;
-	bool Active = false;
-	char Link;
-	short LeverType;
+	WALL = 1,
 };
-struct ActivatableBlock
-{
-	COORD C;
-	char Link;
-};
-struct _Object
+
+struct _Map
 {
 	bool Occupied = false;
 	short Code;
 	bool Solid;
-	std::vector<Lever> Levers;
-	std::vector<ActivatableBlock> Blocks;
-};
-struct PlayerVar 
-{
-	COORD C;
-	bool bGravity=false;
-	//Jumping
-	bool bIsGrounded = false;
-	bool bWasGrounded = false;
-	bool bCanJump = false;
-	short sJump = 2;
-	short sDisplacementSinceGrounded = 0;
-	bool bSomethingHappened = false;
-	//Wall Jumping
-	bool bCanWallJumpR = false;
-	bool bCanWallJumpL = false;
-	bool bWasWallJ = false;//detection if player was Wall jumping
-	bool bWasWallJC = false;//checking if player was Wall jumping
-	//health
-	short health = 3;
-};
-enum Direction
-{
-	A_LEFT,
-	A_RIGHT
+	bool LeverType;
 };
 struct Arrow
 {
 	COORD C;
 	bool Direction;
 	double BounceTime = 0.0;
-	void MoveArrow(double ElapsedTime, _Object Map[][50])
+	void MoveArrow(double ElapsedTime, _Map Map[][50])
 	{
 		if (BounceTime > ElapsedTime)
 			return;
@@ -140,7 +109,7 @@ struct Trap
 	COORD C;
 	bool Direction;
 	double BounceTime = 0.0;
-	void CreateArrow(double ElapsedTime, std::vector<Arrow> *Arrows,_Object Map[][50])
+	void CreateArrow(double ElapsedTime, std::vector<Arrow> *Arrows, _Map Map[][50])
 	{
 		if (BounceTime > ElapsedTime)
 			return;
@@ -161,6 +130,140 @@ struct Trap
 		BounceTime = ElapsedTime + 1.5;
 	}
 };
+//variables for for map objects
+//stores maps variables
+struct Lever
+{
+	COORD C;
+	char Link;
+	bool LeverType;
+	bool Active = false;
+};
+struct ActivatableBlock
+{
+	COORD C;
+	char Link;
+	bool OriginalSolid;
+};
+struct PlayerVar 
+{
+	COORD C;
+	bool bGravity=false;
+	//Jumping
+	bool bIsGrounded = false;
+	bool bWasGrounded = false;
+	bool bCanJump = false;
+	short sJump = 2;
+	short sDisplacementSinceGrounded = 0;
+	bool bSomethingHappened = false;
+	//Wall Jumping
+	bool bCanWallJumpR = false;
+	bool bCanWallJumpL = false;
+	bool bWasWallJ = false;//detection if player was Wall jumping
+	bool bWasWallJC = false;//checking if player was Wall jumping
+	//health
+	short health = 3;
+	//respawn
+	void PlayerRespawn(_Map Map[][50],COORD Respawn)
+	{
+		if (Map[Respawn.X][Respawn.Y].Occupied)
+		{
+			C.X = Respawn.X;
+			C.Y = Respawn.Y;
+		}
+		else
+		{
+			C.X = Respawn.X - 1;
+			C.Y = Respawn.Y;
+		}
+		health = 3;
+	}
+};
+struct Object
+{
+	std::vector<Arrow> Arrows;
+	std::vector<Trap> Traps;
+	std::vector<Lever> Levers;
+	std::vector<ActivatableBlock> Blocks;
+	void UpdateBlockSolidPP(_Map Map[][50])
+	{	
+		for (short i = 0; i < Levers.size(); i++)
+		{
+			if (Levers[i].LeverType == PRESSUREPLATE)
+			{
+				for (int j = 0; j < Blocks.size(); j++)
+				{
+					if (Levers[i].Link == Blocks[j].Link)
+					{
+						if (Map[Levers[i].C.X][Levers[i].C.Y].Occupied)
+						{
+							switch (Blocks[j].OriginalSolid)
+							{
+							case true:
+								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = false;
+								break;
+							case false:
+								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = true;
+								break;
+							}
+						}
+						else
+						{
+							switch (Blocks[j].OriginalSolid)
+							{
+							case true:
+								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = true;
+								break;
+							case false:
+								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = false;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	void UpdateBlockSolidL(_Map Map[][50])
+	{
+		for (short i = 0; i < Levers.size(); i++)
+		{
+			if (Levers[i].LeverType == LEVER)
+			{
+				for (int j = 0; j < Blocks.size(); j++)
+				{
+					if (Levers[i].Link == Blocks[j].Link)
+					{
+						if (Levers[i].Active)
+						{
+							switch (Blocks[j].OriginalSolid)
+							{
+							case true:
+								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = false;
+								break;
+							case false:
+								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = true;
+								break;
+							}
+						}
+						else
+						{
+							switch (Blocks[j].OriginalSolid)
+							{
+							case true:
+								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = true;
+								break;
+							case false:
+								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = false;
+								break;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+};
 
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
@@ -169,9 +272,8 @@ void render      ( void );      // renders the current state of the game to the 
 void shutdown    ( void );      // do clean up, free memory
         //Printing of the map
 
-void PPFunc();
-void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
 void setRespawn(PlayerVar *Player);// sets respawn point
+//void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
 void pausegame();			// pauses game
 
 void intro();
@@ -191,9 +293,9 @@ void MainMenuMusic();
 
 //void JumpMusic();
 //void MovementSounds();
-void MapSetting(std::string output, short y, _Object Map[100][50], std::vector<Trap> *Traps);
-void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps);
-void MapReset(short sMapWidth, short sMapHeight, _Object Map[100][50], std::vector<Arrow> *Arrows, std::vector<Trap> *Traps);
+void MapSetting(std::string output, short y, _Map Map[100][50], Object *Objects);
+void MapInitialise(int level, _Map Map[100][50], Object *Objects);
+void MapReset(short sMapWidth, short sMapHeight, _Map Map[100][50], Object *Objects);
 
 void HpUpdate(PlayerVar *Player);
 void Player1Respawn(PlayerVar *Player);

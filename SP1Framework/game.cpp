@@ -22,9 +22,8 @@ double  g_dBounceTime[2]; // this is to prevent key bouncing, so we won't trigge
 double  g_dSlideTime[2]; //To track how long player has been wall climbing 
 double FrameBouncetime = 0.0;
 irrklang::ISoundEngine* engine = irrklang::createIrrKlangDevice();
-_Object Map[sMapWidth][sMapHeight];
-std::vector<Arrow> Arrows;
-std::vector<Trap> Traps;
+_Map Map[sMapWidth][sMapHeight];
+Object Objects;
 // Console object
 Console g_Console(100, 50, "Game");
 //level counter
@@ -70,7 +69,7 @@ void init(void)
 	g_Console.setConsoleFont(8, 16, L"Consolas");
 	//sets initial spawnpoint
 	setRespawn(&Player1);
-	MapInitialise(level,Map, &Traps);
+	MapInitialise(level,Map, &Objects);
 	switch (level) {
 	case 0:
 		MainMenuMusic();
@@ -333,36 +332,36 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
-	for (int i = 0; i < Traps.size(); i++)
+	for (int i = 0; i < Objects.Traps.size(); i++)
 	{
-		Traps[i].CreateArrow(g_dElapsedTime, &Arrows, Map);
+		Objects.Traps[i].CreateArrow(g_dElapsedTime, &Objects.Arrows, Map);
 	}
-	for (int i = 0; i < Arrows.size(); i++)
+	for (int i = 0; i < Objects.Arrows.size(); i++)
 	{
-		Arrows[i].MoveArrow(g_dElapsedTime, Map);
+		Objects.Arrows[i].MoveArrow(g_dElapsedTime, Map);
 	}
 	//MovementSounds(); // sound can be played here too.
 }
-void scanMap(char _Link)
-{
-	for (int Y = 0; Y < sMapHeight; Y++)
-	{
-		for (int X = 0; X < sMapWidth; X++)
-		{
-			if (Map[X][Y].Link == _Link && Map[X][Y].Code == 8)
-			{
-				if (Map[X][Y].Solid == false)
-				{
-					Map[X][Y].Solid = true;
-				}
-				else if(Map[X][Y].Solid == true)
-				{
-					Map[X][Y].Solid = false;
-				}
-			}
-		}
-	}
-}
+//void scanMap(char _Link)
+//{
+//	for (int Y = 0; Y < sMapHeight; Y++)
+//	{
+//		for (int X = 0; X < sMapWidth; X++)
+//		{
+//			if (Map[X][Y].Link == _Link && Map[X][Y].Code == 8)
+//			{
+//				if (Map[X][Y].Solid == false)
+//				{
+//					Map[X][Y].Solid = true;
+//				}
+//				else if(Map[X][Y].Solid == true)
+//				{
+//					Map[X][Y].Solid = false;
+//				}
+//			}
+//		}
+//	}
+//}
 void moveCharacter1()
 {
 	if (g_dBounceTime[1] > g_dElapsedTime)
@@ -376,18 +375,20 @@ void moveCharacter1()
 	//Lever interaction
 	if (g_abKeyPressed[K_DOWN] && Map[Player1.C.X][Player1.C.Y].Code == 2)
 	{
-		switch (Map[Player1.C.X][Player1.C.Y].LeverType)
+		for (int i = 0; i < Objects.Levers.size(); i++)
 		{
-		case LEVER://NEED TO ADD SAME THING FOR PRESSUREPLATE
-			scanMap(Map[Player1.C.X][Player1.C.Y].Link);
-			if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+			if (Player1.C.X == Objects.Levers[i].C.X && Player1.C.Y == Objects.Levers[i].C.Y && Objects.Levers[i].LeverType == LEVER)
 			{
-				Map[Player2.C.X][Player2.C.Y].Occupied = false;
-				Map[Player2.C.X][Player2.C.Y].Solid = true;
-				Player2Respawn(&Player2);
+				if (Objects.Levers[i].Active == false)
+				{
+					Objects.Levers[i].Active = true;
+				}
+				else
+				{
+					Objects.Levers[i].Active = false;
+				}
+				Objects.UpdateBlockSolidL(Map);
 			}
-		default:
-			break;
 		}
 		Player1.bSomethingHappened = true;
 	}
@@ -593,7 +594,7 @@ void moveCharacter1()
 		Map[Player1.C.X][Player1.C.Y].Code = 0;
 	}
 	//if (Map[PrevPos1.X][PrevPos1.Y].LeverType == PRESSUREPLATE || Map[Player1.C.X][Player1.C.Y].LeverType == PRESSUREPLATE)
-		PPFunc();
+	Objects.UpdateBlockSolidPP(Map);
 
 	if (Player1.bSomethingHappened)
 	{
@@ -605,8 +606,110 @@ void moveCharacter1()
 	Map[Player1.C.X][Player1.C.Y].Solid = true;
 	Map[Player1.C.X][Player1.C.Y].Occupied = true;
 }
-void PPFunc()
+	/*
+void PPFunc(PlayerVar Player)
 {
+	for (short i = 0; i < Objects.Levers.size(); i++)
+	{
+		if (Objects.Levers[i].C.X == Player.C.X && Objects.Levers[i].C.Y == Player.C.Y && Objects.Levers[i].LeverType == PRESSUREPLATE)
+		{
+			for (short j = 0; j < Objects.Blocks.size(); j++)
+			{
+				if (Objects.Levers[i].Link == Objects.Blocks[j].Link)
+				{
+					if (Objects.Levers[i].Active)
+					{
+						switch (Objects.Blocks[j].OriginalSolid)
+						{
+						case true:
+							Map[Objects.Blocks[j].C.X][Objects.Blocks[j].C.Y].Solid = false;
+							break;
+						case false:
+							Map[Objects.Blocks[j].C.X][Objects.Blocks[j].C.Y].Solid = true;
+							break;
+						}
+					}
+					else if (!Objects.Levers[i].Active)
+					{
+						switch (Objects.Blocks[j].OriginalSolid)
+						{
+						case true:
+							Map[Objects.Blocks[j].C.X][Objects.Blocks[j].C.Y].Solid = true;
+							break;
+						case false:
+							Map[Objects.Blocks[j].C.X][Objects.Blocks[j].C.Y].Solid = false;
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+		void Suffocate(PlayerVar *Suffocatee, _Map Map[][50], ActivatableBlock Blocks)
+		{
+			if (Suffocatee->C.X == Blocks.C.X && Suffocatee->C.Y == Blocks.C.Y)
+			{
+				Map[Suffocatee->C.X][Suffocatee->C.Y].Occupied = false;
+				Map[Suffocatee->C.X][Suffocatee->C.Y].Solid = true;
+				PlayerRespawn(&Suffocatee);
+			}
+			else if (!Map[x][y].Active&&Map[x][y].Occupied)
+			{
+				scanMap(Map[x][y].Link);
+				Map[x][y].Active = true;
+				if (Map[Suffocater.C.X][Suffocater.C.Y].Link == Map[Suffocatee.C.X][Suffocatee.C.Y].Link && Map[Suffocatee.C.X][Suffocatee.C.Y].Code == 8)
+				{
+					if (Map[Suffocater.C.X][Suffocater.C.Y].Link == Map[Suffocatee.C.X][Suffocatee.C.Y].Link && Map[Suffocatee.C.X][Suffocatee.C.Y].Code == 8)
+					{
+						Map[Suffocatee.C.X][Suffocatee.C.Y].Occupied = false;
+						Map[Suffocatee.C.X][Suffocatee.C.Y].Solid = true;
+						SuffocateeRespawn(&Suffocatee);
+					}
+					if (Map[Suffocatee.C.X][Suffocatee.C.Y].Link == Map[Suffocater.C.X][Suffocater.C.Y].Link && Map[Suffocater.C.X][Suffocater.C.Y].Code == 8)
+					{
+						Map[Suffocater.C.X][Suffocater.C.Y].Occupied = false;
+						Map[Suffocater.C.X][Suffocater.C.Y].Solid = true;
+						Player1Respawn(&Suffocater);
+					}
+				}
+			}
+		}
+				if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+				{
+					if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+					{
+						Map[Player2.C.X][Player2.C.Y].Occupied = false;
+						Map[Player2.C.X][Player2.C.Y].Solid = true;
+						Player2Respawn(&Player2);
+					}
+					if (Map[Player2.C.X][Player2.C.Y].Link == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
+					{
+						Map[Player1.C.X][Player1.C.Y].Occupied = false;
+						Map[Player1.C.X][Player1.C.Y].Solid = true;
+						Player1Respawn(&Player1);
+					}
+				}
+			else if (!Map[x][y].Active&&Map[x][y].Occupied)
+			{
+				scanMap(Map[x][y].Link);
+				Map[x][y].Active = true;
+				if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+				{
+					if (Map[Player1.C.X][Player1.C.Y].Link == Map[Player2.C.X][Player2.C.Y].Link && Map[Player2.C.X][Player2.C.Y].Code == 8)
+					{
+						Map[Player2.C.X][Player2.C.Y].Occupied = false;
+						Map[Player2.C.X][Player2.C.Y].Solid = true;
+						Player2Respawn(&Player2);
+					}
+					if (Map[Player2.C.X][Player2.C.Y].Link == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
+					{
+						Map[Player1.C.X][Player1.C.Y].Occupied = false;
+						Map[Player1.C.X][Player1.C.Y].Solid = true;
+						Player1Respawn(&Player1);
+					}
+				}
+			}
+}
 	for (int x = 0; x < sMapWidth;x++)
 	{
 		for (int y = 0; y < sMapHeight; y++)
@@ -656,7 +759,7 @@ void PPFunc()
 			}
 		}
 	}
-}
+	*/
 
 void moveCharacter2()
 {
@@ -671,7 +774,7 @@ void moveCharacter2()
 	//Lever interaction
 	if (isKeyPressed(0x53) && Map[Player2.C.X][Player2.C.Y].Code == 2)
 	{
-		switch (Map[Player2.C.X][Player2.C.Y].LeverType)
+		/*switch (Map[Player2.C.X][Player2.C.Y].LeverType)
 		{
 		case LEVER:
 			scanMap(Map[Player2.C.X][Player2.C.Y].Link);
@@ -683,7 +786,7 @@ void moveCharacter2()
 			}
 		default:
 			break;
-		}
+		}*/
 		Player2.bSomethingHappened = true;
 	}
 	if (Map[Player2.C.X][Player2.C.Y + 1].Solid == true)
@@ -881,7 +984,7 @@ void moveCharacter2()
 		Map[Player2.C.X][Player2.C.Y].Code = 0;
 	}
 	//if(Map[PrevPos2.X][PrevPos2.Y].LeverType==PRESSUREPLATE || Map[Player2.C.X][Player2.C.Y].LeverType==PRESSUREPLATE)
-	PPFunc();
+	Objects.UpdateBlockSolidPP(Map);
 
 	if (Player2.bSomethingHappened)
 	{
@@ -1228,7 +1331,7 @@ void renderMap()
 	}
 	if (Map[Player1.C.X][Player1.C.Y].Code == 9&& Map[Player2.C.X][Player2.C.Y].Code == 9) {
 		++level;
-		MapReset(sMapWidth,sMapHeight,Map, &Arrows, &Traps);
+		MapReset(sMapWidth,sMapHeight,Map, &Objects);
 		init();
 	}
 }

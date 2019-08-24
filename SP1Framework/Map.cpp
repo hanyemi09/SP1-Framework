@@ -1,6 +1,7 @@
 #include "game.h"
 
-void MapSetting(std::string output, short y, _Object Map[100][50], std::vector<Trap> *Traps) {
+void MapSetting(std::string output, short y, _Map Map[100][50], Object *Objects) {
+	Trap temp;
 	for (short x = 0; x < output.size(); ++x) {
 		switch (output[x]) {
 		case ' ':
@@ -25,14 +26,14 @@ void MapSetting(std::string output, short y, _Object Map[100][50], std::vector<T
 		case '>':
 			Map[x][y].Code = 6;
 			Map[x][y].Solid = true;
-			Trap temp = { x, y, A_RIGHT };
-			Traps->push_back(temp);
+			temp = { x, y, A_RIGHT };
+			Objects->Traps.push_back(temp);
 			break;
 		case '<':
 			Map[x][y].Code = 7;
 			Map[x][y].Solid = true;
-			Trap temp = { x, y, A_LEFT };
-			Traps->push_back(temp);
+			temp = { x, y, A_LEFT };
+			Objects->Traps.push_back(temp);
 			break;
 		case '7':
 			Map[x][y].Code = 7;
@@ -44,37 +45,39 @@ void MapSetting(std::string output, short y, _Object Map[100][50], std::vector<T
 			if (output[x] >= 97 && output[x] <= 109)
 			{
 				Map[x][y].Code = 8;
-				ActivatableBlock temp = { x,y,output[x] };
-				Map[x][y].Blocks.push_back(temp);
+				ActivatableBlock temp = { x,y,output[x],false };
+				Objects->Blocks.push_back(temp);
 				Map[x][y].Solid = false;
 			}
 			else if (output[x] >= 65 && output[x] <= 77)
 			{
 				Map[x][y].Code = 8;
-				ActivatableBlock temp = { x,y,output[x] + 32, };
-				Map[x][y].Blocks.push_back(temp);
+				ActivatableBlock temp = { x,y,output[x] + 32,true };
+				Objects->Blocks.push_back(temp);
 				Map[x][y].Solid = true;
 			}
 			else {
 				if (output[x] >= 110 && output[x] <= 122)
 				{
 					Map[x][y].Code = 2;
+					Map[x][y].LeverType = PRESSUREPLATE;
 					Lever temp = { x,y,output[x] - 13,PRESSUREPLATE };
-					Map[x][y].Levers.push_back(temp);
+					Objects->Levers.push_back(temp);
 				}
 				else
 					if (output[x] >= 78 && output[x] <= 90)
 					{
 						Map[x][y].Code = 2;
+						Map[x][y].LeverType = LEVER;
 						Lever temp = { x,y,output[x] + 19,LEVER };
-						Map[x][y].Levers.push_back(temp);
+						Objects->Levers.push_back(temp);
 					}
 			}
 		}
 	}
 }
 
-void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps) {
+void MapInitialise(int level, _Map Map[100][50], Object *Objects) {
 	//initialise things in map array
 	switch (level) {
 	case 0: {
@@ -83,7 +86,7 @@ void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps) {
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y, Map, Traps);
+				MapSetting(output, y, Map, Objects);
 				++y;
 			}
 		}
@@ -96,7 +99,7 @@ void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps) {
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y, Map, Traps);
+				MapSetting(output, y, Map, Objects);
 				++y;
 			}
 		}
@@ -109,7 +112,7 @@ void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps) {
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {
-				MapSetting(output, y, Map, Traps);
+				MapSetting(output, y, Map, Objects);
 				++y;
 			}
 		}
@@ -119,14 +122,13 @@ void MapInitialise(int level, _Object Map[100][50], std::vector<Trap> *Traps) {
 
 }
 
-void MapReset(short sMapWidth,short sMapHeight,_Object Map[100][50],std::vector<Arrow> *Arrows, std::vector<Trap> *Traps) {
-	COORD c;
+void MapReset(short sMapWidth,short sMapHeight,_Map Map[100][50],Object *Objects) {
 	for (short x = 0; x < sMapWidth; ++x) {
 		for (short y = 0; y < sMapHeight; ++y) {
 			Map[x][y] = { " " };
 			Map[x][y].Occupied = false;
 		}
 	}
-	Arrows->clear();
-	Traps->clear();
+	Objects->Arrows.clear();
+	Objects->Traps.clear();
 }
