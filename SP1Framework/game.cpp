@@ -380,6 +380,7 @@ void moveCharacter1()
 			{
 				Map[Player2.C.X][Player2.C.Y].Occupied = false;
 				Map[Player2.C.X][Player2.C.Y].Solid = true;
+				engine->play2D("deathsound.mp3", false, false);
 				Player2Respawn(&Player2);
 			}
 		default:
@@ -574,6 +575,7 @@ void moveCharacter1()
 	}
 	if (Map[Player1.C.X][Player1.C.Y].Code == 5)
 	{
+		engine->play2D("deathsound.mp3", false, false);
 		Player1Respawn(&Player1);
 		Player1.health = 3;
 	}
@@ -618,12 +620,14 @@ void PPFunc()
 							{
 								Map[Player2.C.X][Player2.C.Y].Occupied = false;
 								Map[Player2.C.X][Player2.C.Y].Solid = true;
+								engine->play2D("deathsound.mp3", false, false);
 								Player2Respawn(&Player2);
 							}
 							if (Map[Player2.C.X][Player2.C.Y].Link == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
 							{
 								Map[Player1.C.X][Player1.C.Y].Occupied = false;
 								Map[Player1.C.X][Player1.C.Y].Solid = true;
+								engine->play2D("deathsound.mp3", false, false);
 								Player1Respawn(&Player1);
 							}
 						}
@@ -638,12 +642,14 @@ void PPFunc()
 							{
 								Map[Player2.C.X][Player2.C.Y].Occupied = false;
 								Map[Player2.C.X][Player2.C.Y].Solid = true;
+								engine->play2D("deathsound.mp3", false, false);
 								Player2Respawn(&Player2);
 							}
 							if (Map[Player2.C.X][Player2.C.Y].Link == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
 							{
 								Map[Player1.C.X][Player1.C.Y].Occupied = false;
 								Map[Player1.C.X][Player1.C.Y].Solid = true;
+								engine->play2D("deathsound.mp3", false, false);
 								Player1Respawn(&Player1);
 							}
 						}
@@ -674,6 +680,7 @@ void moveCharacter2()
 			{
 				Map[Player1.C.X][Player1.C.Y].Occupied = false;
 				Map[Player1.C.X][Player1.C.Y].Solid = true;
+				engine->play2D("deathsound.mp3", false, false);
 				Player1Respawn(&Player1);
 			}
 		default:
@@ -866,6 +873,7 @@ void moveCharacter2()
 		//Player interation with interactable objects
 	if (Map[Player2.C.X][Player2.C.Y].Code == 5)
 	{
+		engine->play2D("deathsound.mp3", false, false);
 		Player2Respawn(&Player2);
 		Player2.health = 3;
 	}
@@ -885,6 +893,7 @@ void moveCharacter2()
 		g_dBounceTime[0] = g_dElapsedTime + 0.125; // 125ms should be enough
 	}
 	if (Map[Player2.C.X][Player2.C.Y].Code == 4) {
+
 		setRespawn(&Player2);
 	}
 	Map[PrevPos2.X][PrevPos2.Y].Occupied = false;
@@ -905,6 +914,7 @@ void processUserInput()
 		g_eGameState = S_PAUSE;
 	}
 	if (isKeyPressed(0x55)) {
+		engine->play2D("deathsound.mp3", false, false);
 		Player1Respawn(&Player1);
 		Player2Respawn(&Player2);
 		for (int y = 0; y < sMapHeight; y++)
