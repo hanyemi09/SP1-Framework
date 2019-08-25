@@ -387,7 +387,7 @@ void moveCharacter1()
 				{
 					Objects.Levers[i].Active = false;
 				}
-				Objects.UpdateBlockSolidL(Map);
+				Objects.UpdateBlockSolidL(Map, Objects.Levers[i].Link, Objects.Levers[i].Active);
 			}
 		}
 		Player1.bSomethingHappened = true;

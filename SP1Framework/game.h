@@ -224,45 +224,42 @@ struct Object
 			}
 		}
 	}
-	void UpdateBlockSolidL(_Map Map[][50])
+	void UpdateBlockSolidL(_Map Map[][50], char Link, bool Active)
 	{
-		for (short i = 0; i < Levers.size(); i++)
+
+		for (int j = 0; j < Blocks.size(); j++)
 		{
-			if (Levers[i].LeverType == LEVER)
+			if (Link == Blocks[j].Link)
 			{
-				for (int j = 0; j < Blocks.size(); j++)
+				if (Active)
 				{
-					if (Levers[i].Link == Blocks[j].Link)
+					switch (Blocks[j].OriginalSolid)
 					{
-						if (Levers[i].Active)
-						{
-							switch (Blocks[j].OriginalSolid)
-							{
-							case true:
-								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = false;
-								break;
-							case false:
-								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = true;
-								break;
-							}
-						}
-						else
-						{
-							switch (Blocks[j].OriginalSolid)
-							{
-							case true:
-								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = true;
-								break;
-							case false:
-								Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = false;
-								break;
-							}
-						}
+					case true:
+						Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = false;
+						break;
+					case false:
+						Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = true;
+						break;
+					}
+				}
+				else
+				{
+					switch (Blocks[j].OriginalSolid)
+					{
+					case true:
+						Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = true;
+						break;
+					case false:
+						Map[Blocks[j].C.X][Blocks[j].C.Y].Solid = false;
+						break;
 					}
 				}
 			}
 		}
 	}
+
+
 };
 
 void init        ( void );      // initialize your variables, allocate memory, etc
