@@ -774,21 +774,23 @@ void moveCharacter2()
 	//Lever interaction
 	if (isKeyPressed(0x53) && Map[Player2.C.X][Player2.C.Y].Code == 2)
 	{
-		/*switch (Map[Player2.C.X][Player2.C.Y].LeverType)
+		for (int i = 0; i < Objects.Levers.size(); i++)
 		{
-		case LEVER:
-			scanMap(Map[Player2.C.X][Player2.C.Y].Link);
-			if (Map[Player2.C.X][Player2.C.Y].Link  == Map[Player1.C.X][Player1.C.Y].Link && Map[Player1.C.X][Player1.C.Y].Code == 8)
+			if (Player2.C.X == Objects.Levers[i].C.X && Player2.C.Y == Objects.Levers[i].C.Y && Objects.Levers[i].LeverType == LEVER)
 			{
-				Map[Player1.C.X][Player1.C.Y].Occupied = false;
-				Map[Player1.C.X][Player1.C.Y].Solid = true;
-				Player1Respawn(&Player1);
+				if (Objects.Levers[i].Active == false)
+				{
+					Objects.Levers[i].Active = true;
+				}
+				else
+				{
+					Objects.Levers[i].Active = false;
+				}
+				Objects.UpdateBlockSolidL(Map, Objects.Levers[i].Link, Objects.Levers[i].Active);
 			}
-		default:
-			break;
-		}*/
+		}
 		Player2.bSomethingHappened = true;
-	}
+		}
 	if (Map[Player2.C.X][Player2.C.Y + 1].Solid == true)
 	{
 		Player2.bIsGrounded = true;
