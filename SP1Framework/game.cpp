@@ -528,18 +528,16 @@ void moveCharacter1()
 			Player1.C.Y -= 1;
 			Player1.sJump--;
 		}
-		/*else if (Player1.bCanWallJumpL && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid)
+		else if (Player1.bCanWallJumpL && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X--;
 			Player1.C.Y--;
-			g_dSlideTime[1] +=1;
 		}
 		else if (Player1.bCanWallJumpR && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X++;
 			Player1.C.Y--;
-			g_dSlideTime[1] +=1;
-		}*/
+		}
 		else if (Player1.bCanWallJumpL && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X++;
@@ -940,6 +938,16 @@ void moveCharacter2()
 			}
 			Player2.C.Y -= 1;
 			Player2.sJump--;
+		}
+		else if (Player2.bCanWallJumpL && !Map[Player2.C.X - 1][Player2.C.Y - 1].Solid)
+		{
+			Player2.C.X--;
+			Player2.C.Y--;
+		}
+		else if (Player2.bCanWallJumpR && !Map[Player2.C.X + 1][Player2.C.Y - 1].Solid)
+		{
+			Player2.C.X++;
+			Player2.C.Y--;
 		}
 		else if (Player2.bCanWallJumpL && !Map[Player2.C.X + 1][Player2.C.Y - 1].Solid)
 		{
