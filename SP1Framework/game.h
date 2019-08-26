@@ -57,11 +57,6 @@ enum LeverTypes
 	LEVER,
 	PRESSUREPLATE
 };
-enum TILECODE
-{
-	WALL = 1,
-};
-
 struct _Map
 {
 	bool Occupied = false;
