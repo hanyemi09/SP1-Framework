@@ -59,6 +59,10 @@ void init(void)
 		break;
 	}
 	case 2: {
+		Player1.C.X = 2;
+		Player1.C.Y = 6;
+		Player2.C.X = 1;
+		Player2.C.Y = 6;
 		break;
 	}
 	}

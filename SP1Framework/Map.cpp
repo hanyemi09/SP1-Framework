@@ -140,7 +140,7 @@ void MapInitialise(int level, _Map Map[100][50], Object *Objects) {
 	case 2: {
 		std::string output;
 		output.clear();
-		std::ifstream map(".txt");
+		std::ifstream map("ThankYou.txt");
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {
