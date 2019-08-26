@@ -1,5 +1,5 @@
 #include "game.h"
-
+//self-explanitory
 COORD Respawn;
 void setRespawn(PlayerVar *Player)
 {

@@ -1,5 +1,5 @@
 #include "game.h"
-
+//read from text file and store data
 void MapSetting(std::string output, short y, _Map Map[100][50], Object *Objects) {
 	Trap temp;
 	for (short x = 0; x < output.size(); ++x) {
@@ -153,7 +153,7 @@ void MapInitialise(int level, _Map Map[100][50], Object *Objects) {
 	}
 
 }
-
+//reset all map stuff to prepare for next level
 void MapReset(short sMapWidth,short sMapHeight,_Map Map[100][50],Object *Objects) {
 	for (short x = 0; x < sMapWidth; ++x) {
 		for (short y = 0; y < sMapHeight; ++y) {

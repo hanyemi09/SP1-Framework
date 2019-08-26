@@ -57,6 +57,7 @@ enum LeverTypes
 	LEVER,
 	PRESSUREPLATE
 };
+//Map tile struct
 struct _Map
 {
 	bool Occupied = false;
@@ -64,6 +65,7 @@ struct _Map
 	bool Solid;
 	bool LeverType;
 };
+//arrow struct
 struct Arrow
 {
 	COORD C;
@@ -100,7 +102,7 @@ struct Arrow
 		}
 	}
 };
-
+//trap struct
 struct Trap
 {
 	COORD C;
@@ -127,8 +129,7 @@ struct Trap
 		BounceTime = ElapsedTime + 1.5;
 	}
 };
-//variables for for map objects
-//stores maps variables
+//Structs for for map objects
 struct Lever
 {
 	std::vector<COORD> C;
@@ -182,6 +183,7 @@ struct Object
 	std::vector<Trap> Traps;
 	std::vector<Lever> Levers;
 	std::vector<ActivatableBlock> Blocks;
+	//checks pressureplate status and update blocks
 	void UpdateBlockSolidPP(_Map Map[][50])
 	{	
 		for (short i = 0; i < Levers.size(); i++)
@@ -233,6 +235,7 @@ struct Object
 			}
 		}
 	}
+	//checks lever status and update blocks
 	void UpdateBlockSolidL(_Map Map[][50], char Link, bool Active)
 	{
 
@@ -282,7 +285,7 @@ void setRespawn(PlayerVar *Player);// sets respawn point
 //void scanMap(char _Link);	// checks map for activatable blocks and change state accordingly
 void pausegame();			// pauses game
 
-void intro();
+//void intro();
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
 void moveCharacter1();      // moves the character, collision detection, physics, etc

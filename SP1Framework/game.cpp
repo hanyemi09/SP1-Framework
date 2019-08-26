@@ -164,7 +164,7 @@ void ReadTXT(std::string filename,COORD Coord)
 			}
 		}
 	}
-}
+}/*
 void intro()
 {
 	COORD c;
@@ -199,7 +199,7 @@ void intro()
 			break;
 		case 9:ReadTXT("SplashScreenAnimation10.txt", c);
 			break;
-		}/*
+		}
 	if (FrameBouncetime > g_dElapsedTime) 
 	return;
 		for (int line = 0; line < 5; line++)
@@ -212,7 +212,7 @@ void intro()
 				g_Console.writeToBuffer(c, output[x], 0x1f);
 			}
 		}
-		FrameBouncetime = g_dElapsedTime + 0.5;*/
+		FrameBouncetime = g_dElapsedTime + 0.5;
 	
 }
 	//switch (Counter){
@@ -264,8 +264,8 @@ void intro()
 	//	break;
 
 	//}
-	
-
+	*/
+//pause screen
 void pausegame()
 {
 	COORD c = g_Console.getConsoleSize();
@@ -304,8 +304,8 @@ void render()
 		break;
 	case S_PAUSE: pausegame();
 		break;
-	case S_INTRO: intro();
-		break;
+	/*case S_INTRO: intro();
+		break;*/
 	}
 	renderFramerate();  // renders debug information, frame rate, elapsed time, etc
 	renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
@@ -328,12 +328,14 @@ void splashScreenWait()
 void gameplay()            // gameplay logic
 {
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
+	//Moves arrows
 	for (int i = 0; i < Objects.Arrows.size(); i++)
 	{
 		Objects.Arrows[i].MoveArrow(g_dElapsedTime, Map);
 	}
 	moveCharacter1();    // moves the character, collision detection, physics, etc
 	moveCharacter2();
+	//erases arrows that hit a solid tile
 	for (int i = 0; i < Objects.Arrows.size(); i++)
 	{
 		if (Map[Objects.Arrows[i].C.X][Objects.Arrows[i].C.Y].Solid)
@@ -341,6 +343,7 @@ void gameplay()            // gameplay logic
 			Objects.Arrows.erase(Objects.Arrows.begin() + i);
 		}
 	}
+	//arrow traps shoot new arrows
 	for (int i = 0; i < Objects.Traps.size(); i++)
 	{
 		Objects.Traps[i].CreateArrow(g_dElapsedTime, &Objects.Arrows, Map);
@@ -371,11 +374,10 @@ void moveCharacter1()
 {
 	if (g_dBounceTime[1] > g_dElapsedTime)
 		return;
+	//initialize values
 	Player1.bSomethingHappened = false;
 	Player1.bGravity = true;
 	COORD PrevPos1 = Player1.C;
-	//Map[Player1.C.X][Player1.C.Y].Solid = false;
-	//Jumping
 	Player1.bIsGrounded = false;
 	//Lever interaction
 	if (g_abKeyPressed[K_DOWN] && Map[Player1.C.X][Player1.C.Y].Code == 2)
@@ -401,6 +403,7 @@ void moveCharacter1()
 		}
 		Player1.bSomethingHappened = true;
 	}
+	//jumping variables
 	if (Map[Player1.C.X][Player1.C.Y + 1].Solid == true)
 	{
 		Player1.bIsGrounded = true;
@@ -434,18 +437,18 @@ void moveCharacter1()
 	}
 	if (g_abKeyPressed[K_UP] && Player1.C.Y > 0 && Player1.bWasWallJ && Map[Player1.C.X][Player1.C.Y - 1].Code != 1)
 	{
-		
 		Player1.C.Y--;
-		Player1.bWasWallJC = true;
-		
+		Player1.bWasWallJC = true;	
 	}
 	Player1.bWasWallJ = false;
+	//logic for left key
 	if (g_abKeyPressed[K_LEFT] && Player1.C.X > 0 && !g_abKeyPressed[K_RIGHT])
 	{
-		
+		//moving left
 		if (!Map[Player1.C.X - 1][Player1.C.Y].Solid)
 		{
 			Player1.C.X--;
+			//multiplayer physics
 			if (Map[Player1.C.X+1][Player1.C.Y - 1].Occupied && !Map[Player2.C.X-1][Player2.C.Y].Solid)
 			{
 				Map[Player2.C.X][Player2.C.Y].Solid = false;
@@ -455,11 +458,13 @@ void moveCharacter1()
 				Map[Player2.C.X][Player2.C.Y].Occupied = true;
 			}
 		}
+		//step climbing
 		else if (Map[Player1.C.X - 1][Player1.C.Y].Solid && !Map[Player1.C.X][Player1.C.Y - 1].Solid && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid && Player1.bIsGrounded)
 		{
 			Player1.C.X--;
 			Player1.C.Y--;
 		}
+		//detects if player can Wall Jump
 		else if (Map[Player1.C.X - 1][Player1.C.Y].Solid)
 		{
 			Player1.bCanWallJumpL = true;
@@ -472,6 +477,7 @@ void moveCharacter1()
 	{
 		Player1.bCanWallJumpL = false;
 	}
+	//same logic as left key 
 	if (g_abKeyPressed[K_RIGHT] && Player1.C.X < g_Console.getConsoleSize().X - 1 && !g_abKeyPressed[K_LEFT])
 	{
 		if (!Map[Player1.C.X + 1][Player1.C.Y].Solid)
@@ -503,8 +509,10 @@ void moveCharacter1()
 	{
 		Player1.bCanWallJumpR = false;
 	}
+	//logic for up key
 	if (g_abKeyPressed[K_UP] && Player1.C.Y > 0)
 	{
+		//detects if player can jump
 		if ((Map[Player1.C.X][Player1.C.Y - 1].Solid && !Map[Player1.C.X][Player1.C.Y - 1].Occupied) || Player1.sJump <= 0 || (Map[Player1.C.X][Player1.C.Y - 1].Occupied && Map[Player1.C.X][Player1.C.Y - 2].Solid))
 		{
 			Player1.bCanJump = false;
@@ -512,9 +520,9 @@ void moveCharacter1()
 		}
 		else if (Player1.bWasGrounded)
 		{
-
 			Player1.bCanJump = true;
 		}
+		//player jumping 
 		if (Player1.bCanJump)
 		{
 			if (Map[Player1.C.X][Player1.C.Y - 1].Occupied)
@@ -528,6 +536,7 @@ void moveCharacter1()
 			Player1.C.Y -= 1;
 			Player1.sJump--;
 		}
+		//edge climbing
 		else if (Player1.bCanWallJumpL && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X--;
@@ -538,6 +547,7 @@ void moveCharacter1()
 			Player1.C.X++;
 			Player1.C.Y--;
 		}
+		//wall jumping
 		else if (Player1.bCanWallJumpL && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X++;
@@ -565,7 +575,7 @@ void moveCharacter1()
 		Player1.bCanJump = false;
 		Player1.bWasGrounded = true;
 	}
-
+	//release from wall climb
 	if (g_abKeyPressed[K_DOWN])
 	{
 		Player1.bCanWallJumpL = false;
@@ -590,16 +600,17 @@ void moveCharacter1()
 	{
 		Player1.bWasWallJC = false;
 	}
-	if (Map[Player1.C.X][Player1.C.Y].Code == 5)
+	//Player interation with interactable objects
+	if (Map[Player1.C.X][Player1.C.Y].Code == 5)//lava
 	{
 		engine->play2D("deathsound.mp3", false, false);
 		Player1Respawn(&Player1);
 		Player1.health = 3;
 	}
-	//Player interation with interactable objects
-	if (Map[Player1.C.X][Player1.C.Y].Code == 4) {
+	if (Map[Player1.C.X][Player1.C.Y].Code == 4) {//checkpoint
 		setRespawn(&Player1);
 	}
+	//arrow
 	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Solid) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Solid)) {
 		engine->play2D("hitsound.mp3", false, false);
 		Player1.health--;
@@ -609,6 +620,7 @@ void moveCharacter1()
 		Map[Player1.C.X][Player1.C.Y].Code = 0;
 	}
 	//if (Map[PrevPos1.X][PrevPos1.Y].LeverType == PRESSUREPLATE || Map[Player1.C.X][Player1.C.Y].LeverType == PRESSUREPLATE)
+	//updates pressureplate's effects
 	Objects.UpdateBlockSolidPP(Map);
 
 	if (Player1.bSomethingHappened)
@@ -616,11 +628,13 @@ void moveCharacter1()
 		// set the bounce time to some time in the future to prevent accidental triggers
 		g_dBounceTime[1] = g_dElapsedTime + 0.125; // 125ms should be enough
 	}
+	//stores player vaiable for multiplayer physics
 	Map[PrevPos1.X][PrevPos1.Y].Occupied = false;
 	Map[PrevPos1.X][PrevPos1.Y].Solid = false;
 	Map[Player1.C.X][Player1.C.Y].Solid = true;
 	Map[Player1.C.X][Player1.C.Y].Occupied = true;
 }
+//Old Code
 	/*
 void PPFunc(PlayerVar Player)
 {
@@ -779,7 +793,7 @@ void PPFunc(PlayerVar Player)
 		}
 	}
 	*/
-
+//same thing as move character 1
 void moveCharacter2()
 {
 	if (g_dBounceTime[0] > g_dElapsedTime)
@@ -1033,7 +1047,7 @@ void moveCharacter2()
 	Map[Player2.C.X][Player2.C.Y].Occupied = true;
 	Map[Player2.C.X][Player2.C.Y].Solid = true;
 }
-
+//for transitioning to pause sceen and manual respawning
 void processUserInput()
 {
 	// quits the game if player hits the escape key
@@ -1266,19 +1280,19 @@ void renderMap()
 			}
 			switch (Map[x][y].Code) {
 			case 0:
-				Map[x][y].Code = 0;
+				Map[x][y].Code = 0;//air block
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, ' ', colors[12]);
 				break;
-			case 1:
+			case 1://normal blocks
 				Map[x][y].Code = 1;
 				Map[x][y].Solid = true;
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[12]);
 				break;
-			case 2:
+			case 2://levers and pressureplates
 				Map[x][y].Code = 2;
 				c.X = x;
 				c.Y = y;
@@ -1290,25 +1304,25 @@ void renderMap()
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)254, colors[1]);
 				}
 				break;
-			case 3:
+			case 3://scrapped idea
 				Map[x][y].Code = 3;
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[1]);
 				break;
-			case 4:
+			case 4://checkpoint
 				Map[x][y].Code = 4;
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'P', colors[5]);
 				break;
-			case 5:
+			case 5://Lava
 				Map[x][y].Code = 5;
 				c.X = x;
 				c.Y = y;
 				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[2]);
 				break;
-			case 6:
+			case 6://traps or darts
 				c.X = x;
 				c.Y = y;
 				Map[x][y].Code = 6;
@@ -1321,7 +1335,7 @@ void renderMap()
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
 				}
 				break;
-			case 7:
+			case 7://traps or darts
 				Map[x][y].Code = 7;
 				c.X = x;
 				c.Y = y;
@@ -1334,7 +1348,7 @@ void renderMap()
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, (char)15, colors[12]);
 				}
 				break;
-			case 8:
+			case 8://activatable blocks
 				Map[x][y].Code = 8;
 				c.X = x;
 				c.Y = y;
@@ -1345,7 +1359,7 @@ void renderMap()
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[12]);
 				}
 				break;
-			case 9:
+			case 9://end point
 				Map[x][y].Code = 9;
 				c.X = x;
 				c.Y = y;
@@ -1364,6 +1378,7 @@ void renderMap()
 			*/
 		}
 	}
+	//stage transition
 	if (Map[Player1.C.X][Player1.C.Y].Code == 9&& Map[Player2.C.X][Player2.C.Y].Code == 9) {
 		++level;
 		MapReset(sMapWidth,sMapHeight,Map, &Objects);
