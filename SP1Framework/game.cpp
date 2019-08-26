@@ -524,11 +524,11 @@ void moveCharacter1()
 			}
 			if (Player1.sJump == 2){
 				engine->play2D("jump2.wav", false, false);
-		}
+			}
 			Player1.C.Y -= 1;
 			Player1.sJump--;
 		}
-		else if (Player1.bCanWallJumpL && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid)
+		/*else if (Player1.bCanWallJumpL && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X--;
 			Player1.C.Y--;
@@ -539,7 +539,7 @@ void moveCharacter1()
 			Player1.C.X++;
 			Player1.C.Y--;
 			g_dSlideTime[1] +=1;
-		}
+		}*/
 		else if (Player1.bCanWallJumpL && !Map[Player1.C.X + 1][Player1.C.Y - 1].Solid)
 		{
 			Player1.C.X++;
@@ -548,6 +548,7 @@ void moveCharacter1()
 			Player1.bCanWallJumpL = false;
 			Player1.bWasWallJ = true;
 			Player1.bWasWallJC = true;
+			g_dSlideTime[1] =g_dElapsedTime+ 1;
 		}
 		else if (Player1.bCanWallJumpR && !Map[Player1.C.X - 1][Player1.C.Y - 1].Solid)
 		{
@@ -557,6 +558,7 @@ void moveCharacter1()
 			Player1.bCanWallJumpR = false;
 			Player1.bWasWallJ = true;
 			Player1.bWasWallJC = true;
+			g_dSlideTime[1] = g_dElapsedTime + 1;
 		}
 		Player1.bSomethingHappened = true;
 	}
@@ -939,18 +941,6 @@ void moveCharacter2()
 			Player2.C.Y -= 1;
 			Player2.sJump--;
 		}
-		else if (Player2.bCanWallJumpL && !Map[Player2.C.X - 1][Player2.C.Y - 1].Solid)
-		{
-			engine->play2D("jumpmp3.mp3", false, false);
-			Player2.C.X--;
-			Player2.C.Y--;
-		}
-		else if (Player2.bCanWallJumpR && !Map[Player2.C.X + 1][Player2.C.Y - 1].Solid)
-		{
-			engine->play2D("jumpmp3.mp3", false, false);
-			Player2.C.X++;
-			Player2.C.Y--;
-		}
 		else if (Player2.bCanWallJumpL && !Map[Player2.C.X + 1][Player2.C.Y - 1].Solid)
 		{
 			engine->play2D("jumpmp3.mp3", false, false);
@@ -959,14 +949,17 @@ void moveCharacter2()
 			Player2.bCanWallJumpL = false;
 			Player2.bWasWallJ = true;
 			Player2.bWasWallJC = true;
+			g_dSlideTime[1] = g_dElapsedTime + 1;
 		}
 		else if (Player2.bCanWallJumpR && !Map[Player2.C.X - 1][Player2.C.Y - 1].Solid)
 		{
+			engine->play2D("jumpmp3.mp3", false, false);
 			Player2.C.X--;
 			Player2.C.Y--;
 			Player2.bCanWallJumpR = false;
 			Player2.bWasWallJ = true;
 			Player2.bWasWallJC = true;
+			g_dSlideTime[1] = g_dElapsedTime + 1;
 		}
 		Player2.bSomethingHappened = true;
 	}
