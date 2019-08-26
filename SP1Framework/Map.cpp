@@ -114,7 +114,7 @@ void MapInitialise(int level, _Map Map[100][50], Object *Objects) {
 	switch (level) {
 	case 0: {
 		std::string output;
-		std::ifstream map("b2.txt");
+		std::ifstream map("basics.txt");
 		if (map.is_open()) {
 			short y = 1;
 			while (getline(map, output)) {

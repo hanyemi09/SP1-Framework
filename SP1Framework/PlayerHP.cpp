@@ -1,7 +1,6 @@
 #include "game.h"
 
 COORD Respawn;
-
 void setRespawn(PlayerVar *Player)
 {
 	Respawn.X = Player->C.X;

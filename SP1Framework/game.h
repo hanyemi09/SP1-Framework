@@ -10,6 +10,8 @@
 #include <vector>
 #pragma comment( lib, "Winmm.lib" )
 #include <sstream>
+#include <irrKlang.h>
+#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
 
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
@@ -76,7 +78,7 @@ struct Arrow
 	{
 		if (BounceTime > ElapsedTime)
 			return;
-		if (!Map[C.X][C.Y].Solid)
+		if (!Map[C.X][C.Y].Code==0)
 		{
 			if (Direction == A_RIGHT)
 			{

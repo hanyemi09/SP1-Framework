@@ -5,9 +5,7 @@
 #include "Framework\console.h"
 #include <iostream>
 #include <iomanip>
-#include <sstream>
-#include <irrKlang.h>
-#pragma comment(lib, "irrKlang.lib") // link with irrKlang.dll
+
 
 
 double  g_dElapsedTime;
@@ -330,15 +328,22 @@ void splashScreenWait()
 void gameplay()            // gameplay logic
 {
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
-	moveCharacter1();    // moves the character, collision detection, physics, etc
-	moveCharacter2();
-	for (int i = 0; i < Objects.Traps.size(); i++)
-	{
-		Objects.Traps[i].CreateArrow(g_dElapsedTime, &Objects.Arrows, Map);
-	}
 	for (int i = 0; i < Objects.Arrows.size(); i++)
 	{
 		Objects.Arrows[i].MoveArrow(g_dElapsedTime, Map);
+	}
+	moveCharacter1();    // moves the character, collision detection, physics, etc
+	moveCharacter2();
+	for (int i = 0; i < Objects.Arrows.size(); i++)
+	{
+		if (Map[Objects.Arrows[i].C.X][Objects.Arrows[i].C.Y].Solid)
+		{
+			Objects.Arrows.erase(Objects.Arrows.begin() + i);
+		}
+	}
+	for (int i = 0; i < Objects.Traps.size(); i++)
+	{
+		Objects.Traps[i].CreateArrow(g_dElapsedTime, &Objects.Arrows, Map);
 	}
 	//MovementSounds(); // sound can be played here too.
 }
@@ -598,6 +603,8 @@ void moveCharacter1()
 	if ((Map[Player1.C.X][Player1.C.Y].Code == 6 && !Map[Player1.C.X][Player1.C.Y].Solid) || (Map[Player1.C.X][Player1.C.Y].Code == 7 && !Map[Player1.C.X][Player1.C.Y].Solid)) {
 		engine->play2D("hitsound.mp3", false, false);
 		Player1.health--;
+		if(Player1.health == 0)
+			engine->play2D("deathsound.mp3", false, false);
 		HpUpdate(&Player1);
 		Map[Player1.C.X][Player1.C.Y].Code = 0;
 	}
@@ -1003,6 +1010,8 @@ void moveCharacter2()
 	{
 		engine->play2D("hitsound.mp3", false, false);
 		Player2.health--;
+		if (Player2.health == 0)
+			engine->play2D("deathsound.mp3", false, false);
 		HpUpdate(&Player2);
 		Map[Player2.C.X][Player2.C.Y].Code = 0;
 	}
@@ -1272,15 +1281,8 @@ void renderMap()
 				Map[x][y].Code = 2;
 				c.X = x;
 				c.Y = y;
-				if (Map[x][y].LeverType == Lever) {
-					if (Map[x][y].Active)
-					{
+				if (Map[x][y].LeverType == LEVER) {
 					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', 0x71);
-					}
-					else
-					{
-						g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '\\', 0x80);
-					}
 				}
 				else if(Map[x][y].LeverType == PRESSUREPLATE)
 				{
