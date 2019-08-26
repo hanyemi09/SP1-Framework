@@ -375,19 +375,23 @@ void moveCharacter1()
 	//Lever interaction
 	if (g_abKeyPressed[K_DOWN] && Map[Player1.C.X][Player1.C.Y].Code == 2)
 	{
-		for (int i = 0; i < Objects.Levers.size(); i++)
+		for (short i = 0; i < Objects.Levers.size(); i++)
 		{
-			if (Player1.C.X == Objects.Levers[i].C.X && Player1.C.Y == Objects.Levers[i].C.Y && Objects.Levers[i].LeverType == LEVER)
+			for (short j = 0; j < Objects.Levers[i].C.size();j++)
 			{
-				if (Objects.Levers[i].Active == false)
+				if (Player1.C.X == Objects.Levers[i].C[j].X && Player1.C.Y == Objects.Levers[i].C[j].Y && Objects.Levers[i].LeverType == LEVER)
 				{
-					Objects.Levers[i].Active = true;
+					if (Objects.Levers[i].Active == false)
+					{
+						Objects.Levers[i].Active = true;
+					}
+					else
+					{
+						Objects.Levers[i].Active = false;
+					}
+					Objects.UpdateBlockSolidL(Map, Objects.Levers[i].Link, Objects.Levers[i].Active);
+					break;
 				}
-				else
-				{
-					Objects.Levers[i].Active = false;
-				}
-				Objects.UpdateBlockSolidL(Map, Objects.Levers[i].Link, Objects.Levers[i].Active);
 			}
 		}
 		Player1.bSomethingHappened = true;
@@ -774,9 +778,11 @@ void moveCharacter2()
 	//Lever interaction
 	if (isKeyPressed(0x53) && Map[Player2.C.X][Player2.C.Y].Code == 2)
 	{
-		for (int i = 0; i < Objects.Levers.size(); i++)
+		for (short i = 0; i < Objects.Levers.size(); i++)
 		{
-			if (Player2.C.X == Objects.Levers[i].C.X && Player2.C.Y == Objects.Levers[i].C.Y && Objects.Levers[i].LeverType == LEVER)
+			for(short j=0;j< Objects.Levers[i].C.size();j++)
+			{
+			if (Player2.C.X == Objects.Levers[i].C[j].X && Player2.C.Y == Objects.Levers[i].C[j].Y && Objects.Levers[i].LeverType == LEVER)
 			{
 				if (Objects.Levers[i].Active == false)
 				{
@@ -787,6 +793,8 @@ void moveCharacter2()
 					Objects.Levers[i].Active = false;
 				}
 				Objects.UpdateBlockSolidL(Map, Objects.Levers[i].Link, Objects.Levers[i].Active);
+				break;
+			}
 			}
 		}
 		Player2.bSomethingHappened = true;

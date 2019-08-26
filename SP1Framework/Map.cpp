@@ -61,16 +61,48 @@ void MapSetting(std::string output, short y, _Map Map[100][50], Object *Objects)
 				{
 					Map[x][y].Code = 2;
 					Map[x][y].LeverType = PRESSUREPLATE;
-					Lever temp = { x,y,output[x] - 13,PRESSUREPLATE };
+					bool MatchFound = false;
+					COORD ctemp = { x,y };
+					for (int i = 0; i < Objects->Levers.size(); i++)
+					{
+						if (output[x] - 13 == Objects->Levers[i].Link&&Objects->Levers[i].LeverType == PRESSUREPLATE)
+						{
+							Objects->Levers[i].C.push_back(ctemp); 
+							MatchFound = true;
+							break;
+						}
+					}
+					if (!MatchFound)
+					{
+						Lever temp;
+						temp.C.push_back(ctemp);
+						temp = { temp.C,output[x] - 13,PRESSUREPLATE };
 					Objects->Levers.push_back(temp);
+					}
 				}
 				else
 					if (output[x] >= 78 && output[x] <= 90)
 					{
 						Map[x][y].Code = 2;
 						Map[x][y].LeverType = LEVER;
-						Lever temp = { x,y,output[x] + 19,LEVER };
-						Objects->Levers.push_back(temp);
+						bool MatchFound = false;
+						COORD ctemp = { x,y };
+						for (int i = 0; i < Objects->Levers.size(); i++)
+						{
+							if (output[x] + 19 == Objects->Levers[i].Link && Objects->Levers[i].LeverType == LEVER)
+							{
+								Objects->Levers[i].C.push_back(ctemp);
+								MatchFound = true;
+								break;
+							}
+						}
+						if (!MatchFound)
+						{
+							Lever temp;
+							temp.C.push_back(ctemp);
+							temp= {temp.C,output[x] + 19,LEVER };
+							Objects->Levers.push_back(temp);
+						}
 					}
 			}
 		}

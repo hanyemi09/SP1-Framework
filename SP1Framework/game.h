@@ -134,7 +134,7 @@ struct Trap
 //stores maps variables
 struct Lever
 {
-	COORD C;
+	std::vector<COORD> C;
 	char Link;
 	bool LeverType;
 	bool Active = false;
@@ -191,11 +191,23 @@ struct Object
 		{
 			if (Levers[i].LeverType == PRESSUREPLATE)
 			{
-				for (int j = 0; j < Blocks.size(); j++)
+				for (short h = 0; h < Levers[i].C.size(); h++)
+				{
+					if (!Map[Levers[i].C[h].X][Levers[i].C[h].Y].Occupied)
+					{
+						Levers[i].Active = false;
+					}
+					else
+					{
+						Levers[i].Active = true;
+						break;
+					}
+				}
+				for (short j = 0; j < Blocks.size(); j++)
 				{
 					if (Levers[i].Link == Blocks[j].Link)
 					{
-						if (Map[Levers[i].C.X][Levers[i].C.Y].Occupied)
+						if (Levers[i].Active)
 						{
 							switch (Blocks[j].OriginalSolid)
 							{
