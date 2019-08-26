@@ -1162,7 +1162,14 @@ void renderMap()
 				c.X = x;
 				c.Y = y;
 				if (Map[x][y].LeverType == Lever) {
-					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', 0x25C9);
+					if (Map[x][y].Active)
+					{
+					g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '/', 0x71);
+					}
+					else
+					{
+						g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, '\\', 0x80);
+					}
 				}
 				else if(Map[x][y].LeverType == PressurePlate)
 				{
@@ -1179,7 +1186,7 @@ void renderMap()
 				Map[x][y].Code = 4;
 				c.X = x;
 				c.Y = y;
-				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'Û', colors[1]);
+				g_Console.writeToBuffer(c.X, c.Y - sYDisplacement, 'P', colors[5]);
 				break;
 			case 5:
 				Map[x][y].Code = 5;
